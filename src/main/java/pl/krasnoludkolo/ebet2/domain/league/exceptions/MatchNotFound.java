@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.domain.league.api;
+package pl.krasnoludkolo.ebet2.domain.league.exceptions;
 
 public class MatchNotFound extends RuntimeException {
 }
