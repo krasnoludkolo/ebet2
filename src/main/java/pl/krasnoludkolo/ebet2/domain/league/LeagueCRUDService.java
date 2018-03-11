@@ -59,4 +59,8 @@ class LeagueCRUDService {
                 .map(Match::toDTO);
 
     }
+
+    public void removeMatchUUID(UUID leagueUUID) {
+        leagueRepository.delete(leagueUUID);
+    }
 }

@@ -6,6 +6,7 @@ import pl.krasnoludkolo.ebet2.domain.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.domain.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.domain.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.domain.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.domain.results.ResultFacade;
 
 import java.util.UUID;
 
@@ -14,15 +15,19 @@ public class LeagueFacade {
 
     private LeagueCRUDService leagueService;
     private MatchCRUDService matchService;
+    private ResultFacade resultFacade;
 
-    public LeagueFacade(LeagueCRUDService leagueService, MatchCRUDService matchService) {
+    public LeagueFacade(LeagueCRUDService leagueService, MatchCRUDService matchService, ResultFacade resultFacade) {
         this.leagueService = leagueService;
         this.matchService = matchService;
+        this.resultFacade = resultFacade;
     }
 
     public UUID createLeague(String name) {
         League league = leagueService.createLeague(name);
-        return league.getUuid();
+        UUID uuid = league.getUuid();
+        resultFacade.createResultsForLeague(uuid);
+        return uuid;
     }
 
     public Option<LeagueDTO> findLeagueByName(String name) {
@@ -53,5 +58,15 @@ public class LeagueFacade {
 
     public void setMatchResult(UUID matchUUID, MatchResult result) {
         matchService.setMatchResult(matchUUID, result);
+        MatchDTO matchDTO = matchService.findByUUID(matchUUID).getOrElseThrow(IllegalStateException::new).toDTO();
+        resultFacade.updateLeagueResultsForMatch(matchDTO);
+    }
+
+    public void removeMatch(UUID matchUUID) {
+        matchService.removeMatchByUUID(matchUUID);
+    }
+
+    public void removeLeague(UUID leagueUUID) {
+        leagueService.removeMatchUUID(leagueUUID);
     }
 }

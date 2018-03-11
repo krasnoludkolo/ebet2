@@ -15,6 +15,7 @@ public class MatchDTO {
     private String host;
     private String guest;
     private MatchResult result;
+    private UUID leagueUUID;
 
     @Override
     public boolean equals(Object o) {

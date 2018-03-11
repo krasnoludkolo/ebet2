@@ -16,22 +16,24 @@ class Match {
     private String host;
     private String guest;
     private MatchResult result;
+    private UUID leagueUUID;
 
 
     Match(NewMatchDTO dto) {
-        this(dto.getRound(), dto.getHost(), dto.getGuest());
+        this(dto.getRound(), dto.getHost(), dto.getGuest(), dto.getLeagueUUID());
     }
 
-    private Match(int round, String host, String guest) {
-        this(round, host, guest, MatchResult.NOT_SET);
+    private Match(int round, String host, String guest, UUID leagueUUID) {
+        this(round, host, guest, MatchResult.NOT_SET, leagueUUID);
     }
 
-    private Match(int round, String host, String guest, MatchResult result) {
+    private Match(int round, String host, String guest, MatchResult result, UUID leagueUUID) {
         this.round = round;
         this.host = host;
         this.guest = guest;
         this.result = result;
         this.uuid = UUID.randomUUID();
+        this.leagueUUID = leagueUUID;
     }
 
     @Override
@@ -51,7 +53,7 @@ class Match {
     }
 
     MatchDTO toDTO() {
-        return new MatchDTO(uuid, round, host, guest, result);
+        return new MatchDTO(uuid, round, host, guest, result, leagueUUID);
     }
 
     public void setMatchResult(MatchResult matchResult) {

@@ -35,4 +35,8 @@ class MatchCRUDService {
         match.setMatchResult(result);
         matchRepository.update(matchUUID, match);
     }
+
+    public void removeMatchByUUID(UUID matchUUID) {
+        matchRepository.delete(matchUUID);
+    }
 }
