@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.domain;
+package pl.krasnoludkolo.ebet2.infrastructure;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;

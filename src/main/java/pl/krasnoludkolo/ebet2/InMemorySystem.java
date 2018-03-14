@@ -1,11 +1,11 @@
 package pl.krasnoludkolo.ebet2;
 
-import pl.krasnoludkolo.ebet2.domain.bet.BetConfiguration;
-import pl.krasnoludkolo.ebet2.domain.bet.BetFacade;
-import pl.krasnoludkolo.ebet2.domain.league.LeagueConfiguration;
-import pl.krasnoludkolo.ebet2.domain.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.domain.results.ResultConfiguration;
-import pl.krasnoludkolo.ebet2.domain.results.ResultFacade;
+import pl.krasnoludkolo.ebet2.bet.domain.BetConfiguration;
+import pl.krasnoludkolo.ebet2.bet.domain.BetFacade;
+import pl.krasnoludkolo.ebet2.league.domain.LeagueConfiguration;
+import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
+import pl.krasnoludkolo.ebet2.results.domain.ResultConfiguration;
+import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
 
 public class InMemorySystem {
 

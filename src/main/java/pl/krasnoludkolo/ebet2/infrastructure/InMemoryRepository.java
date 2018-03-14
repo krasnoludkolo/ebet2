@@ -2,7 +2,6 @@ package pl.krasnoludkolo.ebet2.infrastructure;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.domain.Repository;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

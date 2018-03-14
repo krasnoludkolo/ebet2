@@ -5,11 +5,12 @@ import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.domain.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.domain.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.domain.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.domain.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.domain.league.exceptions.LeagueNameDuplicationException;
+import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
+import pl.krasnoludkolo.ebet2.league.exceptions.LeagueNameDuplicationException;
 
 import java.util.UUID;
 
@@ -92,7 +93,7 @@ public class LeagueFacadeTest {
         UUID leagueUUID = facade.createLeague("new");
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
         //when
-        facade.addMatchToLeague(leagueUUID, newMatchDTO);
+        facade.addMatchToLeague(newMatchDTO);
         //then
         List<MatchDTO> matchesList = facade.getMatchesFromRound(leagueUUID, 1);
         assertTrue(matchesList.map(MatchDTO::getHost).contains("host"));
@@ -105,8 +106,8 @@ public class LeagueFacadeTest {
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
         NewMatchDTO newMatchDTO2 = new NewMatchDTO("host2", "guest2", 2, leagueUUID);
         //when
-        facade.addMatchToLeague(leagueUUID, newMatchDTO);
-        facade.addMatchToLeague(leagueUUID, newMatchDTO2);
+        facade.addMatchToLeague(newMatchDTO);
+        facade.addMatchToLeague(newMatchDTO2);
         //then
         List<MatchDTO> matchesList1 = facade.getMatchesFromRound(leagueUUID, 1);
         List<MatchDTO> matchesList2 = facade.getMatchesFromRound(leagueUUID, 2);
@@ -121,8 +122,8 @@ public class LeagueFacadeTest {
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
         NewMatchDTO other = new NewMatchDTO("host2", "guest2", 1, leagueUUID);
         //when
-        UUID uuid = facade.addMatchToLeague(leagueUUID, newMatchDTO);
-        facade.addMatchToLeague(leagueUUID, other);
+        UUID uuid = facade.addMatchToLeague(newMatchDTO);
+        facade.addMatchToLeague(other);
         //then
         Option<MatchDTO> dto = facade.getMatchByUUID(uuid);
         if (dto.isEmpty()) {
@@ -138,12 +139,12 @@ public class LeagueFacadeTest {
         UUID leagueUUID = facade.createLeague("new");
         UUID leagueUUID2 = facade.createLeague("new2");
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
-        NewMatchDTO newMatchDTO2 = new NewMatchDTO("host2", "guest2", 1, leagueUUID);
+        NewMatchDTO newMatchDTO2 = new NewMatchDTO("host2", "guest2", 1, leagueUUID2);
         //when
-        facade.addMatchToLeague(leagueUUID, newMatchDTO);
-        facade.addMatchToLeague(leagueUUID, newMatchDTO2);
-        facade.addMatchToLeague(leagueUUID2, newMatchDTO);
-        facade.addMatchToLeague(leagueUUID2, newMatchDTO2);
+        facade.addMatchToLeague(newMatchDTO);
+        facade.addMatchToLeague(newMatchDTO2);
+        facade.addMatchToLeague(newMatchDTO);
+        facade.addMatchToLeague(newMatchDTO2);
         //then
         List<MatchDTO> matchesFromRound = facade.getMatchesFromRound(leagueUUID, 1);
         assertEquals(2, matchesFromRound.size());
@@ -154,7 +155,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new");
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
-        UUID matchUUID = facade.addMatchToLeague(leagueUUID, newMatchDTO);
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO);
         //when
         facade.setMatchResult(matchUUID, MatchResult.DRAW);
         //then
@@ -172,7 +173,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new");
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
-        UUID matchUUID = facade.addMatchToLeague(leagueUUID, newMatchDTO);
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO);
         //when
         facade.setMatchResult(matchUUID, MatchResult.NOT_SET);
     }
@@ -182,7 +183,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new");
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID);
-        UUID matchUUID = facade.addMatchToLeague(leagueUUID, newMatchDTO);
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO);
         //when
         facade.removeMatch(matchUUID);
         //then
