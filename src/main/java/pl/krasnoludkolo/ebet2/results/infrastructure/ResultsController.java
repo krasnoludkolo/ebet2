@@ -27,20 +27,17 @@ class ResultsController {
     @GetMapping("/results")
     public HttpEntity<LeagueResultsDTO> getResultsForLeague(@RequestParam UUID uuid) {
         Option<LeagueResultsDTO> leagueResultsDTOS = resultFacade.getResultsForLeague(uuid);
-        if (leagueResultsDTOS.isEmpty()) {
-            return new ResponseEntity<>(new LeagueResultsDTO(), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(leagueResultsDTOS.get(), HttpStatus.CREATED);
+        return leagueResultsDTOS
+                .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
+                .getOrElse(new ResponseEntity<>(new LeagueResultsDTO(), HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/results")
     public HttpEntity<UserResultDTO> getResultsFromLeagueToUser(@RequestParam UUID leagueUUID, @RequestParam String user) {
         Option<UserResultDTO> results = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        if (results.isEmpty()) {
-            return new ResponseEntity<>(new UserResultDTO(), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(results.get(), HttpStatus.CREATED);
-
+        return results
+                .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
+                .getOrElse(new ResponseEntity<>(new UserResultDTO(), HttpStatus.NOT_FOUND));
     }
 
 }

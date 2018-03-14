@@ -32,10 +32,9 @@ class BetController {
     @GetMapping("/bet")
     public HttpEntity<BetDTO> getBetByUuid(@RequestParam UUID uuid) {
         Option<BetDTO> betByUUID = betFacade.findBetByUUID(uuid);
-        if (betByUUID.isEmpty()) {
-            return new ResponseEntity<>(new BetDTO(), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(betByUUID.get(), HttpStatus.CREATED);
+        return betByUUID
+                .map(betDTO -> new ResponseEntity<>(betDTO, HttpStatus.CREATED))
+                .getOrElse(new ResponseEntity<>(new BetDTO(), HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/bets")
