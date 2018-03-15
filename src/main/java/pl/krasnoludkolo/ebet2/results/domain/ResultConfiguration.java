@@ -11,12 +11,10 @@ public class ResultConfiguration {
 
     @Bean
     public ResultFacade inMemoryResultController(BetFacade betFacade) {
-
         Repository<LeagueResults> repository = new InMemoryRepository<>();
         LeagueResultsCRUDService service = new LeagueResultsCRUDService(repository);
         LeagueResultsUpdater leagueResultsUpdater = new LeagueResultsUpdater(repository);
         return new ResultFacade(service, leagueResultsUpdater, betFacade);
     }
-
 
 }

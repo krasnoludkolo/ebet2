@@ -2,11 +2,7 @@ package pl.krasnoludkolo.ebet2.bet.domain;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
-import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
-import pl.krasnoludkolo.ebet2.bet.exceptions.BetNotFound;
-import pl.krasnoludkolo.ebet2.bet.exceptions.DuplicateUsername;
+import pl.krasnoludkolo.ebet2.bet.api.*;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 
 import java.util.UUID;

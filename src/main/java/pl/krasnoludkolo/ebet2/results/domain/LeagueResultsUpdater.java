@@ -17,10 +17,8 @@ class LeagueResultsUpdater {
         bets
                 .filter(betDTO -> betDTO.getBetTyp().match(result))
                 .map(BetDTO::getUsername)
-                .toJavaStream()
                 .forEach(resultsForLeague::addPointToUser);
         resultsRepository.update(resultsForLeague.getLeagueUUID(), resultsForLeague);
     }
-
 
 }

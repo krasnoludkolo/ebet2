@@ -4,9 +4,9 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.LeagueNameDuplicationException;
+import pl.krasnoludkolo.ebet2.league.api.LeagueNotFound;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.exceptions.LeagueNameDuplicationException;
-import pl.krasnoludkolo.ebet2.league.exceptions.LeagueNotFound;
 
 import java.util.UUID;
 

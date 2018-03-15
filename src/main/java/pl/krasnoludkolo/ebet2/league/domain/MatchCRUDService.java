@@ -2,9 +2,9 @@ package pl.krasnoludkolo.ebet2.league.domain;
 
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.league.api.MatchNotFound;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.league.exceptions.MatchNotFound;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package pl.krasnoludkolo.ebet2.results.domain;
 
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.exceptions.LeagueNotFound;
+import pl.krasnoludkolo.ebet2.league.api.LeagueNotFound;
 
 import java.util.UUID;
 
