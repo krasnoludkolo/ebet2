@@ -11,7 +11,8 @@ import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class BetFacadeTest {
@@ -35,10 +36,6 @@ public class BetFacadeTest {
         UUID betUUID = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, "username", matchUUID));
         //then
         Option<BetDTO> bet = betFacade.findBetByUUID(betUUID);
-        if (bet.isEmpty()) {
-            fail("No bet");
-        }
-
         BetDTO betDTO = bet.get();
         assertEquals(matchUUID, betDTO.getMatchUUID());
         assertEquals(BetTyp.DRAW, betDTO.getBetTyp());
@@ -65,9 +62,6 @@ public class BetFacadeTest {
         betFacade.updateBetToMatch(betUUID, BetTyp.DRAW);
         //then
         Option<BetDTO> bet = betFacade.findBetByUUID(betUUID);
-        if (bet.isEmpty()) {
-            fail("No bet");
-        }
         BetDTO betDTO = bet.get();
         assertEquals(BetTyp.DRAW, betDTO.getBetTyp());
     }

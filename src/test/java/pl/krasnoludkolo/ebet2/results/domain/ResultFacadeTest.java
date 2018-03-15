@@ -52,12 +52,8 @@ public class ResultFacadeTest {
 
         //then
         Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        if (dto.isEmpty()) {
-            fail();
-        } else {
-            UserResultDTO userResult = dto.get();
-            assertEquals(1, userResult.getPointCounter());
-        }
+        UserResultDTO userResult = dto.get();
+        assertEquals(1, userResult.getPointCounter());
     }
 
     @Test
@@ -88,12 +84,8 @@ public class ResultFacadeTest {
 
         //then
         Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        if (dto.isEmpty()) {
-            fail();
-        } else {
-            UserResultDTO userResult = dto.get();
-            assertEquals(1, userResult.getPointCounter());
-        }
+        UserResultDTO userResult = dto.get();
+        assertEquals(1, userResult.getPointCounter());
     }
 
 

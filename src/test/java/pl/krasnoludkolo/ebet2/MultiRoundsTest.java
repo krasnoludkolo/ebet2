@@ -15,7 +15,6 @@ import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class MultiRoundsTest {
 
@@ -54,12 +53,8 @@ public class MultiRoundsTest {
 
         //then
         Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        if (dto.isEmpty()) {
-            fail();
-        } else {
-            UserResultDTO userResult = dto.get();
-            assertEquals(3, userResult.getPointCounter());
-        }
+        UserResultDTO userResult = dto.get();
+        assertEquals(3, userResult.getPointCounter());
     }
 
     @Test
@@ -89,16 +84,12 @@ public class MultiRoundsTest {
         Option<UserResultDTO> dto1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, user1);
         Option<UserResultDTO> dto2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, user2);
         Option<UserResultDTO> dto3 = resultFacade.getResultsFromLeagueToUser(leagueUUID, user3);
-        if (dto1.isEmpty() || dto2.isEmpty() || dto3.isEmpty()) {
-            fail();
-        } else {
-            UserResultDTO userResult1 = dto1.get();
-            UserResultDTO userResult2 = dto2.get();
-            UserResultDTO userResult3 = dto3.get();
-            assertEquals(1, userResult1.getPointCounter());
-            assertEquals(2, userResult2.getPointCounter());
-            assertEquals(3, userResult3.getPointCounter());
-        }
+        UserResultDTO userResult1 = dto1.get();
+        UserResultDTO userResult2 = dto2.get();
+        UserResultDTO userResult3 = dto3.get();
+        assertEquals(1, userResult1.getPointCounter());
+        assertEquals(2, userResult2.getPointCounter());
+        assertEquals(3, userResult3.getPointCounter());
     }
 
 

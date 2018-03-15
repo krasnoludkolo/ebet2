@@ -28,11 +28,7 @@ public class LeagueFacadeTest {
         UUID uuid = facade.createLeague("new");
         //then
         Option<LeagueDTO> dto = facade.getLeagueByUUID(uuid);
-        if (dto.isEmpty()) {
-            fail("No league");
-        } else {
-            assertEquals("new", dto.get().getName());
-        }
+        assertEquals("new", dto.get().getName());
     }
 
     @Test
@@ -42,11 +38,7 @@ public class LeagueFacadeTest {
         facade.createLeague("new");
         //then
         Option<LeagueDTO> dto = facade.findLeagueByName("new");
-        if (dto.isEmpty()) {
-            fail("No league");
-        } else {
-            assertEquals("new", dto.get().getName());
-        }
+        assertEquals("new", dto.get().getName());
     }
 
     @Test(expected = LeagueNameDuplicationException.class)
@@ -155,11 +147,7 @@ public class LeagueFacadeTest {
         facade.setMatchResult(matchUUID, MatchResult.DRAW);
         //then
         Option<MatchDTO> matchByUUID = facade.getMatchByUUID(matchUUID);
-        if (matchByUUID.isEmpty()) {
-            fail("No match");
-        } else {
-            assertEquals(MatchResult.DRAW, matchByUUID.get().getResult());
-        }
+        assertEquals(MatchResult.DRAW, matchByUUID.get().getResult());
     }
 
 
