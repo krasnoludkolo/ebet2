@@ -2,22 +2,20 @@ package pl.krasnoludkolo.ebet2.league.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class MatchDTO {
 
-    private UUID uuid;
-    private int round;
-    private String host;
-    private String guest;
-    private MatchResult result;
-    private UUID leagueUUID;
+    private final UUID uuid;
+    private final int round;
+    private final String host;
+    private final String guest;
+    private final MatchResult result;
+    private final UUID leagueUUID;
 
     @Override
     public boolean equals(Object o) {

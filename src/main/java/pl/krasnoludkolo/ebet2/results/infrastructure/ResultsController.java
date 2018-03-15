@@ -29,7 +29,7 @@ class ResultsController {
         Option<LeagueResultsDTO> leagueResultsDTOS = resultFacade.getResultsForLeague(uuid);
         return leagueResultsDTOS
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
-                .getOrElse(new ResponseEntity<>(new LeagueResultsDTO(), HttpStatus.NOT_FOUND));
+                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/results")
@@ -37,7 +37,7 @@ class ResultsController {
         Option<UserResultDTO> results = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
         return results
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
-                .getOrElse(new ResponseEntity<>(new UserResultDTO(), HttpStatus.NOT_FOUND));
+                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 }

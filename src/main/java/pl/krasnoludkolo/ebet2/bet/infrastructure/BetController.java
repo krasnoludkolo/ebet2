@@ -34,7 +34,7 @@ class BetController {
         Option<BetDTO> betByUUID = betFacade.findBetByUUID(uuid);
         return betByUUID
                 .map(betDTO -> new ResponseEntity<>(betDTO, HttpStatus.CREATED))
-                .getOrElse(new ResponseEntity<>(new BetDTO(), HttpStatus.NOT_FOUND));
+                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/bets")

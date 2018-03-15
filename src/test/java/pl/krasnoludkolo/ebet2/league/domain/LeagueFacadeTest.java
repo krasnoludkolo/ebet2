@@ -23,7 +23,6 @@ public class LeagueFacadeTest {
 
     @Test
     public void shouldAddEmptyLeagueAndFindByUUID() {
-        //given
         //when
         UUID uuid = facade.createLeague("new");
         //then

@@ -47,7 +47,7 @@ class LeagueController {
         Option<MatchDTO> matchDTOS = leagueFacade.getMatchByUUID(uuid);
         return matchDTOS
                 .map(matchDTO -> new ResponseEntity<>(matchDTO, HttpStatus.OK))
-                .getOrElse(new ResponseEntity<>(new MatchDTO(), HttpStatus.NOT_FOUND));
+                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/matchs")

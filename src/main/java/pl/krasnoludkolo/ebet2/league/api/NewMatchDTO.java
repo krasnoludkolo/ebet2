@@ -2,18 +2,16 @@ package pl.krasnoludkolo.ebet2.league.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class NewMatchDTO {
 
-    private String host;
-    private String guest;
-    private int round;
-    private UUID leagueUUID;
+    private final String host;
+    private final String guest;
+    private final int round;
+    private final UUID leagueUUID;
 
 }

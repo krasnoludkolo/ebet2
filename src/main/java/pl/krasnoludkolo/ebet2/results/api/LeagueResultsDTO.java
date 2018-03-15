@@ -1,18 +1,16 @@
 package pl.krasnoludkolo.ebet2.results.api;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
 public class LeagueResultsDTO {
 
-    private List<UserResultDTO> userResultDTOS;
-    private UUID LeagueUuid;
+    private final List<UserResultDTO> userResultDTOS;
+    private final UUID LeagueUuid;
 
     public LeagueResultsDTO(io.vavr.collection.List<UserResultDTO> userResultDTOS, UUID leagueUuid) {
         this.userResultDTOS = userResultDTOS.asJava();
