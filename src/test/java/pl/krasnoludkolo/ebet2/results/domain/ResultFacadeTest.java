@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.domain.results;
+package pl.krasnoludkolo.ebet2.results.domain;
 
 import io.vavr.control.Option;
 import org.junit.Before;
@@ -12,7 +12,6 @@ import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
-import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
 
 import java.util.UUID;
 

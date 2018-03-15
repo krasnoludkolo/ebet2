@@ -1,16 +1,11 @@
-package pl.krasnoludkolo.ebet2.domain.league;
+package pl.krasnoludkolo.ebet2.league.domain;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.exceptions.LeagueNameDuplicationException;
+import pl.krasnoludkolo.ebet2.league.api.*;
 
 import java.util.UUID;
 

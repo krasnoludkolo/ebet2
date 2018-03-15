@@ -1,9 +1,8 @@
-package pl.krasnoludkolo.ebet2.domain;
+package pl.krasnoludkolo.ebet2;
 
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
-import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.bet.domain.BetFacade;
