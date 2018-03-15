@@ -10,6 +10,11 @@ import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
 public class LeagueConfiguration {
 
     @Bean
+    public LeagueFacade leagueFacadeBean(ResultFacade resultFacade) {
+        return inMemoryLeagueFacade(resultFacade);
+    }
+
+
     public LeagueFacade inMemoryLeagueFacade(ResultFacade resultFacade) {
         LeagueCRUDService leagueCRUDService = createLeagueCRUDService();
         MatchCRUDService matchCRUDService = createMatchCRUDService();

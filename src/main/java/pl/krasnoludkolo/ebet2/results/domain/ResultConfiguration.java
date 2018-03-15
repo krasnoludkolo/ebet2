@@ -10,6 +10,10 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 public class ResultConfiguration {
 
     @Bean
+    public ResultFacade resultFacadeBean(BetFacade betFacade) {
+        return inMemoryResultController(betFacade);
+    }
+
     public ResultFacade inMemoryResultController(BetFacade betFacade) {
         Repository<LeagueResults> repository = new InMemoryRepository<>();
         LeagueResultsCRUDService service = new LeagueResultsCRUDService(repository);

@@ -9,6 +9,11 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 public class BetConfiguration {
 
     @Bean
+    public BetFacade betFacadeBean() {
+        return inMemoryBetFacade();
+    }
+
+
     public BetFacade inMemoryBetFacade() {
         Repository<Bet> repository = new InMemoryRepository<>();
         BetCRUDService betCRUDService = new BetCRUDService(repository);

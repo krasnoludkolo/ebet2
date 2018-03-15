@@ -9,6 +9,7 @@ import pl.krasnoludkolo.ebet2.league.api.LeagueNotFound;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 class LeagueCRUDService {
 
@@ -55,9 +56,13 @@ class LeagueCRUDService {
                 .findOne(leagueUUID)
                 .getOrElseThrow(LeagueNotFound::new)
                 .getMatches()
-                .filter(match -> match.getRound() == round)
+                .filter(correspondentRound(round))
                 .map(Match::toDTO);
 
+    }
+
+    private Predicate<Match> correspondentRound(int round) {
+        return match -> match.getRound() == round;
     }
 
     public void removeMatchUUID(UUID leagueUUID) {

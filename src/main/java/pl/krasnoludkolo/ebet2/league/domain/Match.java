@@ -36,27 +36,25 @@ class Match {
         this.leagueUUID = leagueUUID;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Match match = (Match) o;
-        return round == match.round &&
-                Objects.equals(host, match.host) &&
-                Objects.equals(guest, match.guest) &&
-                result == match.result;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(round, host, guest, result);
-    }
 
     MatchDTO toDTO() {
         return new MatchDTO(uuid, round, host, guest, result, leagueUUID);
     }
 
-    public void setMatchResult(MatchResult matchResult) {
+    void setMatchResult(MatchResult matchResult) {
         result = matchResult;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Match match = (Match) o;
+        return Objects.equals(uuid, match.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, round, host, guest, result, leagueUUID);
     }
 }

@@ -6,6 +6,7 @@ import pl.krasnoludkolo.ebet2.bet.api.*;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 class BetCRUDService {
 
@@ -28,7 +29,7 @@ class BetCRUDService {
     }
 
     private boolean matchHasBetWithUsername(UUID matchUUID, String username) {
-        return repository.findAll().filter(b -> b.getMatchUuid().equals(matchUUID)).map(Bet::getUsername).contains(username);
+        return repository.findAll().filter(correspondMatch(matchUUID)).map(Bet::getUsername).contains(username);
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
@@ -46,6 +47,10 @@ class BetCRUDService {
     }
 
     public List<Bet> getAllBetsForMatch(UUID matchUUID) {
-        return repository.findAll().filter(bet -> bet.getMatchUuid().equals(matchUUID));
+        return repository.findAll().filter(correspondMatch(matchUUID));
+    }
+
+    private Predicate<Bet> correspondMatch(UUID matchUUID) {
+        return bet -> bet.getMatchUuid().equals(matchUUID);
     }
 }
