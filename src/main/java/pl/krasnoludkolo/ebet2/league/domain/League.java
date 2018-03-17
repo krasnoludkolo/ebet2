@@ -1,14 +1,13 @@
 package pl.krasnoludkolo.ebet2.league.domain;
 
 import io.vavr.collection.List;
-import lombok.Getter;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 
-@Getter
 class League {
 
     private UUID uuid;
@@ -30,6 +29,24 @@ class League {
         return new LeagueDTO(uuid, name, matchDTOS);
     }
 
+    public List<MatchDTO> getMatchesForRound(int round) {
+        return matches
+                .filter(correspondentRound(round))
+                .map(Match::toDTO);
+    }
+
+    private Predicate<Match> correspondentRound(int round) {
+        return match -> match.getRound() == round;
+    }
+
+    boolean hasName(String name) {
+        return Objects.equals(this.name, name);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,7 +57,7 @@ class League {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(uuid, name, matches);
     }
+
 }

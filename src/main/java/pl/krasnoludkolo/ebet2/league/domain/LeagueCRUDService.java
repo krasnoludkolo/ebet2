@@ -29,11 +29,20 @@ class LeagueCRUDService {
     }
 
     private boolean containsLeagueWithName(String name) {
-        return leagueRepository.findAll().map(League::getName).contains(name);
+        return leagueRepository
+                .findAll()
+                .find(withName(name))
+                .isDefined();
     }
 
     Option<League> findLeagueByName(String name) {
-        return leagueRepository.findAll().filter(l -> l.getName().equals(name)).headOption();
+        return leagueRepository
+                .findAll()
+                .find(withName(name));
+    }
+
+    private Predicate<League> withName(String name) {
+        return league -> league.hasName(name);
     }
 
     Option<League> findLeagueByUUID(UUID uuid) {
@@ -55,14 +64,7 @@ class LeagueCRUDService {
         return leagueRepository
                 .findOne(leagueUUID)
                 .getOrElseThrow(LeagueNotFound::new)
-                .getMatches()
-                .filter(correspondentRound(round))
-                .map(Match::toDTO);
-
-    }
-
-    private Predicate<Match> correspondentRound(int round) {
-        return match -> match.getRound() == round;
+                .getMatchesForRound(round);
     }
 
     public void removeMatchUUID(UUID leagueUUID) {

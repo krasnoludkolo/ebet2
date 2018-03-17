@@ -1,14 +1,15 @@
 package pl.krasnoludkolo.ebet2.results.domain;
 
 import io.vavr.collection.List;
-import lombok.Getter;
+import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-@Getter
 class LeagueResults {
 
     private UUID leagueUUID;
@@ -19,17 +20,36 @@ class LeagueResults {
         this.userResultList = List.empty();
     }
 
-    void addPointToUser(String user) {
+    void addPointToUser(String username) {
+
         UserResult result = userResultList
-                .filter(userResult -> userResult.getName().equals(user))
-                .peekOption().getOrElse(() -> new UserResult(user));
+                .find(withName(username))
+                .getOrElse(createNewUserResult(username));
+
+
         result.addPoint();
         userResultList = userResultList.append(result);
     }
 
-    public LeagueResultsDTO toDTO() {
+    private Supplier<UserResult> createNewUserResult(String user) {
+        return () -> new UserResult(user);
+    }
+
+    Option<UserResult> getUserResultForName(String username) {
+        return userResultList.find(withName(username));
+    }
+
+    private Predicate<UserResult> withName(String user) {
+        return userResult -> userResult.hasName(user);
+    }
+
+    LeagueResultsDTO toDTO() {
         List<UserResultDTO> userResultListDTOS = userResultList.map(UserResult::toDTO);
         return new LeagueResultsDTO(userResultListDTOS, leagueUUID);
+    }
+
+    public UUID getLeagueUUID() {
+        return leagueUUID;
     }
 
     @Override

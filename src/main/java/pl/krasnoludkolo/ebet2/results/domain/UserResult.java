@@ -18,8 +18,8 @@ class UserResult {
         pointCounter.addPoint();
     }
 
-    String getName() {
-        return name;
+    boolean hasName(String name) {
+        return Objects.equals(this.name, name);
     }
 
     public UserResultDTO toDTO() {

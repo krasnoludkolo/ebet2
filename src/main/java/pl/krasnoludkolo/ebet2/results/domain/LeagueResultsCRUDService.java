@@ -2,9 +2,9 @@ package pl.krasnoludkolo.ebet2.results.domain;
 
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.api.LeagueNotFound;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 class LeagueResultsCRUDService {
 
@@ -24,11 +24,14 @@ class LeagueResultsCRUDService {
         repository.save(uuid, leagueResults);
     }
 
-    public Option<UserResult> getResultsFromLeagueToUser(UUID leagueUUID, final String user) {
-        return repository.findOne(leagueUUID)
-                .getOrElseThrow(LeagueNotFound::new)
-                .getUserResultList()
-                .filter(userResult -> userResult.getName().equals(user))
-                .peekOption();
+    public Option<UserResult> getResultsFromLeagueToUser(UUID leagueUUID, final String username) {
+        return repository
+                .findOne(leagueUUID)
+                .flatMap(toUserResultWithName(username));
     }
+
+    private Function<LeagueResults, Option<UserResult>> toUserResultWithName(String username) {
+        return leagueResults -> leagueResults.getUserResultForName(username);
+    }
+
 }
