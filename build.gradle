@@ -7,11 +7,15 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
 	}
 }
 
+plugins {
+	id 'net.ltgt.apt' version '0.10'
+}
+
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 
@@ -22,6 +26,7 @@ sourceCompatibility = 1.8
 repositories {
 	mavenCentral()
 }
+
 
 ext {
 	vaadinVersion = '8.3.0'
@@ -39,8 +44,9 @@ dependencies {
 	runtime('org.springframework.boot:spring-boot-devtools')
 	//runtime('org.postgresql:postgresql')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compile('org.projectlombok:lombok')
-	annotationProcessor "org.projectlombok:lombok"
+	compileOnly 'org.projectlombok:lombok:1.16.20'
+
+	apt "org.projectlombok:lombok:1.16.20"
 }
 
 dependencyManagement {
