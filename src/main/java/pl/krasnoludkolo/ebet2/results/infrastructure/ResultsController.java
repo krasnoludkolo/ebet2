@@ -24,7 +24,8 @@ class ResultsController {
         this.resultFacade = resultFacade;
     }
 
-    @GetMapping("/results")
+    //TODO paths
+    @GetMapping("/league/results")
     public HttpEntity<LeagueResultsDTO> getResultsForLeague(@RequestParam UUID uuid) {
         Option<LeagueResultsDTO> leagueResultsDTOS = resultFacade.getResultsForLeague(uuid);
         return leagueResultsDTOS
