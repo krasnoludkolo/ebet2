@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.league.infrastructure;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +49,7 @@ class LeagueController {
                 .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/matchs")
+    @GetMapping("/matches")
     public HttpEntity<List<MatchDTO>> getAllMatchesFromRound(@RequestParam UUID leagueUUID, @RequestParam int round) {
         List<MatchDTO> matchDTOS = leagueFacade.getMatchesFromRound(leagueUUID, round).toJavaList();
         return new ResponseEntity<>(matchDTOS, HttpStatus.OK);

@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.league.domain;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -13,61 +13,59 @@ import java.util.UUID;
 public class LeagueFacade {
 
 
-    private LeagueCRUDService leagueService;
-    private MatchCRUDService matchService;
+    private LeagueManager leagueManager;
+    private MatchManager matchManager;
     private ResultFacade resultFacade;
 
-    public LeagueFacade(LeagueCRUDService leagueService, MatchCRUDService matchService, ResultFacade resultFacade) {
-        this.leagueService = leagueService;
-        this.matchService = matchService;
+    public LeagueFacade(LeagueManager leagueManager, MatchManager matchManager, ResultFacade resultFacade) {
+        this.leagueManager = leagueManager;
+        this.matchManager = matchManager;
         this.resultFacade = resultFacade;
     }
 
     public UUID createLeague(String name) {
-        League league = leagueService.createLeague(name);
+        League league = leagueManager.createLeague(name);
         UUID uuid = league.getUuid();
         resultFacade.createResultsForLeague(uuid);
         return uuid;
     }
 
     public Option<LeagueDTO> findLeagueByName(String name) {
-        return leagueService.findLeagueByName(name).map(League::toDTO);
+        return leagueManager.findLeagueByName(name).map(League::toDTO);
     }
 
     public List<LeagueDTO> getAllLeagues() {
-        return leagueService.getAllLeagues();
+        return leagueManager.getAllLeagues();
     }
 
     public UUID addMatchToLeague(NewMatchDTO newMatchDTO) {
-        Match match = matchService.createNewMatch(newMatchDTO);
         UUID leagueUUID = newMatchDTO.getLeagueUUID();
-        leagueService.addMatchToLeague(leagueUUID, match);
-        return match.getUuid();
+        return leagueManager.addMatchToLeague(leagueUUID, newMatchDTO);
     }
 
     public List<MatchDTO> getMatchesFromRound(UUID leagueUUID, int round) {
-        return leagueService.getMatchesFromRound(leagueUUID, round);
+        return leagueManager.getMatchesFromRound(leagueUUID, round);
     }
 
     public Option<MatchDTO> getMatchByUUID(UUID uuid) {
-        return matchService.findByUUID(uuid).map(Match::toDTO);
+        return matchManager.findByUUID(uuid).map(Match::toDTO);
     }
 
     public Option<LeagueDTO> getLeagueByUUID(UUID uuid) {
-        return leagueService.findLeagueByUUID(uuid).map(League::toDTO);
+        return leagueManager.findLeagueByUUID(uuid).map(League::toDTO);
     }
 
     public void setMatchResult(UUID matchUUID, MatchResult result) {
-        matchService.setMatchResult(matchUUID, result);
-        MatchDTO matchDTO = matchService.findByUUID(matchUUID).getOrElseThrow(IllegalStateException::new).toDTO();
+        matchManager.setMatchResult(matchUUID, result);
+        MatchDTO matchDTO = matchManager.findByUUID(matchUUID).getOrElseThrow(IllegalStateException::new).toDTO();
         resultFacade.updateLeagueResultsForMatch(matchDTO);
     }
 
     public void removeMatch(UUID matchUUID) {
-        matchService.removeMatchByUUID(matchUUID);
+        matchManager.removeMatchByUUID(matchUUID);
     }
 
     public void removeLeague(UUID leagueUUID) {
-        leagueService.removeMatchUUID(leagueUUID);
+        leagueManager.removeMatchUUID(leagueUUID);
     }
 }

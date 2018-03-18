@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.league.domain;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
@@ -14,19 +14,31 @@ class League {
     private final String name;
     private List<Match> matches;
 
-    League(String name) {
+    static League createWithName(String name) {
+        return new League(name);
+    }
+
+    static League fromEntity(LeagueEntity leagueEntity) {
+        UUID uuid = leagueEntity.getUuid();
+        String name = leagueEntity.getName();
+        League league = new League(uuid, name, List.empty());
+        List<Match> matches = List.ofAll(leagueEntity.getMatches()).map((MatchEntity entity) -> Match.fromEntity(entity, league));
+        matches.forEach(league::addMatch);
+        return league;
+    }
+
+    private League(String name) {
+        this(UUID.randomUUID(), name, List.empty());
+    }
+
+    private League(UUID uuid, String name, List<Match> matches) {
+        this.uuid = uuid;
         this.name = name;
-        matches = List.empty();
-        uuid = UUID.randomUUID();
+        this.matches = matches;
     }
 
     void addMatch(Match match) {
         matches = matches.append(match);
-    }
-
-    LeagueDTO toDTO() {
-        List<MatchDTO> matchDTOS = matches.map(Match::toDTO);
-        return new LeagueDTO(uuid, name, matchDTOS);
     }
 
     public List<MatchDTO> getMatchesForRound(int round) {
@@ -60,4 +72,16 @@ class League {
         return Objects.hash(uuid, name, matches);
     }
 
+    public LeagueEntity toEntity() {
+        LeagueEntity leagueEntity = new LeagueEntity(uuid, name, null);
+        java.util.List<MatchEntity> matchesEntity = matches.map(match -> match.toEntity(leagueEntity)).asJava();
+        leagueEntity.setMatches(matchesEntity);
+        return leagueEntity;
+
+    }
+
+    LeagueDTO toDTO() {
+        List<MatchDTO> matchDTOS = matches.map(Match::toDTO);
+        return new LeagueDTO(uuid, name, matchDTOS);
+    }
 }

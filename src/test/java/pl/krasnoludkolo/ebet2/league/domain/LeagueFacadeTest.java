@@ -5,6 +5,7 @@ import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
+import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.*;
 
 import java.util.UUID;

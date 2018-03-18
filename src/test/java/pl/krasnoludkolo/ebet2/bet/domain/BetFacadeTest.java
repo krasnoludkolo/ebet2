@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.bet.api.*;
+import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.league.domain.LeagueFacade;
 
 import java.util.UUID;
 

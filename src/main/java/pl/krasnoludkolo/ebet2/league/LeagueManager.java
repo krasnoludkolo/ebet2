@@ -1,29 +1,28 @@
-package pl.krasnoludkolo.ebet2.league.domain;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.LeagueNameDuplicationException;
-import pl.krasnoludkolo.ebet2.league.api.LeagueNotFound;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.*;
 
 import java.util.UUID;
 import java.util.function.Predicate;
 
-class LeagueCRUDService {
+class LeagueManager {
 
     private Repository<League> leagueRepository;
+    private MatchManager matchManager;
 
-    LeagueCRUDService(Repository<League> leagueRepository) {
+    LeagueManager(Repository<League> leagueRepository, MatchManager matchManager) {
         this.leagueRepository = leagueRepository;
+        this.matchManager = matchManager;
     }
 
     League createLeague(String name) {
         if (containsLeagueWithName(name)) {
             throw new LeagueNameDuplicationException();
         }
-        League league = new League(name);
+        League league = League.createWithName(name);
         leagueRepository.save(league.getUuid(), league);
         return league;
     }
@@ -53,11 +52,12 @@ class LeagueCRUDService {
         return leagueRepository.findAll().map(League::toDTO);
     }
 
-    void addMatchToLeague(UUID leagueUUID, Match match) {
+    UUID addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
         League league = findLeagueByUUID(leagueUUID).getOrElseThrow(LeagueNotFound::new);
+        Match match = matchManager.createNewMatch(newMatchDTO, league);
         league.addMatch(match);
         leagueRepository.update(leagueUUID, league);
-
+        return match.getUuid();
     }
 
     List<MatchDTO> getMatchesFromRound(UUID leagueUUID, int round) {

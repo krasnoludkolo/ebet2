@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.league.domain;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
@@ -8,17 +8,17 @@ import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import java.util.UUID;
 
-class MatchCRUDService {
+class MatchManager {
 
 
     private Repository<Match> matchRepository;
 
-    MatchCRUDService(Repository<Match> matchRepository) {
+    MatchManager(Repository<Match> matchRepository) {
         this.matchRepository = matchRepository;
     }
 
-    Match createNewMatch(NewMatchDTO newMatchDTO) {
-        Match match = new Match(newMatchDTO);
+    Match createNewMatch(NewMatchDTO newMatchDTO, League league) {
+        Match match = Match.fromDTO(newMatchDTO, league);
         matchRepository.save(match.getUuid(), match);
         return match;
     }
@@ -28,9 +28,6 @@ class MatchCRUDService {
     }
 
     public void setMatchResult(UUID matchUUID, MatchResult result) {
-        if (result.equals(MatchResult.NOT_SET)) {
-            throw new IllegalArgumentException("Cannot set NOT_SET match result");
-        }
         Match match = matchRepository.findOne(matchUUID).getOrElseThrow(MatchNotFound::new);
         match.setMatchResult(result);
         matchRepository.update(matchUUID, match);
