@@ -1,61 +1,57 @@
 package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
+import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+@Entity
+@NoArgsConstructor
 class League {
 
+    @Id
     private UUID uuid;
-    private final String name;
-    private List<Match> matches;
+    private String name;
+    @OneToMany(mappedBy = "league")
+    private java.util.List<Match> matches;
 
     static League createWithName(String name) {
         return new League(name);
     }
 
-    static League fromEntity(LeagueEntity leagueEntity) {
-        UUID uuid = leagueEntity.getUuid();
-        String name = leagueEntity.getName();
-        League league = new League(uuid, name, List.empty());
-        List<Match> matches = List.ofAll(leagueEntity.getMatches()).map((MatchEntity entity) -> Match.fromEntity(entity, league));
-        matches.forEach(league::addMatch);
-        return league;
-    }
-
     private League(String name) {
-        this(UUID.randomUUID(), name, List.empty());
-    }
-
-    private League(UUID uuid, String name, List<Match> matches) {
-        this.uuid = uuid;
+        this.uuid = UUID.randomUUID();
         this.name = name;
-        this.matches = matches;
+        this.matches = new ArrayList<>();
     }
 
     void addMatch(Match match) {
-        matches = matches.append(match);
+        matches.add(match);
     }
 
-    public List<MatchDTO> getMatchesForRound(int round) {
-        return matches
+    List<MatchDTO> getMatchesForRound(int round) {
+        return List.ofAll(matches)
                 .filter(correspondentRound(round))
                 .map(Match::toDTO);
     }
 
     private Predicate<Match> correspondentRound(int round) {
-        return match -> match.getRound() == round;
+        return match -> match.hasRoundNumber(round);
     }
 
     boolean hasName(String name) {
         return Objects.equals(this.name, name);
     }
 
-    public UUID getUuid() {
+    UUID getUuid() {
         return uuid;
     }
 
@@ -72,16 +68,8 @@ class League {
         return Objects.hash(uuid, name, matches);
     }
 
-    public LeagueEntity toEntity() {
-        LeagueEntity leagueEntity = new LeagueEntity(uuid, name, null);
-        java.util.List<MatchEntity> matchesEntity = matches.map(match -> match.toEntity(leagueEntity)).asJava();
-        leagueEntity.setMatches(matchesEntity);
-        return leagueEntity;
-
-    }
-
     LeagueDTO toDTO() {
-        List<MatchDTO> matchDTOS = matches.map(Match::toDTO);
+        List<MatchDTO> matchDTOS = List.ofAll(matches).map(Match::toDTO);
         return new LeagueDTO(uuid, name, matchDTOS);
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-interface LeagueRepository extends CrudRepository<LeagueEntity, UUID> {
+interface LeagueRepository extends CrudRepository<League, UUID> {
 }

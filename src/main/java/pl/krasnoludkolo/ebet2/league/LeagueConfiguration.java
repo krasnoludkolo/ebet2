@@ -20,16 +20,16 @@ public class LeagueConfiguration {
     }
 
     private LeagueManager createLeagueManager(LeagueRepository leagueRepository, MatchManager matchManager) {
-        Function<League, LeagueEntity> d2e = League::toEntity;
-        Function<LeagueEntity, League> e2d = League::fromEntity;
-        SpringDataRepositoryAdapter<League, LeagueEntity> adapter = new SpringDataRepositoryAdapter<>(leagueRepository, d2e, e2d);
+        Function<League, League> d2e = l -> l;
+        Function<League, League> e2d = l -> l;
+        SpringDataRepositoryAdapter<League, League> adapter = new SpringDataRepositoryAdapter<>(leagueRepository, d2e, e2d);
         return new LeagueManager(adapter, matchManager);
     }
 
     private MatchManager createMatchManager(MatchRepository matchRepository) {
-        Function<Match, MatchEntity> d2e = Match::toEntity;
-        Function<MatchEntity, Match> e2d = Match::fromEntity;
-        SpringDataRepositoryAdapter<Match, MatchEntity> adapter = new SpringDataRepositoryAdapter<>(matchRepository, d2e, e2d);
+        Function<Match, Match> d2e = m -> m;
+        Function<Match, Match> e2d = m -> m;
+        SpringDataRepositoryAdapter<Match, Match> adapter = new SpringDataRepositoryAdapter<>(matchRepository, d2e, e2d);
         return new MatchManager(adapter);
     }
 

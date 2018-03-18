@@ -1,31 +1,29 @@
 package pl.krasnoludkolo.ebet2.league;
 
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 import java.util.UUID;
 
-@Getter
+@Entity
+@NoArgsConstructor
 class Match {
 
+    @Id
     private UUID uuid;
     private int round;
     private String host;
     private String guest;
     private MatchResult result;
+    @ManyToOne
     private League league;
 
-
-    static Match fromEntity(MatchEntity entity) {
-        return new Match(entity.getUuid(), entity.getRound(), entity.getHost(), entity.getGuest(), entity.getResult(), League.fromEntity(entity.getLeague()));
-    }
-
-    static Match fromEntity(MatchEntity entity, League league) {
-        return new Match(entity.getUuid(), entity.getRound(), entity.getHost(), entity.getGuest(), entity.getResult(), league);
-    }
 
     static Match fromDTO(NewMatchDTO dto, League league) {
         return new Match(dto.getRound(), dto.getHost(), dto.getGuest(), league);
@@ -51,16 +49,16 @@ class Match {
         result = matchResult;
     }
 
+    boolean hasRoundNumber(int round) {
+        return this.round == round;
+    }
+
     MatchDTO toDTO() {
         return new MatchDTO(uuid, round, host, guest, result, league.getUuid());
     }
 
-    MatchEntity toEntity() {
-        return new MatchEntity(uuid, round, host, guest, result, league.toEntity());
-    }
-
-    MatchEntity toEntity(LeagueEntity entity) {
-        return new MatchEntity(uuid, round, host, guest, result, entity);
+    UUID getUuid() {
+        return uuid;
     }
 
     @Override
@@ -75,4 +73,5 @@ class Match {
     public int hashCode() {
         return Objects.hash(uuid, round, host, guest, result, league);
     }
+
 }
