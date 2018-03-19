@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results.domain;
+package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;

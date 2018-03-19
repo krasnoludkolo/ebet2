@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.bet.domain;
+package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -10,29 +10,29 @@ import java.util.UUID;
 
 public class BetFacade {
 
-    private BetCRUDService betCRUDService;
+    private BetManager betManager;
 
-    public BetFacade(BetCRUDService betCRUDService) {
-        this.betCRUDService = betCRUDService;
+    public BetFacade(BetManager betManager) {
+        this.betManager = betManager;
     }
 
     public UUID addBetToMatch(NewBetDTO newBetDTO) {
-        return betCRUDService.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO);
+        return betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO);
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
-        return betCRUDService.findBetByUUID(betUUID);
+        return betManager.findBetByUUID(betUUID);
     }
 
     public void updateBetToMatch(UUID betUUID, BetTyp betType) {
-        betCRUDService.updateBetToMatch(betUUID, betType);
+        betManager.updateBetToMatch(betUUID, betType);
     }
 
     public void removeBet(UUID betUUID) {
-        betCRUDService.removeBet(betUUID);
+        betManager.removeBet(betUUID);
     }
 
     public List<BetDTO> getAllBetsForMatch(UUID matchUUID) {
-        return betCRUDService.getAllBetsForMatch(matchUUID).map(Bet::toDto);
+        return betManager.getAllBetsForMatch(matchUUID).map(Bet::toDto);
     }
 }

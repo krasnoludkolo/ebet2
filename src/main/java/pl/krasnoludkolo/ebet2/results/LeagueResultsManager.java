@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results.domain;
+package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
@@ -6,11 +6,11 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import java.util.UUID;
 import java.util.function.Function;
 
-class LeagueResultsCRUDService {
+class LeagueResultsManager {
 
     private final Repository<LeagueResults> repository;
 
-    LeagueResultsCRUDService(Repository<LeagueResults> repository) {
+    LeagueResultsManager(Repository<LeagueResults> repository) {
         this.repository = repository;
     }
 
@@ -20,7 +20,7 @@ class LeagueResultsCRUDService {
     }
 
     public void createResultsForLeague(UUID uuid) {
-        LeagueResults leagueResults = new LeagueResults(uuid);
+        LeagueResults leagueResults = LeagueResults.create(uuid);
         repository.save(uuid, leagueResults);
     }
 

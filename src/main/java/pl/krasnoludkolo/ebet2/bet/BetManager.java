@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.bet.domain;
+package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -8,11 +8,11 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-class BetCRUDService {
+class BetManager {
 
     private Repository<Bet> repository;
 
-    BetCRUDService(Repository<Bet> repository) {
+    BetManager(Repository<Bet> repository) {
         this.repository = repository;
     }
 
@@ -29,7 +29,11 @@ class BetCRUDService {
     }
 
     private boolean matchHasBetWithUsername(UUID matchUUID, String username) {
-        return repository.findAll().filter(correspondMatch(matchUUID)).map(Bet::getUsername).contains(username);
+        return repository.findAll().filter(correspondMatch(matchUUID)).find(withUsername(username)).isDefined();
+    }
+
+    private Predicate<Bet> withUsername(String username) {
+        return bet -> bet.hasUsername(username);
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
@@ -51,6 +55,6 @@ class BetCRUDService {
     }
 
     private Predicate<Bet> correspondMatch(UUID matchUUID) {
-        return bet -> bet.getMatchUuid().equals(matchUUID);
+        return bet -> bet.isCorrespondedToMatch(matchUUID);
     }
 }

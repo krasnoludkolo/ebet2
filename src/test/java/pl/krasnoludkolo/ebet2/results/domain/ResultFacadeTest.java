@@ -4,12 +4,13 @@ import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
+import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
-import pl.krasnoludkolo.ebet2.bet.domain.BetFacade;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 

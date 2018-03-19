@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
-import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.function.Function;
 

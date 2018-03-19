@@ -1,10 +1,22 @@
-package pl.krasnoludkolo.ebet2.results.domain;
+package pl.krasnoludkolo.ebet2.results;
 
 import java.util.Objects;
 
 class PointCounter {
 
-    private int count = 0;
+    private int count;
+
+    static PointCounter withCount(int count) {
+        return new PointCounter(count);
+    }
+
+    static PointCounter create() {
+        return new PointCounter(0);
+    }
+
+    private PointCounter(int count) {
+        this.count = count;
+    }
 
     void addPoint() {
         count++;

@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results.domain;
+package pl.krasnoludkolo.ebet2.results;
 
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
@@ -9,9 +9,20 @@ class UserResult {
     private final String name;
     private final PointCounter pointCounter;
 
-    UserResult(String name) {
+
+    static UserResult fromEntity(UserResultEntity entity) {
+        String name = entity.getName();
+        PointCounter counter = PointCounter.withCount(entity.getPointCounter());
+        return new UserResult(name, counter);
+    }
+
+    static UserResult create(String name) {
+        return new UserResult(name, PointCounter.create());
+    }
+
+    private UserResult(String name, PointCounter pointCounter) {
         this.name = name;
-        pointCounter = new PointCounter();
+        this.pointCounter = pointCounter;
     }
 
     void addPoint() {
@@ -37,7 +48,10 @@ class UserResult {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(name, pointCounter);
+    }
+
+    public UserResultEntity toEntity(LeagueResultsEntity entity) {
+        return new UserResultEntity(name, pointCounter.getCount(), entity);
     }
 }

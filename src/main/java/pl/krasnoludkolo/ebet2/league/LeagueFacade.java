@@ -6,7 +6,7 @@ import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.results.domain.ResultFacade;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.UUID;
 
