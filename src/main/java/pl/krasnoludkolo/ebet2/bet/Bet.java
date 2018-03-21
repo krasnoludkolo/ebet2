@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.bet;
 
+import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 
@@ -9,12 +10,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor
 class Bet {
 
     @Id
-    private final UUID uuid;
-    private final UUID matchUuid;
-    private final String username;
+    private UUID uuid;
+    private UUID matchUuid;
+    private String username;
     private BetTyp betTyp;
 
     Bet(UUID matchUuid, String username, BetTyp betTyp) {
