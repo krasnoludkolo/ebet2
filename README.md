@@ -11,8 +11,10 @@ Current features:
 Planned features:
 1. Create user module to register users.
 2. Add source to automatically download matches info from external source.
-3. Try to remove spring ;)
-4. A few implementation details
+3. API security
+4. CQRS 
+5. Try to remove spring ;)
+6. A few implementation details
 
 ## Frameworks and libraries
 
