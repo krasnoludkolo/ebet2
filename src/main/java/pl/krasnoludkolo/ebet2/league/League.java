@@ -21,7 +21,7 @@ class League {
     private UUID uuid;
     private String name;
     @OneToMany(mappedBy = "league")
-    private java.util.List<Match> matches;
+    private java.util.List<Match> matches = new ArrayList<>();
 
     static League createWithName(String name) {
         return new League(name);
@@ -30,7 +30,6 @@ class League {
     private League(String name) {
         this.uuid = UUID.randomUUID();
         this.name = name;
-        this.matches = new ArrayList<>();
     }
 
     void addMatch(Match match) {

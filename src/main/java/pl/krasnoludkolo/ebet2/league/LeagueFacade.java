@@ -8,10 +8,11 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
+import javax.transaction.Transactional;
 import java.util.UUID;
 
+@Transactional
 public class LeagueFacade {
-
 
     private LeagueManager leagueManager;
     private MatchManager matchManager;
