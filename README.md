@@ -1,11 +1,11 @@
 # ebet2
 
 ## Summary
-Ebet2 is a web application which allows you to make safe bets to matches.
+Ebet2 is a web application which allows you to make safe bets on matches.
 
 Current features:
 1. Create leagues and add matches to them.
-2. Make, update, delete bets to matches.
+2. Make, update, delete bets on matches.
 3. Automatically update user's score when match result is set.
 
 Planned features:
@@ -47,7 +47,7 @@ Provides operation to create, delete etc. operations on leagues and matches.
 
 * Bet
 
-Provides possibilities to make, update etc. bets to matches.
+Provides possibilities to make, update etc. bets on matches.
 
 * Results
 
