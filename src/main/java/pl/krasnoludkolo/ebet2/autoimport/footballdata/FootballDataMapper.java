@@ -1,34 +1,14 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.autoimport.footballdata;
 
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import io.vavr.collection.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
-class FootballDataClient implements ExternalSourceClient {
+class FootballDataMapper {
 
-    private final String urlBeginning = "http://api.football-data.org/v1/";
-
-    @Override
-    public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
-        try {
-            String leagueId = config.getParameter("leagueId");
-            return createMatchesFromLeague(leagueId);
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-        return List.empty();
-    }
-
-    private List<MatchInfo> createMatchesFromLeague(String leagueId) throws UnirestException {
-        JSONArray fixtures = Unirest.get(urlBeginning + "competitions/" + leagueId + "/fixtures")
-                .header("accept", "application/json")
-                .asJson()
-                .getBody()
-                .getObject()
-                .getJSONArray("fixtures");
+    List<MatchInfo> getMatchInfosFromJsonArray(JSONArray fixtures) {
         List<MatchInfo> matchInfos = List.empty();
         for (int i = 0; i < fixtures.length(); i++) {
             JSONObject fixture = fixtures.getJSONObject(i);
@@ -43,7 +23,6 @@ class FootballDataClient implements ExternalSourceClient {
         String awayTeamName = fixture.getString("awayTeamName");
         int round = fixture.getInt("matchday");
         String status = fixture.getString("status");
-
         boolean finished = status.equals("FINISHED");
         MatchResult result = MatchResult.NOT_SET;
         if (finished) {
@@ -65,14 +44,5 @@ class FootballDataClient implements ExternalSourceClient {
         }
     }
 
-    //TODO downloadRound
-    @Override
-    public List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round) {
-        return List.empty();
-    }
 
-    @Override
-    public String getShortcut() {
-        return "FootballData";
-    }
 }

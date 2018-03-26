@@ -1,6 +1,9 @@
 package pl.krasnoludkolo.ebet2.autoimport;
 
 import io.vavr.collection.List;
+import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
+import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
+import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 

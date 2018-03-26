@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.autoimport.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
 @Getter
 @AllArgsConstructor
-class MatchInfo {
+public class MatchInfo {
 
 
     private final String hostName;

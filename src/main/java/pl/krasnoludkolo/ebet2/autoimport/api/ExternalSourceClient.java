@@ -1,8 +1,8 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.autoimport.api;
 
 import io.vavr.collection.List;
 
-interface ExternalSourceClient {
+public interface ExternalSourceClient {
 
     List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round);
 
