@@ -18,11 +18,20 @@ class LeagueInitializer {
     }
 
     LeagueDetails initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config) {
+        return initialize(client, config);
+    }
+
+    private LeagueDetails initialize(ExternalSourceClient client, ExternalSourceConfiguration config) {
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
+        UUID leagueUUID = initializeLeagueInLeagueModule(config, matchInfos);
+        String shortcut = client.getShortcut();
+        return new LeagueDetails(leagueUUID, config, shortcut);
+    }
+
+    private UUID initializeLeagueInLeagueModule(ExternalSourceConfiguration config, List<MatchInfo> matchInfos) {
         UUID leagueUUID = createLeague(config);
-        matchInfos
-                .forEach(matchInfo -> addMatchToLeague(matchInfo, leagueUUID));
-        return new LeagueDetails(leagueUUID, config, 0);
+        matchInfos.forEach(matchInfo -> addMatchToLeague(matchInfo, leagueUUID));
+        return leagueUUID;
     }
 
     private UUID createLeague(ExternalSourceConfiguration config) {
@@ -36,7 +45,6 @@ class LeagueInitializer {
         if (matchInfo.isFinished()) {
             leagueFacade.setMatchResult(uuid, matchInfo.getResult());
         }
-
     }
 
     private NewMatchDTO createNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {

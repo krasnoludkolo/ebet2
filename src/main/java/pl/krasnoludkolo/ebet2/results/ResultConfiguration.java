@@ -26,7 +26,7 @@ public class ResultConfiguration {
         return new SpringDataRepositoryAdapter<>(repository, d2e, e2d);
     }
 
-    public ResultFacade inMemoryResultController(BetFacade betFacade) {
+    public ResultFacade inMemoryResult(BetFacade betFacade) {
         Repository<LeagueResults> repository = new InMemoryRepository<>();
         LeagueResultsManager service = new LeagueResultsManager(repository);
         LeagueResultsUpdater leagueResultsUpdater = new LeagueResultsUpdater(repository);

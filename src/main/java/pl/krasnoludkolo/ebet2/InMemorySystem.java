@@ -18,7 +18,7 @@ public class InMemorySystem {
 
     public InMemorySystem() {
         betFacade = new BetConfiguration().inMemoryBetFacade();
-        resultFacade = new ResultConfiguration().inMemoryResultController(betFacade);
+        resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
         autoImportFacade = new AutoImportConfiguration().inMemory(leagueFacade);
     }
@@ -33,5 +33,9 @@ public class InMemorySystem {
 
     public ResultFacade resultFacade() {
         return resultFacade;
+    }
+
+    public AutoImportFacade getAutoImportFacade() {
+        return autoImportFacade;
     }
 }

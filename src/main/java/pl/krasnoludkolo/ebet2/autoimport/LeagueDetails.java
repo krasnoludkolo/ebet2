@@ -16,14 +16,6 @@ class LeagueDetails {
     @Id
     private UUID leagueUUID;
     private ExternalSourceConfiguration configuration;
-    private int lastResolvedRound;
-
-    void incrementLastResolvedRound() {
-        lastResolvedRound++;
-    }
-
-    int getNextRoundToResolveNumber() {
-        return lastResolvedRound + 1;
-    }
+    private String clientShortcut;
 
 }
