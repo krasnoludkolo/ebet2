@@ -18,10 +18,6 @@ class LeagueInitializer {
     }
 
     LeagueDetails initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config) {
-        return initialize(client, config);
-    }
-
-    private LeagueDetails initialize(ExternalSourceClient client, ExternalSourceConfiguration config) {
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
         UUID leagueUUID = initializeLeagueInLeagueModule(config, matchInfos);
         String shortcut = client.getShortcut();
@@ -52,7 +48,6 @@ class LeagueInitializer {
         String guest = matchInfo.getGuestName();
         int round = matchInfo.getRound();
         return new NewMatchDTO(host, guest, round, leagueUUID);
-
     }
 
 

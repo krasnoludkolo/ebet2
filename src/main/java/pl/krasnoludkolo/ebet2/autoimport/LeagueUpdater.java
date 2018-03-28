@@ -25,18 +25,19 @@ class LeagueUpdater {
     LeagueDetails updateLeague(LeagueDetails leagueDetails, ExternalSourceClient client) {
         List<MatchInfo> matchInfoList = client.downloadAllRounds(leagueDetails.getConfiguration());
         List<MatchDTO> matchesFromRound = List.ofAll(leagueFacade.getLeagueByUUID(leagueDetails.getLeagueUUID()).get().getMatchDTOS());
-
-        List<Tuple2<UUID, MatchResult>> map = matchesFromRound
-                .filter(matchesWithNotSetResult())
-                .map(toMatchUUIDAndResultTuple(matchInfoList))
-                .filter(t -> t._2 != MatchResult.NOT_SET);
-
-        map.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));
-
+        List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromRound);
+        newToOldMatchesMap.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));
         return leagueDetails;
     }
 
-    private Predicate<MatchDTO> matchesWithNotSetResult() {
+    private List<Tuple2<UUID, MatchResult>> getNewToOldMatchesMap(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromRound) {
+        return matchesFromRound
+                .filter(matchesDTOWithNotSetResult())
+                .map(toMatchUUIDAndResultTuple(matchInfoList))
+                .filter(tupleWithNoNotSetResult());
+    }
+
+    private Predicate<MatchDTO> matchesDTOWithNotSetResult() {
         return matchDTO -> matchDTO.getResult() == MatchResult.NOT_SET;
     }
 
@@ -51,6 +52,10 @@ class LeagueUpdater {
 
     private Predicate<MatchInfo> correspondingMatch(MatchDTO matchDTO) {
         return matchInfo -> isSameMatch(matchDTO, matchInfo);
+    }
+
+    private Predicate<Tuple2<UUID, MatchResult>> tupleWithNoNotSetResult() {
+        return t -> t._2 != MatchResult.NOT_SET;
     }
 
     private boolean isSameMatch(MatchDTO matchDTO, MatchInfo matchInfo) {
