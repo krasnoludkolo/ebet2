@@ -2,10 +2,7 @@ package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.*;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import javax.transaction.Transactional;
@@ -35,8 +32,8 @@ public class LeagueFacade {
         return leagueManager.findLeagueByName(name).map(League::toDTO);
     }
 
-    public List<LeagueDTO> getAllLeagues() {
-        return leagueManager.getAllLeagues();
+    public List<LeagueDetailsDTO> getAllLeaguesDetails() {
+        return leagueManager.getAllLeagues().map(l -> new LeagueDetailsDTO(l.getUuid(), l.getName()));
     }
 
     public UUID addMatchToLeague(NewMatchDTO newMatchDTO) {

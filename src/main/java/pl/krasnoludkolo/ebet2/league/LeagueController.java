@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.LeagueDetailsDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
@@ -30,8 +31,8 @@ class LeagueController {
     }
 
     @GetMapping("/leagues")
-    public HttpEntity<List<LeagueDTO>> getAllLeagues() {
-        List<LeagueDTO> allLeagues = leagueFacade.getAllLeagues().asJava();
+    public HttpEntity<List<LeagueDetailsDTO>> getAllLeagues() {
+        List<LeagueDetailsDTO> allLeagues = leagueFacade.getAllLeaguesDetails().asJava();
         return new ResponseEntity<>(allLeagues, HttpStatus.OK);
     }
 
@@ -53,6 +54,16 @@ class LeagueController {
     public HttpEntity<List<MatchDTO>> getAllMatchesFromRound(@RequestParam UUID leagueUUID, @RequestParam int round) {
         List<MatchDTO> matchDTOS = leagueFacade.getMatchesFromRound(leagueUUID, round).toJavaList();
         return new ResponseEntity<>(matchDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/matches")
+    public HttpEntity<LeagueDTO> getAllMatchesFromLeague(@RequestParam UUID leagueUUID) {
+        Option<LeagueDTO> leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID);
+        return leagueDTO
+                .map(l -> new ResponseEntity<>(l, HttpStatus.OK))
+                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+
     }
 
     @DeleteMapping("/league")
