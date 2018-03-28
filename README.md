@@ -4,17 +4,19 @@
 Ebet2 is a web application which allows you to make safe bets on matches.
 
 Current features:
-1. Create leagues and add matches to them.
-2. Make, update, delete bets on matches.
-3. Automatically update user's score when match result is set.
+- Create leagues and add matches to them.
+- Make, update, delete bets on matches.
+- Automatically update user's score when match result is set.
+
+Under development:
+- Add source to automatically download matches info from external source.
 
 Planned features:
-1. Create user module to register users.
-2. Add source to automatically download matches info from external source.
-3. API security
-4. CQRS 
-5. Try to remove spring ;)
-6. A few implementation details
+- Create user module to register users.
+- API security
+- CQRS 
+- Try to remove spring ;)
+- A few implementation details
 
 ## Frameworks and libraries
 
@@ -53,9 +55,9 @@ Provides possibilities to make, update etc. bets on matches.
 
 Handle calculating users score in each league.
 
-* autoimport - not finished yet
+* autoimport
 
-Importing data from external source
+Importing data from external source. 
 
 ## Spring
 I try to avoid using spring 'magic'. Why? To find another way to build application then @Component and @Autowired.
