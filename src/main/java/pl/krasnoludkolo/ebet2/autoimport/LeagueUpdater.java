@@ -6,6 +6,7 @@ import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
+import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
@@ -24,10 +25,19 @@ class LeagueUpdater {
 
     LeagueDetails updateLeague(LeagueDetails leagueDetails, ExternalSourceClient client) {
         List<MatchInfo> matchInfoList = client.downloadAllRounds(leagueDetails.getConfiguration());
-        List<MatchDTO> matchesFromRound = List.ofAll(leagueFacade.getLeagueByUUID(leagueDetails.getLeagueUUID()).get().getMatchDTOS());
-        List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromRound);
+        List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
+        List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
         newToOldMatchesMap.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));
         return leagueDetails;
+    }
+
+    private List<MatchDTO> getAllMatchesFromLeague(LeagueDetails leagueDetails) {
+        UUID leagueUUID = leagueDetails.getLeagueUUID();
+        return leagueFacade
+                .getLeagueByUUID(leagueUUID)
+                .map(LeagueDTO::getMatchDTOS)
+                .map(List::ofAll)
+                .getOrElse(List.empty());
     }
 
     private List<Tuple2<UUID, MatchResult>> getNewToOldMatchesMap(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromRound) {
@@ -47,7 +57,9 @@ class LeagueUpdater {
     }
 
     private MatchInfo findCorrespondingMatch(MatchDTO matchDTO, List<MatchInfo> matchInfoList) {
-        return matchInfoList.find(correspondingMatch(matchDTO)).getOrElseThrow(IllegalStateException::new);
+        return matchInfoList
+                .find(correspondingMatch(matchDTO))
+                .getOrElseThrow(IllegalStateException::new);
     }
 
     private Predicate<MatchInfo> correspondingMatch(MatchDTO matchDTO) {
