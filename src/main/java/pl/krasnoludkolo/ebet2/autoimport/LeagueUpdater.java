@@ -27,13 +27,17 @@ class LeagueUpdater {
         List<MatchDTO> matchesFromRound = List.ofAll(leagueFacade.getLeagueByUUID(leagueDetails.getLeagueUUID()).get().getMatchDTOS());
 
         List<Tuple2<UUID, MatchResult>> map = matchesFromRound
-                .filter(matchDTO -> matchDTO.getResult() == MatchResult.NOT_SET)
+                .filter(matchesWithNotSetResult())
                 .map(toMatchUUIDAndResultTuple(matchInfoList))
                 .filter(t -> t._2 != MatchResult.NOT_SET);
 
         map.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));
 
         return leagueDetails;
+    }
+
+    private Predicate<MatchDTO> matchesWithNotSetResult() {
+        return matchDTO -> matchDTO.getResult() == MatchResult.NOT_SET;
     }
 
     private Function<MatchDTO, Tuple2<UUID, MatchResult>> toMatchUUIDAndResultTuple(List<MatchInfo> matchInfoList) {
