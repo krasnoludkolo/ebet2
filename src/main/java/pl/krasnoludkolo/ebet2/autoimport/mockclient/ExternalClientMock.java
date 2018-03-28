@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.autoimport.mockclient;
 
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
@@ -6,10 +6,10 @@ import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
-class ExternalClientMock implements ExternalSourceClient {
+public class ExternalClientMock implements ExternalSourceClient {
 
 
-    static List<MatchInfo> SOME_MATCHES = List.of(
+    public static List<MatchInfo> SOME_MATCHES = List.of(
 
             new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON),
             new MatchInfo("c", "d", 1, true, MatchResult.GUEST_WON),
@@ -21,10 +21,9 @@ class ExternalClientMock implements ExternalSourceClient {
 
     private List<MatchInfo> matchList;
 
-    ExternalClientMock(List<MatchInfo> matchList) {
+    public ExternalClientMock(List<MatchInfo> matchList) {
         this.matchList = matchList;
     }
-
 
     @Override
     public List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round) {
@@ -42,11 +41,11 @@ class ExternalClientMock implements ExternalSourceClient {
         return "Mock";
     }
 
-    List<MatchInfo> getMatchList() {
+    public List<MatchInfo> getMatchList() {
         return matchList;
     }
 
-    void setMatchList(List<MatchInfo> matchList) {
+    public void setMatchList(List<MatchInfo> matchList) {
         this.matchList = matchList;
     }
 

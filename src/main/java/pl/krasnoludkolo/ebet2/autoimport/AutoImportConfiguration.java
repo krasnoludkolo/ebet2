@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.autoimport.footballdata.FootballDataClient;
+import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;

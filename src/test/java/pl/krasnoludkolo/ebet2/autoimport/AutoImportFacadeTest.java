@@ -5,6 +5,7 @@ import org.junit.Test;
 import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.autoimport.api.MissingConfigurationException;
+import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;

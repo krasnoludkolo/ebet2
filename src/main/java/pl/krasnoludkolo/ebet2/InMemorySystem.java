@@ -1,7 +1,10 @@
 package pl.krasnoludkolo.ebet2;
 
+import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.autoimport.AutoImportConfiguration;
 import pl.krasnoludkolo.ebet2.autoimport.AutoImportFacade;
+import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
@@ -15,12 +18,14 @@ public class InMemorySystem {
     private BetFacade betFacade;
     private ResultFacade resultFacade;
     private AutoImportFacade autoImportFacade;
+    private ExternalClientMock externalClientMock;
 
     public InMemorySystem() {
+        externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
         betFacade = new BetConfiguration().inMemoryBetFacade();
         resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
-        autoImportFacade = new AutoImportConfiguration().inMemory(leagueFacade);
+        autoImportFacade = new AutoImportConfiguration().inMemory(leagueFacade, externalClientMock);
     }
 
     public LeagueFacade leagueFacade() {
@@ -35,7 +40,16 @@ public class InMemorySystem {
         return resultFacade;
     }
 
-    public AutoImportFacade getAutoImportFacade() {
+    public AutoImportFacade autoImportFacade() {
         return autoImportFacade;
     }
+
+    public void setExternalSourceMatchList(List<MatchInfo> list) {
+        externalClientMock.setMatchList(list);
+    }
+
+    public List<MatchInfo> getExternalSourceMatchList() {
+        return externalClientMock.getMatchList();
+    }
+
 }

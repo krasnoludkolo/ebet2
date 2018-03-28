@@ -58,7 +58,7 @@ public class LeagueFacadeTest {
     @Test
     public void shouldReturnEmptyListIfNoLeague() {
         //then
-        List<LeagueDTO> allLeagues = facade.getAllLeagues();
+        List<LeagueDetailsDTO> allLeagues = facade.getAllLeaguesDetails();
         assertTrue(allLeagues.isEmpty());
     }
 
@@ -68,8 +68,8 @@ public class LeagueFacadeTest {
         facade.createLeague("new");
         facade.createLeague("new2");
         //then
-        List<LeagueDTO> dtos = facade.getAllLeagues();
-        List<String> namesList = dtos.map(LeagueDTO::getName);
+        List<LeagueDetailsDTO> dtos = facade.getAllLeaguesDetails();
+        List<String> namesList = dtos.map(LeagueDetailsDTO::getName);
         assertTrue(namesList.contains("new"));
         assertTrue(namesList.contains("new2"));
     }
