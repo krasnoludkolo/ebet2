@@ -21,6 +21,7 @@ Planned features:
 ## Frameworks and libraries
 
 * spring boot, data 
+* unirest
 * vavr
 * lombok
 
