@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Controller("/api")
+@RequestMapping("api")
 class AutoImportController {
 
     private AutoImportFacade facade;

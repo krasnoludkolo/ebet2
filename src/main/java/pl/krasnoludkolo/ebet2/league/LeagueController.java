@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("api")
 class LeagueController {
 
     private LeagueFacade leagueFacade;
