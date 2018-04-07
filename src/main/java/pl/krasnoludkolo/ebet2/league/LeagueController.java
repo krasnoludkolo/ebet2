@@ -56,8 +56,8 @@ class LeagueController {
         return new ResponseEntity<>(matchDTOS, HttpStatus.OK);
     }
 
-    @GetMapping("/matches")
-    public HttpEntity<LeagueDTO> getAllMatchesFromLeague(@RequestParam UUID leagueUUID) {
+    @GetMapping("league/{leagueUUID}/matches")
+    public HttpEntity<LeagueDTO> getAllMatchesFromLeague(@PathVariable UUID leagueUUID) {
         Option<LeagueDTO> leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID);
         return leagueDTO
                 .map(l -> new ResponseEntity<>(l, HttpStatus.OK))
