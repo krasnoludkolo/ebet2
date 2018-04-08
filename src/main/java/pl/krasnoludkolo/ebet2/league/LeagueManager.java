@@ -70,4 +70,8 @@ class LeagueManager {
     public void removeMatchUUID(UUID leagueUUID) {
         leagueRepository.delete(leagueUUID);
     }
+
+    public List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
+        return leagueRepository.findOne(uuid).map(League::getAllMatches).getOrElse(List::empty);
+    }
 }

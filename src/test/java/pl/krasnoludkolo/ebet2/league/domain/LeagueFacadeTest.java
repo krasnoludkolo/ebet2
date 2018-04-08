@@ -185,4 +185,20 @@ public class LeagueFacadeTest {
         assertTrue(leagueByUUID.isEmpty());
     }
 
+    @Test
+    public void shouldGetAllMatchesFromLeague() {
+        //given
+        UUID tested = facade.createLeague("test");
+        UUID other = facade.createLeague("test2");
+        //when
+        facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, tested));
+        facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, tested));
+        facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, tested));
+        facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, other));
+        //then
+        int matchesInLeague = facade.getAllMatchesFromLeague(tested).size();
+        assertEquals(3, matchesInLeague);
+
+    }
+
 }

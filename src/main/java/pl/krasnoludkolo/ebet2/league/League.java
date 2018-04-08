@@ -42,6 +42,10 @@ class League {
                 .map(Match::toDTO);
     }
 
+    List<MatchDTO> getAllMatches() {
+        return List.ofAll(matches).map(Match::toDTO);
+    }
+
     private Predicate<Match> correspondentRound(int round) {
         return match -> match.hasRoundNumber(round);
     }

@@ -66,4 +66,8 @@ public class LeagueFacade {
     public void removeLeague(UUID leagueUUID) {
         leagueManager.removeMatchUUID(leagueUUID);
     }
+
+    public List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
+        return leagueManager.getAllMatchesFromLeague(uuid);
+    }
 }

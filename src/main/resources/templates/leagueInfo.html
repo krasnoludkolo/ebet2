@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<!--/*@thymesVar id="match" type="pl.krasnoludkolo.ebet2.league.api.MatchDTO"*/-->
+<div th:each="match : ${matchList}">
+    <div>
+        <table class="fixed">
+            <col width="200px"/>
+            <col width="200px"/>
+            <col width="80px"/>
+            <col width="30px"/>
+            <tr>
+                <td th:text="${match.host}">name</td>
+                <td th:text="${match.guest}">name</td>
+                <td th:text="${match.result}">name</td>
+                <!--<td style="word-wrap: break-word"><a th:href="@{/league/{id}/ (id=${league.leagueUUID})}" th:method="get" th:text="kek" role="button"></a></td>
+                -->
+            </tr>
+        </table>
+    </div>
+</div>
+<br/>
+</body>
+</html>
