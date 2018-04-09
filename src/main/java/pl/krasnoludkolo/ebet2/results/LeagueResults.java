@@ -34,13 +34,16 @@ class LeagueResults {
     void addPointToUser(String username) {
         UserResult result = userResultList
                 .find(withName(username))
-                .getOrElse(createNewUserResult(username));
+                .getOrElse(createNewUserResultAndSave(username));
         result.addPoint();
-        userResultList = userResultList.append(result);
     }
 
-    private Supplier<UserResult> createNewUserResult(String user) {
-        return () -> UserResult.create(user);
+    private Supplier<UserResult> createNewUserResultAndSave(String user) {
+        return () -> {
+            UserResult userResult = UserResult.create(user);
+            userResultList = userResultList.append(userResult);
+            return userResult;
+        };
     }
 
     Option<UserResult> getUserResultForName(String username) {
