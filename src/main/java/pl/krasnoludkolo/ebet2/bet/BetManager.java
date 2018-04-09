@@ -17,8 +17,10 @@ class BetManager {
     }
 
     public UUID addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO) {
-        if (matchHasBetWithUsername(matchUUID, newBetDTO.getUsername())) {
-            throw new DuplicateUsername();
+        if (invalidUsername(newBetDTO.getUsername())) {
+            throw new UsernameException("Username null or empty");
+        } else if (matchHasBetWithUsername(matchUUID, newBetDTO.getUsername())) {
+            throw new DuplicateUsername("Duplicate username");
         }
         String username = newBetDTO.getUsername();
         BetTyp betType = newBetDTO.getBetTyp();
@@ -26,6 +28,10 @@ class BetManager {
         UUID uuid = bet.getUuid();
         repository.save(uuid, bet);
         return uuid;
+    }
+
+    private boolean invalidUsername(String username) {
+        return username == null || username.isEmpty();
     }
 
     private boolean matchHasBetWithUsername(UUID matchUUID, String username) {

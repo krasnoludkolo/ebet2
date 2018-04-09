@@ -1,11 +1,10 @@
-package pl.krasnoludkolo.ebet2.bet.domain;
+package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.bet.api.*;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
@@ -26,6 +25,24 @@ public class BetFacadeTest {
         InMemorySystem system = new InMemorySystem();
         betFacade = system.betFacade();
         leagueFacade = system.leagueFacade();
+    }
+
+    @Test(expected = UsernameException.class)
+    public void shouldNotAddMatchWithNoUsername() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
+        //when
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, "", matchUUID));
+    }
+
+    @Test(expected = UsernameException.class)
+    public void shouldNotAddMatchWithNullUsername() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
+        //when
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, null, matchUUID));
     }
 
     @Test

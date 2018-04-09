@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results.domain;
+package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.control.Option;
 import org.junit.Before;
@@ -10,7 +10,6 @@ import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
@@ -73,11 +72,12 @@ public class ResultFacadeTest {
 
     @Test
     public void shouldAddPointForCorrectBetAndNotForIncorrect() {
-        //when
         String user = "user";
+        //given
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID));
+        //when
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID));
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID2));
         leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
@@ -89,5 +89,41 @@ public class ResultFacadeTest {
         assertEquals(1, userResult.getPointCounter());
     }
 
+    @Test
+    public void shouldAddDwoPointsToOneUser() {
+        String user = "user";
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID));
+        //when
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID2));
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+
+        //then
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        assertEquals(2, userResultDTO.getPointCounter());
+    }
+
+    @Test
+    public void shouldBeOnlyOneUserResultToOneUser() {
+        String user = "user";
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID));
+        //when
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user, matchUUID2));
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+
+        //then
+        int numberOfUserResults = resultFacade.getResultsForLeague(leagueUUID).get().getUserResultDTOS().size();
+        assertEquals(1, numberOfUserResults);
+
+    }
 
 }

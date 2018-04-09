@@ -1,11 +1,10 @@
-package pl.krasnoludkolo.ebet2.league.domain;
+package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.*;
 
 import java.util.UUID;
@@ -21,6 +20,15 @@ public class LeagueFacadeTest {
         facade = new InMemorySystem().leagueFacade();
     }
 
+    @Test(expected = LeagueNameException.class)
+    public void shouldNotCreateLeagueWithNoName() {
+        facade.createLeague("");
+    }
+
+    @Test(expected = LeagueNameException.class)
+    public void shouldNotCreateLeagueWithNullName() {
+        facade.createLeague(null);
+    }
 
     @Test
     public void shouldAddEmptyLeagueAndFindByUUID() {

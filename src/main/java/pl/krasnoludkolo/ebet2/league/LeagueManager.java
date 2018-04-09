@@ -19,12 +19,18 @@ class LeagueManager {
     }
 
     League createLeague(String name) {
-        if (containsLeagueWithName(name)) {
-            throw new LeagueNameDuplicationException();
+        if (invalidName(name)) {
+            throw new LeagueNameException("Name is null or empty");
+        } else if (containsLeagueWithName(name)) {
+            throw new LeagueNameDuplicationException("Duplication name");
         }
         League league = League.createWithName(name);
         leagueRepository.save(league.getUuid(), league);
         return league;
+    }
+
+    private boolean invalidName(String name) {
+        return name == null || name.isEmpty();
     }
 
     private boolean containsLeagueWithName(String name) {
