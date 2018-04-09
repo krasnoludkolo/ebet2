@@ -20,8 +20,9 @@
                 <td th:text="${match.host}">name</td>
                 <td th:text="${match.guest}">name</td>
                 <td th:text="${match.result}">name</td>
-                <!--<td style="word-wrap: break-word"><a th:href="@{/league/{id}/ (id=${league.leagueUUID})}" th:method="get" th:text="kek" role="button"></a></td>
-                -->
+                <td style="word-wrap: break-word"><a
+                        th:href="@{/league/{id}/match/{matchId}/newbet (id=${match.leagueUUID}, matchId=${match.uuid})}"
+                        th:method="get" th:text="newbet" role="button"></a></td>
             </tr>
         </table>
     </div>
