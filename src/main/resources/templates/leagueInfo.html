@@ -2,6 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+<div>
+    <a th:href="@{__${#httpServletRequest.requestURI}__/results}" th:method="get" th:text="results"
+       role="button"></a>
+
+</div>
 
 <!--/*@thymesVar id="match" type="pl.krasnoludkolo.ebet2.league.api.MatchDTO"*/-->
 <div th:each="match : ${matchList}">
@@ -21,6 +26,7 @@
         </table>
     </div>
 </div>
+
 <br/>
 </body>
 </html>
