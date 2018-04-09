@@ -10,6 +10,7 @@ Current features:
 
 Under development:
 - Add source to automatically download matches info from external source.
+- Frond-end in thymeleaf
 
 Planned features:
 - Create user module to register users.
@@ -24,6 +25,7 @@ Planned features:
 * unirest
 * vavr
 * lombok
+* thymeleaf
 
 Postgesql as database
 
