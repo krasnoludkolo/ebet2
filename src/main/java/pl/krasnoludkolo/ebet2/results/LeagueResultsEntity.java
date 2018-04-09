@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -20,7 +21,7 @@ class LeagueResultsEntity {
 
     @Id
     private UUID leagueUUID;
-    @OneToMany(mappedBy = "leagueResultsEntity")
+    @OneToMany(mappedBy = "leagueResultsEntity", cascade = CascadeType.ALL)
     private List<UserResultEntity> userResultList;
 
 }

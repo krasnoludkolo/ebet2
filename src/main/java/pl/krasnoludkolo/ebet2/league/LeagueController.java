@@ -6,10 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDetailsDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -63,8 +60,12 @@ class LeagueController {
         return leagueDTO
                 .map(l -> new ResponseEntity<>(l, HttpStatus.OK))
                 .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-
+    @PostMapping("/match/{uuid}/result")
+    public HttpStatus setMatchResult(@RequestBody MatchResult matchResult, @PathVariable UUID uuid) {
+        leagueFacade.setMatchResult(uuid, matchResult);
+        return HttpStatus.OK;
     }
 
     @DeleteMapping("/league")
