@@ -11,12 +11,12 @@ Current features:
 Under development:
 - Add source to automatically download matches info from external source.
 - Frond-end in thymeleaf
+- Remove spring
 
 Planned features:
 - Create user module to register users.
 - API security
 - CQRS 
-- Try to remove spring ;)
 - A few implementation details
 
 ## Frameworks and libraries
