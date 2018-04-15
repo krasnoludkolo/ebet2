@@ -5,12 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 
+import java.util.function.Function;
+
 @Configuration
 public class BetConfiguration {
 
     @Bean
     public BetFacade betFacadeBean() {
-        Repository<Bet> repository = new BetJOOQRepository();
+        Function<Bet, BetEntity> d2e = Bet::toEntity;
+        Function<BetEntity, Bet> e2d = Bet::new;
+        Repository<Bet> repository = new BetJOOQRepository(d2e, e2d);
         BetManager betManager = new BetManager(repository);
         return new BetFacade(betManager);
     }
