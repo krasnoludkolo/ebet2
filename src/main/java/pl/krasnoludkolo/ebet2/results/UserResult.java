@@ -4,7 +4,7 @@ import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.Objects;
 
-class UserResult {
+class UserResult implements Comparable<UserResult> {
 
     private final String name;
     private final PointCounter pointCounter;
@@ -33,7 +33,7 @@ class UserResult {
         return Objects.equals(this.name, name);
     }
 
-    public UserResultDTO toDTO() {
+    UserResultDTO toDTO() {
         return new UserResultDTO(name, pointCounter.getCount());
     }
 
@@ -54,4 +54,10 @@ class UserResult {
     public UserResultEntity toEntity(LeagueResultsEntity entity) {
         return new UserResultEntity(name, pointCounter.getCount(), entity);
     }
+
+    @Override
+    public int compareTo(UserResult userResult) {
+        return Integer.compare(userResult.pointCounter.getCount(), pointCounter.getCount());
+    }
+
 }

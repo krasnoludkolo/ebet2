@@ -28,7 +28,7 @@ class LeagueResults {
 
     private LeagueResults(UUID leagueUUID, List<UserResult> userResultList) {
         this.leagueUUID = leagueUUID;
-        this.userResultList = userResultList;
+        this.userResultList = userResultList.sorted();
     }
 
     void addPointToUser(String username) {
@@ -36,6 +36,7 @@ class LeagueResults {
                 .find(withName(username))
                 .getOrElse(createNewUserResultAndSave(username));
         result.addPoint();
+        this.userResultList = userResultList.sorted();
     }
 
     private Supplier<UserResult> createNewUserResultAndSave(String user) {
@@ -59,7 +60,7 @@ class LeagueResults {
         return new LeagueResultsDTO(userResultListDTOS, leagueUUID);
     }
 
-    public UUID getLeagueUUID() {
+    UUID getLeagueUUID() {
         return leagueUUID;
     }
 
@@ -76,7 +77,7 @@ class LeagueResults {
         return Objects.hash(leagueUUID, userResultList);
     }
 
-    public LeagueResultsEntity toEntity() {
+    LeagueResultsEntity toEntity() {
         LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
         List<UserResultEntity> list = userResultList.map(r -> r.toEntity(entity));
         entity.setUserResultList(list.toJavaList());

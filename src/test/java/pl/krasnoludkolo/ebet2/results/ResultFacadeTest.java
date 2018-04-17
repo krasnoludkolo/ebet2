@@ -13,6 +13,7 @@ import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -123,7 +124,37 @@ public class ResultFacadeTest {
         //then
         int numberOfUserResults = resultFacade.getResultsForLeague(leagueUUID).get().getUserResultDTOS().size();
         assertEquals(1, numberOfUserResults);
+    }
 
+    @Test
+    public void resultsFromLeagueShouldBeInDecreasingOrder() {
+        //when
+        String user1 = "user";
+        String user2 = "user2";
+        String user3 = "user3";
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID));
+        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user1, matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, user1, matchUUID2));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, user1, matchUUID3));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user2, matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user2, matchUUID2));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, user2, matchUUID3));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user3, matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user3, matchUUID2));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, user3, matchUUID3));
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
+        //then
+        List<UserResultDTO> userResultDTOS = resultFacade.getResultsForLeague(leagueUUID).get().getUserResultDTOS();
+        for (int i = 0; i < userResultDTOS.size() - 1; i++) {
+            int current = userResultDTOS.get(i).getPointCounter();
+            int next = userResultDTOS.get(i + 1).getPointCounter();
+            assertTrue(current >= next);
+        }
     }
 
 }
