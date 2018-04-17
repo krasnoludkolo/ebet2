@@ -12,7 +12,7 @@ import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller("/api")
+@Controller()
 @RequestMapping("api")
 class AutoImportController {
 
@@ -32,4 +32,9 @@ class AutoImportController {
         return new ResponseEntity<>(uuid, HttpStatus.CREATED);
     }
 
+    @PostMapping("/autoupdate")
+    public HttpStatus addLeagueToAutoUpdate(@RequestBody UUID leagueUUID) {
+        facade.addLeagueToAutoUpdater(leagueUUID);
+        return HttpStatus.NO_CONTENT;
+    }
 }

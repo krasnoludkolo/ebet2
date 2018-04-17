@@ -16,12 +16,18 @@ public class AutoImportFacade {
     private LeagueUpdater leagueUpdater;
     private Map<String, ExternalSourceClient> clientsMap;
     private Repository<LeagueDetails> leagueDetailsRepository;
+    private AutoUpdaterScheduler autoUpdaterScheduler;
 
     AutoImportFacade(LeagueFacade leagueFacade, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
         leagueInitializer = new LeagueInitializer(leagueFacade);
         this.leagueUpdater = leagueUpdater;
         clientsMap = clients.toMap(client -> Tuple.of(client.getShortcut(), client));
         this.leagueDetailsRepository = leagueDetailsRepository;
+        setUpUpdateScheduler();
+    }
+
+    private void setUpUpdateScheduler() {
+        autoUpdaterScheduler = new AutoUpdaterScheduler(this);
     }
 
     public UUID initializeLeague(ExternalSourceConfiguration config, String clientShortcut) {
@@ -38,5 +44,15 @@ public class AutoImportFacade {
         leagueDetailsRepository.update(details.getLeagueUUID(), details);
     }
 
+    public void addLeagueToAutoUpdater(UUID leagueUUID) {
+        checkIfLeagueDetailsExist(leagueUUID);
+        autoUpdaterScheduler.addLeagueToAutoUpdate(leagueUUID);
+    }
+
+    private void checkIfLeagueDetailsExist(UUID leagueUUID) {
+        if (leagueDetailsRepository.findOne(leagueUUID).isEmpty()) {
+            throw new IllegalArgumentException("No league with given uuid");
+        }
+    }
 
 }
