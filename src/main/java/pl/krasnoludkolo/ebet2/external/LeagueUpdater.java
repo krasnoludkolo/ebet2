@@ -1,10 +1,10 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.external;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
-import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
+import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;

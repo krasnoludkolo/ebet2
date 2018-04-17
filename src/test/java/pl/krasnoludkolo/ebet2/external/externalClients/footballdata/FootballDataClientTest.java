@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.autoimport.footballdata;
+package pl.krasnoludkolo.ebet2.external.externalClients.footballdata;
 
 import io.vavr.collection.List;
 import org.json.JSONArray;
@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
-import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
+import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class FootballDataClientTest {
 
 
-    private String fileName = "src/test/java/pl/krasnoludkolo/ebet2/autoimport/footballdata/data.json";
+    private String fileName = "src/test/java/pl/krasnoludkolo/ebet2/external/footballdata/data.json";
 
     @Mock
     private FootballDataDownloader downloader;

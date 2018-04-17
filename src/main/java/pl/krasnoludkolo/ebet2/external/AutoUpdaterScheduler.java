@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.external;
 
 import java.time.Duration;
 import java.time.LocalTime;

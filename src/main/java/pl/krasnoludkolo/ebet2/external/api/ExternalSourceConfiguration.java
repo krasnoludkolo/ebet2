@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.autoimport.api;
+package pl.krasnoludkolo.ebet2.external.api;
 
 import io.vavr.control.Option;
 

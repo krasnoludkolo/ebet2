@@ -1,12 +1,12 @@
 package pl.krasnoludkolo.ebet2;
 
 import io.vavr.collection.List;
-import pl.krasnoludkolo.ebet2.autoimport.AutoImportConfiguration;
-import pl.krasnoludkolo.ebet2.autoimport.AutoImportFacade;
-import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
+import pl.krasnoludkolo.ebet2.external.AutoImportConfiguration;
+import pl.krasnoludkolo.ebet2.external.AutoImportFacade;
+import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.results.ResultConfiguration;

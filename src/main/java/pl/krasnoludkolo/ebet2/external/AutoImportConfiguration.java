@@ -1,12 +1,12 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.external;
 
 import io.vavr.collection.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceClient;
-import pl.krasnoludkolo.ebet2.autoimport.footballdata.FootballDataClient;
-import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
+import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
+import pl.krasnoludkolo.ebet2.external.externalClients.footballdata.FootballDataClient;
+import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;

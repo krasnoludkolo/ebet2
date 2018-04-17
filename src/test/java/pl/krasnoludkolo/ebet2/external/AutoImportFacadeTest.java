@@ -1,13 +1,13 @@
-package pl.krasnoludkolo.ebet2.autoimport;
+package pl.krasnoludkolo.ebet2.external;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.krasnoludkolo.ebet2.autoimport.api.ExternalSourceConfiguration;
-import pl.krasnoludkolo.ebet2.autoimport.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.autoimport.api.MissingConfigurationException;
-import pl.krasnoludkolo.ebet2.autoimport.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
+import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
+import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.external.api.MissingConfigurationException;
+import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
