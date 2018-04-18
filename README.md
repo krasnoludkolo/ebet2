@@ -58,7 +58,7 @@ Provides possibilities to make, update etc. bets on matches.
 
 Handle calculating users score in each league.
 
-* autoimport
+* External
 
 Importing data from external source. 
 
