@@ -5,7 +5,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 class FootballDataDownloader {
+
+    private final static Logger LOGGER = Logger.getLogger(FootballDataDownloader.class.getName());
 
     private final String urlBeginning = "http://api.football-data.org/v1/";
 
@@ -15,7 +20,7 @@ class FootballDataDownloader {
             String url = urlBeginning + "competitions/" + leagueId + "/fixtures";
             return getMatches(url);
         } catch (UnirestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return new JSONArray();
     }
@@ -26,7 +31,7 @@ class FootballDataDownloader {
             String url = urlBeginning + "competitions/" + leagueId + "/fixtures?matchday=" + round;
             return getMatches(url);
         } catch (UnirestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return new JSONArray();
     }
