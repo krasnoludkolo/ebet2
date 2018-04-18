@@ -3,8 +3,8 @@ package pl.krasnoludkolo.ebet2;
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
-import pl.krasnoludkolo.ebet2.external.AutoImportConfiguration;
-import pl.krasnoludkolo.ebet2.external.AutoImportFacade;
+import pl.krasnoludkolo.ebet2.external.ExternalConfiguration;
+import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
@@ -17,7 +17,7 @@ public class InMemorySystem {
     private LeagueFacade leagueFacade;
     private BetFacade betFacade;
     private ResultFacade resultFacade;
-    private AutoImportFacade autoImportFacade;
+    private ExternalFacade externalFacade;
     private ExternalClientMock externalClientMock;
 
     public InMemorySystem() {
@@ -25,7 +25,7 @@ public class InMemorySystem {
         betFacade = new BetConfiguration().inMemoryBetFacade();
         resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
-        autoImportFacade = new AutoImportConfiguration().inMemory(leagueFacade, externalClientMock);
+        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalClientMock);
     }
 
     public LeagueFacade leagueFacade() {
@@ -40,8 +40,8 @@ public class InMemorySystem {
         return resultFacade;
     }
 
-    public AutoImportFacade autoImportFacade() {
-        return autoImportFacade;
+    public ExternalFacade autoImportFacade() {
+        return externalFacade;
     }
 
     public void setExternalSourceMatchList(List<MatchInfo> list) {

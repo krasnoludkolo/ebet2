@@ -10,7 +10,7 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 
 import java.util.UUID;
 
-public class AutoImportFacade {
+public class ExternalFacade {
 
     private LeagueInitializer leagueInitializer;
     private LeagueUpdater leagueUpdater;
@@ -18,7 +18,7 @@ public class AutoImportFacade {
     private Repository<LeagueDetails> leagueDetailsRepository;
     private AutoUpdaterScheduler autoUpdaterScheduler;
 
-    AutoImportFacade(LeagueFacade leagueFacade, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
+    ExternalFacade(LeagueFacade leagueFacade, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
         leagueInitializer = new LeagueInitializer(leagueFacade);
         this.leagueUpdater = leagueUpdater;
         clientsMap = clients.toMap(client -> Tuple.of(client.getShortcut(), client));

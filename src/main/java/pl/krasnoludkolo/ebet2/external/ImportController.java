@@ -17,11 +17,11 @@ import java.util.UUID;
 @RequestMapping("api")
 class ImportController {
 
-    private final AutoImportFacade autoImportFacade;
+    private final ExternalFacade externalFacade;
 
     @Autowired
-    ImportController(AutoImportFacade autoImportFacade) {
-        this.autoImportFacade = autoImportFacade;
+    ImportController(ExternalFacade externalFacade) {
+        this.externalFacade = externalFacade;
     }
 
     //TODO async
@@ -34,7 +34,7 @@ class ImportController {
         ExternalSourceConfiguration externalSourceConfiguration = new ExternalSourceConfiguration();
         externalSourceConfiguration.putParameter("leagueId", leagueId);
         externalSourceConfiguration.putParameter("name", name);
-        UUID leagueUUID = autoImportFacade.initializeLeague(externalSourceConfiguration, clientShortcut);
+        UUID leagueUUID = externalFacade.initializeLeague(externalSourceConfiguration, clientShortcut);
         return new ResponseEntity<>(leagueUUID, HttpStatus.OK);
     }
 

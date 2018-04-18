@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
-public class AutoImportFacadeTest {
+public class ExternalFacadeTest {
 
     private io.vavr.collection.List<MatchInfo> matchList = io.vavr.collection.List.of(
             new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON),
@@ -32,7 +32,7 @@ public class AutoImportFacadeTest {
             new MatchInfo("c", "b", 3, false, MatchResult.NOT_SET)
     );
 
-    private AutoImportFacade autoImportFacade;
+    private ExternalFacade externalFacade;
     private LeagueFacade leagueFacade;
     private ExternalClientMock externalSourceClient;
 
@@ -42,7 +42,7 @@ public class AutoImportFacadeTest {
         ResultFacade result = new ResultConfiguration().inMemoryResult(bet);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(result);
         externalSourceClient = new ExternalClientMock(matchList);
-        autoImportFacade = new AutoImportConfiguration().inMemory(leagueFacade, externalSourceClient);
+        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalSourceClient);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class AutoImportFacadeTest {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         config.putParameter("name", "test");
         //when
-        UUID uuid = autoImportFacade.initializeLeague(config, "Mock");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock");
         //then
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
         List<MatchDTO> matchDTOS = leagueDTO.getMatchDTOS();
@@ -62,7 +62,7 @@ public class AutoImportFacadeTest {
     @Test(expected = MissingConfigurationException.class)
     public void shouldNotImportLeagueBecauseOfMissingLeagueName() {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        autoImportFacade.initializeLeague(config, "Mock");
+        externalFacade.initializeLeague(config, "Mock");
     }
 
     @Test
@@ -70,7 +70,7 @@ public class AutoImportFacadeTest {
         //given
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         config.putParameter("name", "test");
-        UUID uuid = autoImportFacade.initializeLeague(config, "Mock");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock");
         MatchInfo m = externalSourceClient.getMatchList().get(2);
         MatchInfo m2 = externalSourceClient.getMatchList().get(3);
         MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW);
@@ -78,7 +78,7 @@ public class AutoImportFacadeTest {
         externalSourceClient.setMatchList(externalSourceClient.getMatchList().replace(m, nm));
         externalSourceClient.setMatchList(externalSourceClient.getMatchList().replace(m2, nm2));
         //when
-        autoImportFacade.updateLeague(uuid);
+        externalFacade.updateLeague(uuid);
         //then
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
         int sum = leagueDTO.getMatchDTOS().stream().mapToInt(match -> match.getResult() == MatchResult.DRAW ? 1 : 0).sum();
