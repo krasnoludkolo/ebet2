@@ -7,7 +7,7 @@ import org.junit.Test;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
-import pl.krasnoludkolo.ebet2.external.AutoImportFacade;
+import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AutoImportAndLeagueResultsUpdate {
 
-    private AutoImportFacade autoImportFacade;
+    private ExternalFacade externalFacade;
     private BetFacade betFacade;
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
@@ -33,7 +33,7 @@ public class AutoImportAndLeagueResultsUpdate {
     @Before
     public void init() {
         system = new InMemorySystem();
-        autoImportFacade = system.autoImportFacade();
+        externalFacade = system.autoImportFacade();
         betFacade = system.betFacade();
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
@@ -43,7 +43,7 @@ public class AutoImportAndLeagueResultsUpdate {
     public void shouldImportLeagueMakeBetAndUpdateResult() {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         config.putParameter("name", "test");
-        UUID leagueUUID = autoImportFacade.initializeLeague(config, "Mock");
+        UUID leagueUUID = externalFacade.initializeLeague(config, "Mock");
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
@@ -51,7 +51,7 @@ public class AutoImportAndLeagueResultsUpdate {
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, "user2", matchUUID));
         List<MatchInfo> list = getListWithNewResult();
         system.setExternalSourceMatchList(list);
-        autoImportFacade.updateLeague(leagueUUID);
+        externalFacade.updateLeague(leagueUUID);
         UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
         Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user2");
         assertEquals(1, user1.getPointCounter());

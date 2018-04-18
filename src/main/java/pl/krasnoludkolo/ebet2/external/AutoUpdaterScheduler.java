@@ -13,13 +13,13 @@ import java.util.logging.Logger;
 
 class AutoUpdaterScheduler {
 
-    private final static Logger LOGGER = Logger.getLogger(AutoImportFacade.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(ExternalFacade.class.getName());
 
-    private final AutoImportFacade autoImportFacade;
+    private final ExternalFacade externalFacade;
     private List<UUID> leaguesToUpdate = new ArrayList<>();
 
-    AutoUpdaterScheduler(AutoImportFacade autoImportFacade) {
-        this.autoImportFacade = autoImportFacade;
+    AutoUpdaterScheduler(ExternalFacade externalFacade) {
+        this.externalFacade = externalFacade;
         long hoursToNight = calculateHoursToNight(LocalTime.now());
         LOGGER.log(Level.INFO, "hoursToNight: " + hoursToNight);
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
@@ -40,7 +40,7 @@ class AutoUpdaterScheduler {
         LOGGER.log(Level.INFO, "Start league auto-update: ");
         for (UUID leagueUUID : leaguesToUpdate) {
             LOGGER.log(Level.INFO, "Start updating league with UUID: " + leagueUUID.toString());
-            autoImportFacade.updateLeague(leagueUUID);
+            externalFacade.updateLeague(leagueUUID);
             LOGGER.log(Level.INFO, "Update finished");
         }
     }

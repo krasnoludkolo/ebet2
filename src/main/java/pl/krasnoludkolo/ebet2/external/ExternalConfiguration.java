@@ -12,29 +12,29 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 
 @Configuration
-public class AutoImportConfiguration {
+public class ExternalConfiguration {
 
 
     @Bean
     @Autowired
-    public AutoImportFacade autoImportBean(LeagueFacade leagueFacade) {
+    public ExternalFacade autoImportBean(LeagueFacade leagueFacade) {
         LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade);
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
-        return new AutoImportFacade(leagueFacade, leagueUpdater, List.of(FootballDataClient.create()), leagueDetailsRepository);
+        return new ExternalFacade(leagueFacade, leagueUpdater, List.of(FootballDataClient.create()), leagueDetailsRepository);
     }
 
-    public AutoImportFacade inMemory(LeagueFacade leagueFacade) {
+    public ExternalFacade inMemory(LeagueFacade leagueFacade) {
         List<ExternalSourceClient> list = List.of(new ExternalClientMock(ExternalClientMock.SOME_MATCHES));
         LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade);
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
-        return new AutoImportFacade(leagueFacade, leagueUpdater, list, leagueDetailsRepository);
+        return new ExternalFacade(leagueFacade, leagueUpdater, list, leagueDetailsRepository);
     }
 
-    public AutoImportFacade inMemory(LeagueFacade leagueFacade, ExternalSourceClient mockClient) {
+    public ExternalFacade inMemory(LeagueFacade leagueFacade, ExternalSourceClient mockClient) {
         List<ExternalSourceClient> list = List.of(mockClient);
         LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade);
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
-        return new AutoImportFacade(leagueFacade, leagueUpdater, list, leagueDetailsRepository);
+        return new ExternalFacade(leagueFacade, leagueUpdater, list, leagueDetailsRepository);
     }
 
 
