@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <script language="JavaScript">
+        var toggle = function () {
+            var table = document.getElementById('matchesTable');
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                if (row.cells[2].innerText !== 'NOT_SET') {
+                    if (row.style.display === 'block' || row.style.display === '')
+                        row.style.display = 'none';
+                    else
+                        row.style.display = 'block'
+                }
+            }
+        }
+    </script>
+
+
+</head>
 <body>
+
 <div>
     <a th:href="@{__${#httpServletRequest.requestURI}__/results}" th:method="get" th:text="results"
        role="button"></a>
-
 </div>
 
+
+<input type="button" value="Hide matches with result" onclick="toggle()"/>
+
 <!--/*@thymesVar id="match" type="pl.krasnoludkolo.ebet2.league.api.MatchDTO"*/-->
-<div th:each="match : ${matchList}">
-    <div>
-        <table class="fixed">
-            <col width="200px"/>
-            <col width="200px"/>
-            <col width="120px"/>
-            <col width="30px"/>
-            <tr>
-                <td th:text="${match.host}">name</td>
-                <td th:text="${match.guest}">name</td>
-                <td th:text="${match.result}">name</td>
-                <td style="word-wrap: break-word"><a
-                        th:href="@{/league/{id}/match/{matchId}/newbet (id=${match.leagueUUID}, matchId=${match.uuid})}"
-                        th:method="get" th:text="newbet" role="button"></a></td>
-            </tr>
-        </table>
-    </div>
+<div>
+    <table class="fixed" id="matchesTable">
+        <col width="200px"/>
+        <col width="200px"/>
+        <col width="120px"/>
+        <col width="30px"/>
+        <col width="30px"/>
+        <tr th:each="match : ${matchList}">
+            <td th:text="${match.host}">name</td>
+            <td th:text="${match.guest}">name</td>
+            <td th:text="${match.result}">name</td>
+            <td th:text="${match.round}">name</td>
+            <td style="word-wrap: break-word"><a
+                    th:href="@{/league/{id}/match/{matchId}/newbet (id=${match.leagueUUID}, matchId=${match.uuid})}"
+                    th:method="get" th:text="newbet" role="button"></a></td>
+        </tr>
+    </table>
 </div>
 
 <br/>
