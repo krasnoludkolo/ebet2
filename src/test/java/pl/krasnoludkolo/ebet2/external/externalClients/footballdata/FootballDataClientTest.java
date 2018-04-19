@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class FootballDataClientTest {
 
 
-    private String fileName = "src/test/java/pl/krasnoludkolo/ebet2/external/footballdata/data.json";
+    private String fileName = "src/test/java/pl/krasnoludkolo/ebet2/external/externalClients/footballdata/data.json";
 
     @Mock
     private FootballDataDownloader downloader;
@@ -40,7 +40,8 @@ public class FootballDataClientTest {
     }
 
     private JSONArray loadFromFile() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File(fileName), "UTF-8");
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file, "UTF-8");
         String text = scanner.useDelimiter("\\A").next();
         scanner.close();
         return new JSONObject(text).getJSONArray("fixtures");
