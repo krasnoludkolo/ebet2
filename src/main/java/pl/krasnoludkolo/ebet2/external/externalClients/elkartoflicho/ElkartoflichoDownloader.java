@@ -21,8 +21,8 @@ class ElkartoflichoDownloader {
             return downloadAllMatchesFromLeague(url);
         } catch (UnirestException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new IllegalStateException("Error when downloading");
         }
-        return new JSONArray("[]");
     }
 
 
