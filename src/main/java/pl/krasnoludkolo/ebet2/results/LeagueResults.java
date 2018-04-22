@@ -10,8 +10,15 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static java.util.logging.Logger.getLogger;
 
 class LeagueResults {
+
+    private final static Logger LOGGER = getLogger(LeagueResults.class.getName());
+
 
     private UUID leagueUUID;
     private List<UserResult> userResultList;
@@ -32,6 +39,7 @@ class LeagueResults {
     }
 
     void addPointToUser(String username) {
+        LOGGER.log(Level.INFO, "Add point to " + username);
         UserResult result = userResultList
                 .find(withName(username))
                 .getOrElse(createNewUserResultAndSave(username));
@@ -40,6 +48,7 @@ class LeagueResults {
     }
 
     private Supplier<UserResult> createNewUserResultAndSave(String user) {
+        LOGGER.log(Level.INFO, "Create new user with name: " + user);
         return () -> {
             UserResult userResult = UserResult.create(user);
             userResultList = userResultList.append(userResult);

@@ -10,8 +10,13 @@ import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ResultFacade {
+
+    private final static Logger LOGGER = Logger.getLogger(ResultFacade.class.getName());
+
 
     private LeagueResultsManager crudService;
     private LeagueResultsUpdater leagueResultsUpdater;
@@ -36,10 +41,12 @@ public class ResultFacade {
     }
 
     public void updateLeagueResultsForMatch(MatchDTO matchDTO) {
+        LOGGER.log(Level.INFO, "Updating results for match " + matchDTO.getHost() + " : " + matchDTO.getGuest() + " with uuid: " + matchDTO.getUuid());
         UUID leagueUUID = matchDTO.getLeagueUUID();
         LeagueResults resultsForLeague = crudService.getResultsForLeague(leagueUUID);
         MatchResult matchResult = matchDTO.getResult();
         List<BetDTO> bets = betFacade.getAllBetsForMatch(matchDTO.getUuid());
+        LOGGER.log(Level.INFO, "Found " + bets.length() + " bets to update");
         leagueResultsUpdater.updateResultsForMatchInLeague(resultsForLeague, matchResult, bets);
     }
 
