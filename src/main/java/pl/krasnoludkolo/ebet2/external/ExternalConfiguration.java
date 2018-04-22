@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
+import pl.krasnoludkolo.ebet2.external.externalClients.elkartoflicho.ElkartoflichoClient;
 import pl.krasnoludkolo.ebet2.external.externalClients.footballdata.FootballDataClient;
 import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
@@ -20,7 +21,8 @@ public class ExternalConfiguration {
     public ExternalFacade autoImportBean(LeagueFacade leagueFacade) {
         LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade);
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
-        return new ExternalFacade(leagueFacade, leagueUpdater, List.of(FootballDataClient.create()), leagueDetailsRepository);
+        List<ExternalSourceClient> clients = List.of(FootballDataClient.create(), new ElkartoflichoClient());
+        return new ExternalFacade(leagueFacade, leagueUpdater, clients, leagueDetailsRepository);
     }
 
     public ExternalFacade inMemory(LeagueFacade leagueFacade) {

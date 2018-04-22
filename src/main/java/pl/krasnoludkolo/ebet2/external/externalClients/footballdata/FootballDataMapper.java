@@ -29,20 +29,9 @@ class FootballDataMapper {
             JSONObject matchResult = fixture.getJSONObject("result");
             int goalsHomeTeam = matchResult.getInt("goalsHomeTeam");
             int goalsAwayTeam = matchResult.getInt("goalsAwayTeam");
-            result = getMatchResult(goalsHomeTeam, goalsAwayTeam);
+            result = MatchResult.fromResult(goalsHomeTeam, goalsAwayTeam);
         }
         return new MatchInfo(homeTeamName, awayTeamName, round, finished, result);
     }
-
-    private MatchResult getMatchResult(int g1, int g2) {
-        if (g1 > g2) {
-            return MatchResult.HOST_WON;
-        } else if (g1 < g2) {
-            return MatchResult.GUEST_WON;
-        } else {
-            return MatchResult.DRAW;
-        }
-    }
-
 
 }
