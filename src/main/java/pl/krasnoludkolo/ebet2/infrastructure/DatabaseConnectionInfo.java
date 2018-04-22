@@ -13,7 +13,7 @@ class DatabaseConnectionInfo {
     DatabaseConnectionInfo() {
         this.username = System.getenv("DATA_USER");
         this.password = System.getenv("DATA_PASSWORD");
-        this.url = System.getenv("DATA_URL") + "/ebet2";
+        this.url = System.getenv("DATA_URL");
     }
 
     Connection createConnection() throws SQLException {
