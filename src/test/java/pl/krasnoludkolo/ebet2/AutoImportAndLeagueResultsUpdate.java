@@ -16,6 +16,7 @@ import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.user.UserFacade;
 
 import java.util.UUID;
 
@@ -29,14 +30,20 @@ public class AutoImportAndLeagueResultsUpdate {
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
+    private String auth;
+    private String auth2;
 
     @Before
     public void init() {
         system = new InMemorySystem();
-        externalFacade = system.autoImportFacade();
+        externalFacade = system.externalFacade();
         betFacade = system.betFacade();
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
+        UserFacade userFacade = system.userFacade();
+        auth = userFacade.registerUser("username1", "password").get();
+        auth2 = userFacade.registerUser("username2", "password").get();
+
     }
 
     @Test
@@ -47,13 +54,13 @@ public class AutoImportAndLeagueResultsUpdate {
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, "user1", matchUUID));
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, "user2", matchUUID));
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, "username1", matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, "username2", matchUUID), auth2);
         List<MatchInfo> list = getListWithNewResult();
         system.setExternalSourceMatchList(list);
         externalFacade.updateLeague(leagueUUID);
-        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
-        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user2");
+        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "username1").get();
+        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "username2");
         assertEquals(1, user1.getPointCounter());
         assertTrue(user2.isEmpty());
     }

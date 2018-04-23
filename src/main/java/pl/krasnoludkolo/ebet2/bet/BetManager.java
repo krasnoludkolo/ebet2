@@ -63,4 +63,8 @@ class BetManager {
     private Predicate<Bet> correspondMatch(UUID matchUUID) {
         return bet -> bet.isCorrespondedToMatch(matchUUID);
     }
+
+    public boolean correspondigUsername(UUID betUUID, String username) {
+        return repository.findOne(betUUID).getOrElseThrow(BetNotFound::new).hasUsername(username);
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
+import pl.krasnoludkolo.ebet2.user.UserFacade;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -14,18 +15,18 @@ import java.util.function.Function;
 public class BetConfiguration {
 
     @Bean
-    public BetFacade betFacadeBean(CrudRepository<BetEntity, UUID> repo) {
+    public BetFacade betFacadeBean(CrudRepository<BetEntity, UUID> repo, UserFacade userFacade) {
         Function<Bet, BetEntity> d2e = Bet::toEntity;
         Function<BetEntity, Bet> e2d = Bet::new;
         Repository<Bet> repository = new SpringDataRepositoryAdapter<>(repo, d2e, e2d);
         BetManager betManager = new BetManager(repository);
-        return new BetFacade(betManager);
+        return new BetFacade(betManager, userFacade);
     }
 
-    public BetFacade inMemoryBetFacade() {
+    public BetFacade inMemoryBetFacade(UserFacade userFacade) {
         Repository<Bet> repository = new InMemoryRepository<>();
         BetManager betManager = new BetManager(repository);
-        return new BetFacade(betManager);
+        return new BetFacade(betManager, userFacade);
     }
 
 }

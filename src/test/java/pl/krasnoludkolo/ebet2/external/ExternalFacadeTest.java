@@ -2,19 +2,14 @@ package pl.krasnoludkolo.ebet2.external;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
-import pl.krasnoludkolo.ebet2.bet.BetFacade;
+import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.external.api.MissingConfigurationException;
-import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
-import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
-import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,15 +29,14 @@ public class ExternalFacadeTest {
 
     private ExternalFacade externalFacade;
     private LeagueFacade leagueFacade;
-    private ExternalClientMock externalSourceClient;
+    private InMemorySystem system;
 
     @Before
     public void setUp() {
-        BetFacade bet = new BetConfiguration().inMemoryBetFacade();
-        ResultFacade result = new ResultConfiguration().inMemoryResult(bet);
-        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(result);
-        externalSourceClient = new ExternalClientMock(matchList);
-        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalSourceClient);
+        system = new InMemorySystem();
+        leagueFacade = system.leagueFacade();
+        externalFacade = system.externalFacade();
+
     }
 
     @Test
@@ -71,12 +65,12 @@ public class ExternalFacadeTest {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         config.putParameter("name", "test");
         UUID uuid = externalFacade.initializeLeague(config, "Mock");
-        MatchInfo m = externalSourceClient.getMatchList().get(2);
-        MatchInfo m2 = externalSourceClient.getMatchList().get(3);
+        MatchInfo m = system.getExternalSourceMatchList().get(2);
+        MatchInfo m2 = system.getExternalSourceMatchList().get(3);
         MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW);
         MatchInfo nm2 = new MatchInfo(m2.getHostName(), m2.getGuestName(), m2.getRound(), true, MatchResult.DRAW);
-        externalSourceClient.setMatchList(externalSourceClient.getMatchList().replace(m, nm));
-        externalSourceClient.setMatchList(externalSourceClient.getMatchList().replace(m2, nm2));
+        system.setExternalSourceMatchList(system.getExternalSourceMatchList().replace(m, nm));
+        system.setExternalSourceMatchList(system.getExternalSourceMatchList().replace(m2, nm2));
         //when
         externalFacade.updateLeague(uuid);
         //then

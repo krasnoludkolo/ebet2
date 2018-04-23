@@ -11,9 +11,12 @@ import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
+import pl.krasnoludkolo.ebet2.user.UserConfiguration;
+import pl.krasnoludkolo.ebet2.user.UserFacade;
 
 public class InMemorySystem {
 
+    private UserFacade userFacade;
     private LeagueFacade leagueFacade;
     private BetFacade betFacade;
     private ResultFacade resultFacade;
@@ -21,11 +24,17 @@ public class InMemorySystem {
     private ExternalClientMock externalClientMock;
 
     public InMemorySystem() {
+        userFacade = new UserConfiguration().inMemoryUserFacade();
         externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
-        betFacade = new BetConfiguration().inMemoryBetFacade();
+        betFacade = new BetConfiguration().inMemoryBetFacade(userFacade);
         resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
         externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalClientMock);
+
+    }
+
+    public UserFacade userFacade() {
+        return userFacade;
     }
 
     public LeagueFacade leagueFacade() {
@@ -40,7 +49,7 @@ public class InMemorySystem {
         return resultFacade;
     }
 
-    public ExternalFacade autoImportFacade() {
+    public ExternalFacade externalFacade() {
         return externalFacade;
     }
 
