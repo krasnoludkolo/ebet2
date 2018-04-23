@@ -22,15 +22,27 @@ public class InMemorySystem {
     private ResultFacade resultFacade;
     private ExternalFacade externalFacade;
     private ExternalClientMock externalClientMock;
+    private List<String> sampleUsersApiToken;
 
     public InMemorySystem() {
+        configureModules();
+        addSampleUsers();
+    }
+
+    private void configureModules() {
         userFacade = new UserConfiguration().inMemoryUserFacade();
         externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
         betFacade = new BetConfiguration().inMemoryBetFacade(userFacade);
         resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
         externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalClientMock);
+    }
 
+    private void addSampleUsers() {
+        String api1 = userFacade.registerUser("user1", "pass1").get();
+        String api2 = userFacade.registerUser("user2", "pass2").get();
+        String api3 = userFacade.registerUser("user3", "pass3").get();
+        sampleUsersApiToken = List.of(api1, api2, api3);
     }
 
     public UserFacade userFacade() {
@@ -61,4 +73,7 @@ public class InMemorySystem {
         return externalClientMock.getMatchList();
     }
 
+    public List<String> getSampleUsersApiToken() {
+        return sampleUsersApiToken;
+    }
 }
