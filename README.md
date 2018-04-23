@@ -7,14 +7,15 @@ Current features:
 - Create leagues and add matches to them.
 - Make, update, delete bets on matches.
 - Automatically update user's score when match result is set.
+- Download matches info from external source.
 
 Under development:
-- Add source to automatically download matches info from external source.
-- Frond-end in thymeleaf
-- Remove spring
+- Frond-end in angular (different project)
+- Create user module to register users.
+- Scheduler to leagues auto-update
 
 Planned features:
-- Create user module to register users.
+- Remove spring
 - API security
 - CQRS 
 - A few implementation details
@@ -26,6 +27,7 @@ Planned features:
 * vavr
 * lombok
 * thymeleaf
+* JOOQ
 
 Postgesql as database
 
