@@ -14,7 +14,6 @@ import java.util.UUID;
 public class NewBetDTO {
 
     private BetTyp betTyp;
-    private String username;
     private UUID matchUUID;
 
 }

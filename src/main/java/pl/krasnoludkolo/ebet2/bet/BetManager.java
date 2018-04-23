@@ -16,13 +16,10 @@ class BetManager {
         this.repository = repository;
     }
 
-    public UUID addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO) {
-        if (invalidUsername(newBetDTO.getUsername())) {
-            throw new UsernameException("Username null or empty");
-        } else if (matchHasBetWithUsername(matchUUID, newBetDTO.getUsername())) {
-            throw new DuplicateUsername("Duplicate username");
+    public UUID addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO, String username) {
+        if (betWithUsernameExist(matchUUID, username)) {
+            throw new BetAlreadySet("Bet for username: " + username + " and match UUID " + matchUUID + "exists");
         }
-        String username = newBetDTO.getUsername();
         BetTyp betType = newBetDTO.getBetTyp();
         Bet bet = new Bet(matchUUID, username, betType);
         UUID uuid = bet.getUuid();
@@ -30,16 +27,8 @@ class BetManager {
         return uuid;
     }
 
-    private boolean invalidUsername(String username) {
-        return username == null || username.isEmpty();
-    }
-
-    private boolean matchHasBetWithUsername(UUID matchUUID, String username) {
-        return repository.findAll().filter(correspondMatch(matchUUID)).find(withUsername(username)).isDefined();
-    }
-
-    private Predicate<Bet> withUsername(String username) {
-        return bet -> bet.hasUsername(username);
+    private boolean betWithUsernameExist(UUID matchUUID, String username) {
+        return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUsername(username)).isDefined();
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
@@ -64,7 +53,7 @@ class BetManager {
         return bet -> bet.isCorrespondedToMatch(matchUUID);
     }
 
-    public boolean correspondigUsername(UUID betUUID, String username) {
+    public boolean correspondingUsername(UUID betUUID, String username) {
         return repository.findOne(betUUID).getOrElseThrow(BetNotFound::new).hasUsername(username);
     }
 }

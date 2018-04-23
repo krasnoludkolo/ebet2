@@ -26,8 +26,7 @@ public class BetFacade {
             //TODO change method signature to better  error handling
             throw new IllegalArgumentException(username.getLeft());
         }
-        newBetDTO.setUsername(username.get());
-        return betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO);
+        return betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO, username.get());
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
@@ -36,7 +35,7 @@ public class BetFacade {
 
     public void updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
         String username = userFacade.getUsername(auth).get();
-        if (!betManager.correspondigUsername(betUUID, username)) {
+        if (!betManager.correspondingUsername(betUUID, username)) {
             throw new IllegalArgumentException("Wrong user");
         }
         betManager.updateBetToMatch(betUUID, betType);

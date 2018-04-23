@@ -16,7 +16,6 @@ import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
-import pl.krasnoludkolo.ebet2.user.UserFacade;
 
 import java.util.UUID;
 
@@ -40,9 +39,8 @@ public class AutoImportAndLeagueResultsUpdate {
         betFacade = system.betFacade();
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
-        UserFacade userFacade = system.userFacade();
-        auth = userFacade.registerUser("username1", "password").get();
-        auth2 = userFacade.registerUser("username2", "password").get();
+        auth = system.getSampleUsersApiToken().get(0);
+        auth2 = system.getSampleUsersApiToken().get(1);
 
     }
 
@@ -54,13 +52,13 @@ public class AutoImportAndLeagueResultsUpdate {
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, "username1", matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, "username2", matchUUID), auth2);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID), auth2);
         List<MatchInfo> list = getListWithNewResult();
         system.setExternalSourceMatchList(list);
         externalFacade.updateLeague(leagueUUID);
-        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "username1").get();
-        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "username2");
+        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
+        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user2");
         assertEquals(1, user1.getPointCounter());
         assertTrue(user2.isEmpty());
     }

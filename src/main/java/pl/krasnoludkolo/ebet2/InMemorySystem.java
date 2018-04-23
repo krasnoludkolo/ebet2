@@ -23,6 +23,7 @@ public class InMemorySystem {
     private ExternalFacade externalFacade;
     private ExternalClientMock externalClientMock;
     private List<String> sampleUsersApiToken;
+    private List<String> sampleUsernameList;
 
     public InMemorySystem() {
         configureModules();
@@ -43,6 +44,7 @@ public class InMemorySystem {
         String api2 = userFacade.registerUser("user2", "pass2").get();
         String api3 = userFacade.registerUser("user3", "pass3").get();
         sampleUsersApiToken = List.of(api1, api2, api3);
+        sampleUsernameList = List.of("user1", "user2", "user3");
     }
 
     public UserFacade userFacade() {
@@ -75,5 +77,9 @@ public class InMemorySystem {
 
     public List<String> getSampleUsersApiToken() {
         return sampleUsersApiToken;
+    }
+
+    public List<String> getSampleUsernameList() {
+        return sampleUsernameList;
     }
 }
