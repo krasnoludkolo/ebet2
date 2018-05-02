@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.league.query;
 
+import io.vavr.collection.List;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -10,8 +11,6 @@ import pl.krasnoludkolo.ebet2.infrastructure.ListResultJOOQQuery;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.jooq.impl.DSL.field;
@@ -42,13 +41,15 @@ public class AllMatchesFromRoundFromLeagueQueryList extends ListResultJOOQQuery<
 
     @Override
     protected List<MatchDTO> mapResult(Result<Record> result) {
-        List<MatchDTO> resultList = new ArrayList<>();
-        for (Record record : result) {
-            MatchDTO matchDTO = modelMapper.map(record, MatchDTO.class);
-            Integer matchResult = (Integer) record.getValue(3);
-            matchDTO.setResult(MatchResult.values()[matchResult]);
-            resultList.add(matchDTO);
-        }
-        return resultList;
+        return List
+                .ofAll(result)
+                .map(this::mapToMatchDTO);
+    }
+
+    private MatchDTO mapToMatchDTO(Record record) {
+        MatchDTO matchDTO = modelMapper.map(record, MatchDTO.class);
+        Integer matchResult = (Integer) record.getValue(3);
+        matchDTO.setResult(MatchResult.values()[matchResult]);
+        return matchDTO;
     }
 }

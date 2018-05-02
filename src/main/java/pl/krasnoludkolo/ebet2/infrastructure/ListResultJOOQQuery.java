@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.infrastructure;
 
+import io.vavr.collection.List;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -8,8 +9,6 @@ import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +16,7 @@ public abstract class ListResultJOOQQuery<T> {
 
 
     private static final Logger LOGGER = Logger.getLogger(ListResultJOOQQuery.class.getName());
+
     private DatabaseConnectionInfo connectionInfo = new DatabaseConnectionInfo();
 
     public List<T> execute() {
@@ -27,7 +27,7 @@ public abstract class ListResultJOOQQuery<T> {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
-        return Collections.emptyList();
+        return List.empty();
     }
 
 
