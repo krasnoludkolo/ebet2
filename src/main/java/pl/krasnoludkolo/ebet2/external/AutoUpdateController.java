@@ -25,4 +25,10 @@ class AutoUpdateController {
         facade.addLeagueToAutoUpdater(leagueUUID);
         return HttpStatus.NO_CONTENT;
     }
+
+    @PostMapping("/update")
+    public HttpStatus manuallyUpdateLeague(@RequestBody UUID leagueUUID) {
+        facade.updateLeague(leagueUUID);
+        return HttpStatus.NO_CONTENT;
+    }
 }
