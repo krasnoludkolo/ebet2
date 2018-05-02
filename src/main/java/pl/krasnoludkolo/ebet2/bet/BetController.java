@@ -54,6 +54,7 @@ class BetController {
         betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
         return HttpStatus.OK;
     }
+
 }
 
 
