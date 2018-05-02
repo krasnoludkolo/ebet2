@@ -18,7 +18,7 @@ class BetManager {
 
     public UUID addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO, String username) {
         if (betWithUsernameExist(matchUUID, username)) {
-            throw new BetAlreadySet("Bet for username: " + username + " and match UUID " + matchUUID + "exists");
+            throw new BetAlreadySet("Bet for username: " + username + " and match UUID " + matchUUID + " doesn't exist");
         }
         BetTyp betType = newBetDTO.getBetTyp();
         Bet bet = new Bet(matchUUID, username, betType);
