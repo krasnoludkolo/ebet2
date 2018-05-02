@@ -66,7 +66,6 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new IllegalStateException(e.getMessage());
         }
-//        return List.empty();
     }
 
 
@@ -88,6 +87,7 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
             deleteQuery(create, uuid);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         }
     }
 
