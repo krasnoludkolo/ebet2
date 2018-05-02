@@ -17,6 +17,7 @@ class DatabaseConnectionInfo {
     }
 
     Connection createConnection() throws SQLException {
+        System.out.println(username + " " + url);
         return DriverManager.getConnection(url, username, password);
     }
 

@@ -36,6 +36,7 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
             saveQuery(create, entity);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         }
 
     }
@@ -63,8 +64,9 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
             return convertToBetList(result);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         }
-        return List.empty();
+//        return List.empty();
     }
 
 
