@@ -6,7 +6,7 @@ import org.jooq.Result;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.jooq.RecordValueReader;
-import pl.krasnoludkolo.ebet2.infrastructure.ResultJOOQQuery;
+import pl.krasnoludkolo.ebet2.infrastructure.ListResultJOOQQuery;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
@@ -17,13 +17,13 @@ import java.util.UUID;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class AllMatchesFromRoundFromLeagueQuery extends ResultJOOQQuery<MatchDTO> {
+public class AllMatchesFromRoundFromLeagueQueryList extends ListResultJOOQQuery<MatchDTO> {
 
     private UUID leagueUUID;
     private int round;
     private ModelMapper modelMapper;
 
-    public AllMatchesFromRoundFromLeagueQuery(UUID leagueUUID, int round) {
+    public AllMatchesFromRoundFromLeagueQueryList(UUID leagueUUID, int round) {
         this.leagueUUID = leagueUUID;
         this.round = round;
         modelMapper = new ModelMapper();

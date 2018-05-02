@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class ResultJOOQQuery<T> {
+public abstract class ListResultJOOQQuery<T> {
 
 
-    private static final Logger LOGGER = Logger.getLogger(ResultJOOQQuery.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ListResultJOOQQuery.class.getName());
     private DatabaseConnectionInfo connectionInfo = new DatabaseConnectionInfo();
 
     public List<T> execute() {

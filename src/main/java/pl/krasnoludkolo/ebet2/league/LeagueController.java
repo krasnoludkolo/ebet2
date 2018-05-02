@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.league.api.*;
-import pl.krasnoludkolo.ebet2.league.query.AllMatchesFromRoundFromLeagueQuery;
+import pl.krasnoludkolo.ebet2.league.query.AllMatchesFromRoundFromLeagueQueryList;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +51,7 @@ class LeagueController {
 
     @GetMapping("/matches")
     public HttpEntity<List<MatchDTO>> getAllMatchesFromRound(@RequestParam UUID leagueUUID, @RequestParam int round) {
-        AllMatchesFromRoundFromLeagueQuery query = new AllMatchesFromRoundFromLeagueQuery(leagueUUID, round);
+        AllMatchesFromRoundFromLeagueQueryList query = new AllMatchesFromRoundFromLeagueQueryList(leagueUUID, round);
         List<MatchDTO> matchDTOS = query.execute();
         return new ResponseEntity<>(matchDTOS, HttpStatus.OK);
     }
