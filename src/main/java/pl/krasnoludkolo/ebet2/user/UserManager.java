@@ -3,7 +3,6 @@ package pl.krasnoludkolo.ebet2.user;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 
 import java.util.UUID;
@@ -57,11 +56,12 @@ class UserManager {
     }
 
     private byte[] encryptPassword(String password) {
-        return DigestUtils.sha256(password);
+        return Base64.encodeBase64(password.getBytes());
     }
 
     private String decryptPassword(byte[] password) {
-        return Base64.encodeBase64String(password);
+        byte[] bytes = Base64.decodeBase64(password);
+        return new String(bytes);
     }
 
 
