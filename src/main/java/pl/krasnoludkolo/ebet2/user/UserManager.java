@@ -2,6 +2,8 @@ package pl.krasnoludkolo.ebet2.user;
 
 import io.vavr.control.Either;
 import io.vavr.control.Option;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 
 import java.util.UUID;
@@ -29,9 +31,9 @@ class UserManager {
         return Either.right(tokenManager.generateTokenFor(username));
     }
 
-    //TODO encrypt password
     private UserEntity createUserEntity(String username, String password) {
-        return new UserEntity(UUID.randomUUID(), username, password);
+        byte[] encryptedPassword = encryptPassword(password);
+        return new UserEntity(UUID.randomUUID(), username, encryptedPassword);
     }
 
     private boolean userWithUsernameExists(String username) {
@@ -47,11 +49,21 @@ class UserManager {
         return Option.none();
     }
 
-    //TODO encrypt password
     public boolean checkPasswordFor(String username, String password) {
         return !repository
                 .findAll()
-                .filter(userEntity -> userEntity.getUsername().equals(username) && userEntity.getPassword().equals(password))
+                .filter(userEntity -> userEntity.getUsername().equals(username) && decryptPassword(userEntity.getPassword()).equals(password))
                 .isEmpty();
     }
+
+    private byte[] encryptPassword(String password) {
+        return DigestUtils.sha256(password);
+    }
+
+    private String decryptPassword(byte[] password) {
+        return Base64.encodeBase64String(password);
+    }
+
+
+
 }
