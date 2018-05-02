@@ -52,7 +52,7 @@ class LeagueController {
     @GetMapping("/matches")
     public HttpEntity<List<MatchDTO>> getAllMatchesFromRound(@RequestParam UUID leagueUUID, @RequestParam int round) {
         AllMatchesFromRoundFromLeagueQueryList query = new AllMatchesFromRoundFromLeagueQueryList(leagueUUID, round);
-        List<MatchDTO> matchDTOS = query.execute();
+        List<MatchDTO> matchDTOS = query.execute().asJava();
         return new ResponseEntity<>(matchDTOS, HttpStatus.OK);
     }
 
