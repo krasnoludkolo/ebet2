@@ -1,10 +1,7 @@
 package pl.krasnoludkolo.ebet2.infrastructure;
 
 import io.vavr.collection.List;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.SQLDialect;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
@@ -22,7 +19,7 @@ public abstract class ListResultJOOQQuery<T> {
     public List<T> execute() {
         try (Connection connection = connectionInfo.createConnection()) {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES);
-            Result<Record> result = query(create);
+            Result<Record> result = query(create).fetch();
             return mapResult(result);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
@@ -31,7 +28,7 @@ public abstract class ListResultJOOQQuery<T> {
     }
 
 
-    protected abstract Result<Record> query(DSLContext create);
+    protected abstract SelectConditionStep<Record> query(DSLContext create);
 
     protected abstract List<T> mapResult(Result<Record> result);
 

@@ -4,6 +4,7 @@ import io.vavr.collection.List;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.jooq.RecordValueReader;
@@ -31,12 +32,11 @@ public class AllMatchesFromRoundFromLeagueQueryList extends ListResultJOOQQuery<
     }
 
     @Override
-    protected Result<Record> query(DSLContext create) {
+    protected SelectConditionStep<Record> query(DSLContext create) {
         return create
                 .selectFrom(table("match"))
                 .where(field("league_uuid").eq(leagueUUID))
-                .and(field("round").eq(round))
-                .fetch();
+                .and(field("round").eq(round));
     }
 
     @Override
