@@ -43,28 +43,26 @@ public class ExternalFacadeTest {
     public void shouldImportLeague() {
         //given
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        config.putParameter("name", "test");
         //when
-        UUID uuid = externalFacade.initializeLeague(config, "Mock");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName");
         //then
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
         List<MatchDTO> matchDTOS = leagueDTO.getMatchDTOS();
         assertEquals(6, matchDTOS.size());
-        assertEquals("test", leagueDTO.getName());
+        assertEquals("testName", leagueDTO.getName());
     }
 
     @Test(expected = MissingConfigurationException.class)
     public void shouldNotImportLeagueBecauseOfMissingLeagueName() {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        externalFacade.initializeLeague(config, "Mock");
+        config.getParameter("asd");
     }
 
     @Test
     public void shouldUpdateLeague() {
         //given
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        config.putParameter("name", "test");
-        UUID uuid = externalFacade.initializeLeague(config, "Mock");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName");
         MatchInfo m = system.getExternalSourceMatchList().get(2);
         MatchInfo m2 = system.getExternalSourceMatchList().get(3);
         MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW);

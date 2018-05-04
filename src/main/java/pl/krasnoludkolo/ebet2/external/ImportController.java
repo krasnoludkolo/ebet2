@@ -29,9 +29,9 @@ class ImportController {
     public HttpEntity<UUID> importLeague(@RequestBody Map config) {
         String clientShortcut = (String) config.get("clientShortcut");
         Map<String, String> clientConfig = (Map<String, String>) config.get("clientConfig");
-        ExternalSourceConfiguration externalSourceConfiguration = new ExternalSourceConfiguration();
-        clientConfig.forEach(externalSourceConfiguration::putParameter);
-        UUID leagueUUID = externalFacade.initializeLeague(externalSourceConfiguration, clientShortcut);
+        ExternalSourceConfiguration externalSourceConfiguration = new ExternalSourceConfiguration(clientConfig);
+        String leagueName = (String) config.get("leagueName");
+        UUID leagueUUID = externalFacade.initializeLeague(externalSourceConfiguration, clientShortcut, leagueName);
         return new ResponseEntity<>(leagueUUID, HttpStatus.OK);
     }
 

@@ -47,8 +47,7 @@ public class AutoImportAndLeagueResultsUpdate {
     @Test
     public void shouldImportLeagueMakeBetAndUpdateResult() {
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        config.putParameter("name", "test");
-        UUID leagueUUID = externalFacade.initializeLeague(config, "Mock");
+        UUID leagueUUID = externalFacade.initializeLeague(config, "Mock", "testName");
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();

@@ -17,21 +17,20 @@ class LeagueInitializer {
         this.leagueFacade = leagueFacade;
     }
 
-    LeagueDetails initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config) {
+    LeagueDetails initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config, String leagueName) {
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
-        UUID leagueUUID = initializeLeagueInLeagueModule(config, matchInfos);
+        UUID leagueUUID = initializeLeagueInLeagueModule(matchInfos, leagueName);
         String shortcut = client.getShortcut();
         return LeagueDetailsCreator.fromExternalSourceConfiguration(leagueUUID, config, shortcut);
     }
 
-    private UUID initializeLeagueInLeagueModule(ExternalSourceConfiguration config, List<MatchInfo> matchInfos) {
-        UUID leagueUUID = createLeague(config);
+    private UUID initializeLeagueInLeagueModule(List<MatchInfo> matchInfos, String leagueName) {
+        UUID leagueUUID = createLeague(leagueName);
         matchInfos.forEach(matchInfo -> addMatchToLeague(matchInfo, leagueUUID));
         return leagueUUID;
     }
 
-    private UUID createLeague(ExternalSourceConfiguration config) {
-        String leagueName = config.getParameter("name");
+    private UUID createLeague(String leagueName) {
         return leagueFacade.createLeague(leagueName);
     }
 

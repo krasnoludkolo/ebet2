@@ -30,9 +30,9 @@ public class ExternalFacade {
         autoUpdaterScheduler = new AutoUpdaterScheduler(this);
     }
 
-    public UUID initializeLeague(ExternalSourceConfiguration config, String clientShortcut) {
+    public UUID initializeLeague(ExternalSourceConfiguration config, String clientShortcut, String leagueName) {
         ExternalSourceClient client = clientsMap.get(clientShortcut).getOrElseThrow(IllegalArgumentException::new);
-        LeagueDetails leagueDetails = leagueInitializer.initializeLeague(client, config);
+        LeagueDetails leagueDetails = leagueInitializer.initializeLeague(client, config, leagueName);
         leagueDetailsRepository.save(leagueDetails.getLeagueUUID(), leagueDetails);
         return leagueDetails.getLeagueUUID();
     }
