@@ -18,7 +18,7 @@ class UserResultEntity {
     @Id
     private String name;
     private int pointCounter;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private LeagueResultsEntity leagueResultsEntity;
 
 }

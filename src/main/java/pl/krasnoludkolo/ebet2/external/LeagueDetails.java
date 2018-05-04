@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -19,7 +20,7 @@ class LeagueDetails {
 
     @Id
     private UUID leagueUUID;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<LeagueDetailsSetting> config;
     private String clientShortcut;
 
