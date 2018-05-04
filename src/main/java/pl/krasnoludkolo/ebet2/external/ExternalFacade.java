@@ -37,6 +37,7 @@ public class ExternalFacade {
         return leagueDetails.getLeagueUUID();
     }
 
+    //TODO async
     public void updateLeague(UUID leagueUUID) {
         LeagueDetails leagueDetails = leagueDetailsRepository.findOne(leagueUUID).getOrElseThrow(IllegalArgumentException::new);
         ExternalSourceClient client = clientsMap.get(leagueDetails.getClientShortcut()).getOrElseThrow(IllegalArgumentException::new);
