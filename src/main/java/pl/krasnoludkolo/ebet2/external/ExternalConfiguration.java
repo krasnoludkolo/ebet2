@@ -10,6 +10,7 @@ import pl.krasnoludkolo.ebet2.external.externalClients.footballdata.FootballData
 import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 
 @Configuration
@@ -18,9 +19,9 @@ public class ExternalConfiguration {
 
     @Bean
     @Autowired
-    public ExternalFacade autoImportBean(LeagueFacade leagueFacade) {
+    public ExternalFacade autoImportBean(LeagueFacade leagueFacade, SpringLeagueDetailsRepository repo) {
         LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade);
-        Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
+        Repository<LeagueDetails> leagueDetailsRepository = new SpringDataRepositoryAdapter<>(repo, e -> e, e -> e);
         List<ExternalSourceClient> clients = List.of(FootballDataClient.create(), new ElkartoflichoClient());
         return new ExternalFacade(leagueFacade, leagueUpdater, clients, leagueDetailsRepository);
     }

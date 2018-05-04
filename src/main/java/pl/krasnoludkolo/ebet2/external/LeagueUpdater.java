@@ -4,6 +4,7 @@ import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
+import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
@@ -24,7 +25,8 @@ class LeagueUpdater {
     }
 
     LeagueDetails updateLeague(LeagueDetails leagueDetails, ExternalSourceClient client) {
-        List<MatchInfo> matchInfoList = client.downloadAllRounds(leagueDetails.getConfiguration());
+        ExternalSourceConfiguration config = LeagueDetailsCreator.toExternalSourceConfiguration(leagueDetails);
+        List<MatchInfo> matchInfoList = client.downloadAllRounds(config);
         List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
         List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
         newToOldMatchesMap.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));

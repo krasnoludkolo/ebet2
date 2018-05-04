@@ -21,7 +21,7 @@ class LeagueInitializer {
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
         UUID leagueUUID = initializeLeagueInLeagueModule(config, matchInfos);
         String shortcut = client.getShortcut();
-        return new LeagueDetails(leagueUUID, config, shortcut);
+        return LeagueDetailsCreator.fromExternalSourceConfiguration(leagueUUID, config, shortcut);
     }
 
     private UUID initializeLeagueInLeagueModule(ExternalSourceConfiguration config, List<MatchInfo> matchInfos) {
