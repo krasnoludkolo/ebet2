@@ -13,8 +13,6 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 class LeagueUpdater {
 
@@ -44,37 +42,38 @@ class LeagueUpdater {
 
     private List<Tuple2<UUID, MatchResult>> getNewToOldMatchesMap(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromRound) {
         return matchesFromRound
-                .filter(matchesDTOWithNotSetResult())
-                .map(toMatchUUIDAndResultTuple(matchInfoList))
-                .filter(tupleWithNoNotSetResult());
+                .filter(this::matchesDTOWithNotSetResult)
+                .map(matchDTO -> toMatchUUIDAndResultTuple(matchInfoList, matchDTO))
+                .filter(this::tupleWithNoNotSetResult);
     }
 
-    private Predicate<MatchDTO> matchesDTOWithNotSetResult() {
-        return matchDTO -> matchDTO.getResult() == MatchResult.NOT_SET;
+    private boolean matchesDTOWithNotSetResult(MatchDTO matchDTO) {
+        return matchDTO.getResult() == MatchResult.NOT_SET;
     }
 
-    private Function<MatchDTO, Tuple2<UUID, MatchResult>> toMatchUUIDAndResultTuple(List<MatchInfo> matchInfoList) {
-        return matchDTO ->
-                Tuple.of(matchDTO.getUuid(), findCorrespondingMatch(matchDTO, matchInfoList).getResult());
+    private Tuple2<UUID, MatchResult> toMatchUUIDAndResultTuple(List<MatchInfo> matchInfoList, MatchDTO matchDTO) {
+        return Tuple.of(matchDTO.getUuid(), findCorrespondingMatch(matchDTO, matchInfoList).getResult());
     }
+
 
     private MatchInfo findCorrespondingMatch(MatchDTO matchDTO, List<MatchInfo> matchInfoList) {
         return matchInfoList
-                .find(correspondingMatch(matchDTO))
+                .find(matchInfo -> correspondingMatch(matchDTO, matchInfo))
                 .getOrElseThrow(IllegalStateException::new);
     }
 
-    private Predicate<MatchInfo> correspondingMatch(MatchDTO matchDTO) {
-        return matchInfo -> isSameMatch(matchDTO, matchInfo);
-    }
-
-    private Predicate<Tuple2<UUID, MatchResult>> tupleWithNoNotSetResult() {
-        return t -> t._2 != MatchResult.NOT_SET;
+    private boolean correspondingMatch(MatchDTO matchDTO, MatchInfo matchInfo) {
+        return isSameMatch(matchDTO, matchInfo);
     }
 
     private boolean isSameMatch(MatchDTO matchDTO, MatchInfo matchInfo) {
         return Objects.equals(matchDTO.getHost(), matchInfo.getHostName())
-                && Objects.equals(matchDTO.getGuest(), matchInfo.getGuestName());
+                && Objects.equals(matchDTO.getGuest(), matchInfo.getGuestName())
+                && matchDTO.getRound() == matchInfo.getRound();
+    }
+
+    private boolean tupleWithNoNotSetResult(Tuple2<UUID, MatchResult> t) {
+        return t._2 != MatchResult.NOT_SET;
     }
 
 }
