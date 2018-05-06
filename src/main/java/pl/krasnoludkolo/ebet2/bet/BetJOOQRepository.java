@@ -77,7 +77,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     protected void updateQuery(DSLContext create, BetEntity entity, UUID uuid) {
         create
                 .update(table(BET_ENTITY))
-                .set(field("bet_type"), entity.getBetTyp().ordinal())
+                .set(field("bet_typ"), entity.getBetTyp().ordinal())
                 .set(field("match_uuid"), entity.getMatchUuid())
                 .set(field("username"), entity.getUsername())
                 .where(field("uuid").eq(uuid))

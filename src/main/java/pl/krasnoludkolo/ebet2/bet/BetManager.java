@@ -38,7 +38,7 @@ class BetManager {
     public void updateBetToMatch(UUID betUUID, BetTyp betType) {
         Bet bet = repository.findOne(betUUID).getOrElseThrow(BetNotFound::new);
         bet.updateBetType(betType);
-        repository.save(betUUID, bet);
+        repository.update(betUUID, bet);
     }
 
     public void removeBet(UUID betUUID) {
