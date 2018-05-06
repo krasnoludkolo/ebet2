@@ -50,6 +50,7 @@ class BetController {
         return HttpStatus.OK;
     }
 
+    @CrossOrigin
     @PutMapping
     public HttpStatus updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
         betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
