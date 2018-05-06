@@ -49,7 +49,7 @@ class BetController {
         return HttpStatus.OK;
     }
 
-    @PutMapping
+    @PutMapping("/bet")
     public HttpStatus updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
         betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
         return HttpStatus.OK;
