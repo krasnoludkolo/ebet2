@@ -12,7 +12,7 @@ import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "*", allowCredentials = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("api")
 class BetController {
