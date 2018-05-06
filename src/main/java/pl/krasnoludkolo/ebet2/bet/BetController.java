@@ -12,7 +12,6 @@ import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("api")
 class BetController {
@@ -50,7 +49,6 @@ class BetController {
         return HttpStatus.OK;
     }
 
-    @CrossOrigin
     @PutMapping
     public HttpStatus updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
         betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
