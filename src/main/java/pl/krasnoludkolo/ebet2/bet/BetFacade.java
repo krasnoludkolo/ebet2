@@ -34,6 +34,7 @@ public class BetFacade {
     }
 
     public void updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
+        //TODO get
         String username = userFacade.getUsername(auth).get();
         if (!betManager.correspondingUsername(betUUID, username)) {
             throw new IllegalArgumentException("Wrong user");
