@@ -1,6 +1,7 @@
 package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +76,9 @@ public class BetFacadeTest {
     @Test(expected = BetNotFound.class)
     public void shouldNotUpdateBet() {
         //when
-        betFacade.updateBetToMatch(UUID.randomUUID(), BetTyp.DRAW, auth);
+        Either<String, Void> shouldBeError = betFacade.updateBetToMatch(UUID.randomUUID(), BetTyp.DRAW, auth);
+        assertTrue(shouldBeError.isLeft());
+        assertEquals("Bet not found", shouldBeError.getLeft());
     }
 
     @Test

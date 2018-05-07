@@ -33,13 +33,16 @@ public class BetFacade {
         return betManager.findBetByUUID(betUUID);
     }
 
-    public void updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
-        //TODO get
-        String username = userFacade.getUsername(auth).get();
-        if (!betManager.correspondingUsername(betUUID, username)) {
-            throw new IllegalArgumentException("Wrong user");
+    public Either<String, Void> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
+        Either<String, String> username = userFacade.getUsername(auth);
+        if (username.isLeft()) {
+            return Either.left(username.getLeft());
+        }
+        if (!betManager.correspondingUsername(betUUID, username.get())) {
+            return Either.left("Wrong user");
         }
         betManager.updateBetToMatch(betUUID, betType);
+        return Either.right(null);
     }
 
     public void removeBet(UUID betUUID) {
