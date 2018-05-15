@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.query.BetForUserToMatchQuery;
+import pl.krasnoludkolo.ebet2.bet.query.BetsFromLeagueToUserQuery;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("query")
 class BetQueryController {
 
     @GetMapping("/match/bet")
@@ -24,5 +26,13 @@ class BetQueryController {
                 .getOrElse(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping
+    public ResponseEntity<List<BetDTO>> findAllBetsToLeague(@RequestParam String username, @RequestParam UUID leagueUUID) {
+        List<BetDTO> list = new BetsFromLeagueToUserQuery(username, leagueUUID)
+                .execute()
+                .asJava();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+
+    }
 
 }
