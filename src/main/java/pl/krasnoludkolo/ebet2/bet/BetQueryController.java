@@ -26,7 +26,7 @@ class BetQueryController {
                 .getOrElse(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping
+    @GetMapping("/league/bets")
     public ResponseEntity<List<BetDTO>> findAllBetsToLeague(@RequestParam String username, @RequestParam UUID leagueUUID) {
         List<BetDTO> list = new BetsFromLeagueToUserQuery(username, leagueUUID)
                 .execute()
