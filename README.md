@@ -64,6 +64,10 @@ Handle calculating users score in each league.
 
 Importing data from external source. 
 
+* Users
+
+Register and login users.
+
 ## Spring
 I try to avoid using spring 'magic'. Why? To find another way to build application then @Component and @Autowired.
 Currently I use spring to put together modules as beans but I believe I could use ratpack and jooq as well.
