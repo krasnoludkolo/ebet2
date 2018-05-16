@@ -8,17 +8,17 @@ Current features:
 - Make, update, delete bets on matches.
 - Automatically update user's score when match result is set.
 - Download matches info from external source.
+- Create user module to register users.
 
 Under development:
 - Frond-end in angular (different project)
-- Create user module to register users.
 - Scheduler to leagues auto-update
+- API security (JWT tokens)
 
 Planned features:
 - Remove spring
-- API security
 - CQRS 
-- A few implementation details
+
 
 ## Frameworks and libraries
 
@@ -26,7 +26,6 @@ Planned features:
 * unirest
 * vavr
 * lombok
-* thymeleaf
 * JOOQ
 
 Postgesql as database
