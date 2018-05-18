@@ -32,11 +32,11 @@ public class InMemorySystem {
 
     private void configureModules() {
         userFacade = new UserConfiguration().inMemoryUserFacade();
+        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade();
         externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
-        betFacade = new BetConfiguration().inMemoryBetFacade(userFacade);
-        resultFacade = new ResultConfiguration().inMemoryResult(betFacade);
-        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(resultFacade);
-        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, externalClientMock);
+        betFacade = new BetConfiguration().inMemoryBetFacade(userFacade, leagueFacade);
+        resultFacade = new ResultConfiguration().inMemoryResult(betFacade, leagueFacade);
+        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, resultFacade, externalClientMock);
     }
 
     private void addSampleUsers() {

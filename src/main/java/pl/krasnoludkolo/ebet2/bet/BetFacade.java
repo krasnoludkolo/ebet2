@@ -20,29 +20,25 @@ public class BetFacade {
         this.userFacade = userFacade;
     }
 
-    public UUID addBetToMatch(NewBetDTO newBetDTO, String auth) {
-        Either<String, String> username = userFacade.getUsername(auth);
-        if (username.isLeft()) {
-            //TODO change method signature to better  error handling
-            throw new IllegalArgumentException(username.getLeft());
-        }
-        return betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO, username.get());
+    public Either<String, UUID> addBetToMatch(NewBetDTO newBetDTO, String auth) {
+        return userFacade
+                .getUsername(auth)
+                .flatMap(user -> betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO, user));
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
         return betManager.findBetByUUID(betUUID);
     }
 
-    public Either<String, Void> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
+    public Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
         Either<String, String> username = userFacade.getUsername(auth);
         if (username.isLeft()) {
             return Either.left(username.getLeft());
         }
         if (!betManager.correspondingUsername(betUUID, username.get())) {
-            return Either.left("Wrong user");
+            return Either.left("Bet with uuid:" + betUUID + " and username:" + username.get() + "not found");
         }
-        betManager.updateBetToMatch(betUUID, betType);
-        return Either.right(null);
+        return betManager.updateBetToMatch(betUUID, betType);
     }
 
     public void removeBet(UUID betUUID) {

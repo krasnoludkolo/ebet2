@@ -12,11 +12,16 @@ import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
 public class MultiRoundsTest {
+
+    private LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
+
 
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
@@ -42,11 +47,11 @@ public class MultiRoundsTest {
         //when
         String user = "user1";
         UUID leagueUUID = leagueFacade.createLeague("new");
-        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
-        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID));
-        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID));
-        UUID matchUUID4 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 4, leagueUUID));
-        UUID matchUUID5 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 5, leagueUUID));
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear));
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear));
+        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear));
+        UUID matchUUID4 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 4, leagueUUID, nextYear));
+        UUID matchUUID5 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 5, leagueUUID, nextYear));
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth);
@@ -58,6 +63,11 @@ public class MultiRoundsTest {
         leagueFacade.setMatchResult(matchUUID4, MatchResult.HOST_WON);
         leagueFacade.setMatchResult(matchUUID5, MatchResult.DRAW);
 
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        resultFacade.updateLeagueResultsForMatch(matchUUID2);
+        resultFacade.updateLeagueResultsForMatch(matchUUID3);
+        resultFacade.updateLeagueResultsForMatch(matchUUID4);
+        resultFacade.updateLeagueResultsForMatch(matchUUID5);
         //then
         Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
         UserResultDTO userResult = dto.get();
@@ -71,9 +81,9 @@ public class MultiRoundsTest {
         String user2 = "user2";
         String user3 = "user3";
         UUID leagueUUID = leagueFacade.createLeague("new");
-        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID));
-        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID));
-        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID));
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear));
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear));
+        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear));
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
@@ -86,6 +96,10 @@ public class MultiRoundsTest {
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
+
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        resultFacade.updateLeagueResultsForMatch(matchUUID2);
+        resultFacade.updateLeagueResultsForMatch(matchUUID3);
 
         //then
         Option<UserResultDTO> dto1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, user1);

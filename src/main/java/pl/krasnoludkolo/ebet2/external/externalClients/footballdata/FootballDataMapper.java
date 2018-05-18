@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 class FootballDataMapper {
 
     List<MatchInfo> getMatchInfosFromJsonArray(JSONArray fixtures) {
@@ -24,6 +27,7 @@ class FootballDataMapper {
         int round = fixture.getInt("matchday");
         String status = fixture.getString("status");
         boolean finished = status.equals("FINISHED");
+        LocalDateTime startDate = getDateFromFixtureJSONObject(fixture);
         MatchResult result = MatchResult.NOT_SET;
         if (finished) {
             JSONObject matchResult = fixture.getJSONObject("result");
@@ -31,7 +35,11 @@ class FootballDataMapper {
             int goalsAwayTeam = matchResult.getInt("goalsAwayTeam");
             result = MatchResult.fromResult(goalsHomeTeam, goalsAwayTeam);
         }
-        return new MatchInfo(homeTeamName, awayTeamName, round, finished, result);
+        return new MatchInfo(homeTeamName, awayTeamName, round, finished, result, startDate);
+    }
+
+    private LocalDateTime getDateFromFixtureJSONObject(JSONObject fixture) {
+        return ZonedDateTime.parse(fixture.getString("date")).toLocalDateTime();
     }
 
 }

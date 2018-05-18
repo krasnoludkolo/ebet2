@@ -6,7 +6,6 @@ import io.vavr.collection.Map;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 
 import java.util.UUID;
 
@@ -18,8 +17,8 @@ public class ExternalFacade {
     private Repository<LeagueDetails> leagueDetailsRepository;
     private AutoUpdaterScheduler autoUpdaterScheduler;
 
-    ExternalFacade(LeagueFacade leagueFacade, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
-        leagueInitializer = new LeagueInitializer(leagueFacade);
+    ExternalFacade(LeagueInitializer leagueInitializer, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
+        this.leagueInitializer = leagueInitializer;
         this.leagueUpdater = leagueUpdater;
         clientsMap = clients.toMap(client -> Tuple.of(client.getShortcut(), client));
         this.leagueDetailsRepository = leagueDetailsRepository;

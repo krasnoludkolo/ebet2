@@ -17,6 +17,8 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +68,8 @@ public class AutoImportAndLeagueResultsUpdate {
     private List<MatchInfo> getListWithNewResult() {
         List<MatchInfo> externalSourceMatchList = system.getExternalSourceMatchList();
         MatchInfo m = externalSourceMatchList.get(2);
-        MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW);
+        LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
+        MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW, nextYear);
         externalSourceMatchList = externalSourceMatchList.replace(m, nm);
         return externalSourceMatchList;
     }

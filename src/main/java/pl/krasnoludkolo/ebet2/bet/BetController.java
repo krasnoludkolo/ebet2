@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.bet;
 
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -24,9 +25,11 @@ class BetController {
     }
 
     @PostMapping("/bet")
-    public HttpEntity<UUID> addBetToMatch(@RequestHeader("Authorization") String auth, @RequestBody NewBetDTO newBetDTO) {
-        UUID uuid = betFacade.addBetToMatch(newBetDTO, auth);
-        return new ResponseEntity<>(uuid, HttpStatus.CREATED);
+    public HttpEntity<String> addBetToMatch(@RequestHeader("Authorization") String auth, @RequestBody NewBetDTO newBetDTO) {
+        Either<String, UUID> betUUID = betFacade.addBetToMatch(newBetDTO, auth);
+        return betUUID
+                .map(uuid -> new ResponseEntity<>(uuid.toString(), HttpStatus.CREATED))
+                .getOrElse(() -> new ResponseEntity<>(betUUID.getLeft(), HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/bet")

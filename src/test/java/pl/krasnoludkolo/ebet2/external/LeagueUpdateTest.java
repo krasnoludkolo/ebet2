@@ -9,28 +9,32 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
 public class LeagueUpdateTest {
 
+    private LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
+
     private io.vavr.collection.List<MatchInfo> firstMatchList = io.vavr.collection.List.of(
-            new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON),
-            new MatchInfo("c", "d", 1, true, MatchResult.GUEST_WON),
-            new MatchInfo("a", "c", 2, false, MatchResult.NOT_SET),
-            new MatchInfo("b", "d", 2, false, MatchResult.NOT_SET),
-            new MatchInfo("a", "d", 3, false, MatchResult.NOT_SET),
-            new MatchInfo("c", "b", 3, false, MatchResult.NOT_SET)
+            new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON, nextYear),
+            new MatchInfo("c", "d", 1, true, MatchResult.GUEST_WON, nextYear),
+            new MatchInfo("a", "c", 2, false, MatchResult.NOT_SET, nextYear),
+            new MatchInfo("b", "d", 2, false, MatchResult.NOT_SET, nextYear),
+            new MatchInfo("a", "d", 3, false, MatchResult.NOT_SET, nextYear),
+            new MatchInfo("c", "b", 3, false, MatchResult.NOT_SET, nextYear)
     );
 
     private io.vavr.collection.List<MatchInfo> updated = io.vavr.collection.List.of(
-            new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON),
-            new MatchInfo("c", "d", 1, true, MatchResult.GUEST_WON),
-            new MatchInfo("a", "c", 2, true, MatchResult.DRAW),
-            new MatchInfo("b", "d", 2, true, MatchResult.DRAW),
-            new MatchInfo("a", "d", 3, false, MatchResult.NOT_SET),
-            new MatchInfo("c", "b", 3, false, MatchResult.NOT_SET)
+            new MatchInfo("a", "b", 1, true, MatchResult.HOST_WON, nextYear),
+            new MatchInfo("c", "d", 1, true, MatchResult.GUEST_WON, nextYear),
+            new MatchInfo("a", "c", 2, true, MatchResult.DRAW, nextYear),
+            new MatchInfo("b", "d", 2, true, MatchResult.DRAW, nextYear),
+            new MatchInfo("a", "d", 3, false, MatchResult.NOT_SET, nextYear),
+            new MatchInfo("c", "b", 3, false, MatchResult.NOT_SET, nextYear)
     );
 
     private ExternalFacade externalFacade;

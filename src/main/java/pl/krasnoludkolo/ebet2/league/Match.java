@@ -8,6 +8,7 @@ import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,23 +24,25 @@ class Match {
     private MatchResult result;
     @ManyToOne
     private League league;
+    private LocalDateTime matchStartDate;
 
 
     static Match fromDTO(NewMatchDTO dto, League league) {
-        return new Match(dto.getRound(), dto.getHost(), dto.getGuest(), league);
+        return new Match(dto.getRound(), dto.getHost(), dto.getGuest(), league, dto.getMatchStartDate());
     }
 
-    private Match(int round, String host, String guest, League league) {
-        this(UUID.randomUUID(), round, host, guest, MatchResult.NOT_SET, league);
+    private Match(int round, String host, String guest, League league, LocalDateTime startDate) {
+        this(UUID.randomUUID(), round, host, guest, MatchResult.NOT_SET, league, startDate);
     }
 
-    private Match(UUID uuid, int round, String host, String guest, MatchResult result, League league) {
+    private Match(UUID uuid, int round, String host, String guest, MatchResult result, League league, LocalDateTime startDate) {
         this.uuid = uuid;
         this.round = round;
         this.host = host;
         this.guest = guest;
         this.result = result;
         this.league = league;
+        this.matchStartDate = startDate;
     }
 
     void setMatchResult(MatchResult matchResult) {
@@ -53,8 +56,12 @@ class Match {
         return this.round == round;
     }
 
+    boolean hasAlreadyBegun() {
+        return LocalDateTime.now().isAfter(matchStartDate);
+    }
+
     MatchDTO toDTO() {
-        return new MatchDTO(uuid, round, host, guest, result, league.getUuid());
+        return new MatchDTO(uuid, matchStartDate, round, host, guest, result, league.getUuid());
     }
 
     UUID getUuid() {

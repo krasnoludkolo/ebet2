@@ -10,6 +10,7 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -17,9 +18,11 @@ import java.util.UUID;
 class LeagueUpdater {
 
     private LeagueFacade leagueFacade;
+    private ResultFacade resultFacade;
 
-    LeagueUpdater(LeagueFacade leagueFacade) {
+    LeagueUpdater(LeagueFacade leagueFacade, ResultFacade resultFacade) {
         this.leagueFacade = leagueFacade;
+        this.resultFacade = resultFacade;
     }
 
     LeagueDetails updateLeague(LeagueDetails leagueDetails, ExternalSourceClient client) {
@@ -27,8 +30,13 @@ class LeagueUpdater {
         List<MatchInfo> matchInfoList = client.downloadAllRounds(config);
         List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
         List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
-        newToOldMatchesMap.forEach(t -> leagueFacade.setMatchResult(t._1, t._2));
+        newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
         return leagueDetails;
+    }
+
+    private void setMatchResultsAndUpdateResults(Tuple2<UUID, MatchResult> t) {
+        leagueFacade.setMatchResult(t._1, t._2);
+        resultFacade.updateLeagueResultsForMatch(t._1);
     }
 
     private List<MatchDTO> getAllMatchesFromLeague(LeagueDetails leagueDetails) {

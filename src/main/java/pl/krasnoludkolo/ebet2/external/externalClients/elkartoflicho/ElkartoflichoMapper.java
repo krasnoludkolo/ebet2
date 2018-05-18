@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
+import java.time.LocalDateTime;
+
 class ElkartoflichoMapper {
     public List<MatchInfo> mapToMatchInfoList(JSONArray allRounds) {
         List<MatchInfo> result = List.empty();
@@ -22,13 +24,18 @@ class ElkartoflichoMapper {
         String guestName = match.getString("guest_team");
         int round = match.getInt("match_day");
         boolean finished = match.getString("status").equals("FINISHED");
+        LocalDateTime startDate = getDataFromMatchJSONObject(match);
         MatchResult result = MatchResult.NOT_SET;
         if (finished) {
-            int hostGloas = match.getInt("host_result");
+            int hostGoals = match.getInt("host_result");
             int guestGoals = match.getInt("guest_result");
-            result = MatchResult.fromResult(hostGloas, guestGoals);
+            result = MatchResult.fromResult(hostGoals, guestGoals);
         }
-        return new MatchInfo(hostName, guestName, round, finished, result);
+        return new MatchInfo(hostName, guestName, round, finished, result, startDate);
+    }
+
+    private LocalDateTime getDataFromMatchJSONObject(JSONObject match) {
+        return LocalDateTime.parse(match.getString("data"));
     }
 
 }

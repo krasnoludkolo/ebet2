@@ -16,12 +16,13 @@ class LeagueResultsManager {
 
 
     public LeagueResults getResultsForLeague(UUID leagueUUID) {
-        return repository.findOne(leagueUUID).getOrElseThrow(IllegalStateException::new);
+        return repository.findOne(leagueUUID).getOrElse(createResultsForLeague(leagueUUID));
     }
 
-    public void createResultsForLeague(UUID uuid) {
+    private LeagueResults createResultsForLeague(UUID uuid) {
         LeagueResults leagueResults = LeagueResults.create(uuid);
         repository.save(uuid, leagueResults);
+        return leagueResults;
     }
 
     public Option<UserResult> getResultsFromLeagueToUser(UUID leagueUUID, final String username) {

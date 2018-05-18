@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -14,8 +15,9 @@ public class MatchInfo {
     private final String hostName;
     private final String guestName;
     private final int round;
-    private boolean finished;
-    private MatchResult result;
+    private final boolean finished;
+    private final MatchResult result;
+    private final LocalDateTime matchStartDate;
 
     @Override
     public boolean equals(Object o) {
@@ -31,7 +33,6 @@ public class MatchInfo {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(hostName, guestName, round, finished, result);
     }
 }

@@ -1,9 +1,9 @@
 package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.league.api.*;
-import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import javax.transaction.Transactional;
 import java.util.UUID;
@@ -13,19 +13,15 @@ public class LeagueFacade {
 
     private LeagueManager leagueManager;
     private MatchManager matchManager;
-    private ResultFacade resultFacade;
 
-    public LeagueFacade(LeagueManager leagueManager, MatchManager matchManager, ResultFacade resultFacade) {
+    public LeagueFacade(LeagueManager leagueManager, MatchManager matchManager) {
         this.leagueManager = leagueManager;
         this.matchManager = matchManager;
-        this.resultFacade = resultFacade;
     }
 
     public UUID createLeague(String name) {
         League league = leagueManager.createLeague(name);
-        UUID uuid = league.getUuid();
-        resultFacade.createResultsForLeague(uuid);
-        return uuid;
+        return league.getUuid();
     }
 
     public Option<LeagueDTO> findLeagueByName(String name) {
@@ -55,8 +51,6 @@ public class LeagueFacade {
 
     public void setMatchResult(UUID matchUUID, MatchResult result) {
         matchManager.setMatchResult(matchUUID, result);
-        MatchDTO matchDTO = matchManager.findByUUID(matchUUID).getOrElseThrow(IllegalStateException::new).toDTO();
-        resultFacade.updateLeagueResultsForMatch(matchDTO);
     }
 
     public void removeMatch(UUID matchUUID) {
@@ -69,5 +63,12 @@ public class LeagueFacade {
 
     public List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
         return leagueManager.getAllMatchesFromLeague(uuid);
+    }
+
+    public Either<String, Boolean> hasMatchAlreadyBegun(UUID matchUUID) {
+        return matchManager
+                .findByUUID(matchUUID)
+                .toEither("Match not found")
+                .map(Match::hasAlreadyBegun);
     }
 }
