@@ -14,11 +14,8 @@ class LeagueResultsUpdater {
     }
 
     void updateResultsForMatchInLeague(LeagueResults resultsForLeague, MatchResult result, List<BetDTO> bets) {
-        bets
-                .filter(betDTO -> betDTO.getBetTyp().match(result))
-                .map(BetDTO::getUsername)
-                .forEach(resultsForLeague::addPointToUser);
-        resultsRepository.update(resultsForLeague.getLeagueUUID(), resultsForLeague);
+        LeagueResults updatedResults = resultsForLeague.updateResults(result, bets);
+        resultsRepository.update(resultsForLeague.getLeagueUUID(), updatedResults);
     }
 
 }

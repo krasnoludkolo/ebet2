@@ -1,7 +1,10 @@
 package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.collection.List;
+import io.vavr.collection.PriorityQueue;
 import io.vavr.control.Option;
+import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
+import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
@@ -9,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,44 +22,61 @@ class LeagueResults {
     private final static Logger LOGGER = getLogger(LeagueResults.class.getName());
 
 
-    private UUID leagueUUID;
-    private List<UserResult> userResultList;
+    private final UUID leagueUUID;
+    private final PriorityQueue<UserResult> userResultPriorityQueue;
 
     static LeagueResults create(UUID leagueUUID) {
-        return new LeagueResults(leagueUUID, List.empty());
+        return new LeagueResults(leagueUUID, PriorityQueue.empty());
     }
 
     static LeagueResults fromEntity(LeagueResultsEntity leagueResultsEntity) {
         UUID leagueUUID = leagueResultsEntity.getLeagueUUID();
         List<UserResult> list = List.ofAll(leagueResultsEntity.getUserResultList()).map(UserResult::fromEntity);
-        return new LeagueResults(leagueUUID, list);
+        return new LeagueResults(leagueUUID, PriorityQueue.ofAll(list));
     }
 
-    private LeagueResults(UUID leagueUUID, List<UserResult> userResultList) {
+    private LeagueResults(UUID leagueUUID, PriorityQueue<UserResult> userResultPriorityQueue) {
         this.leagueUUID = leagueUUID;
-        this.userResultList = userResultList.sorted();
+        this.userResultPriorityQueue = userResultPriorityQueue;
     }
 
-    void addPointToUser(String username) {
-        LOGGER.log(Level.INFO, "Add point to " + username);
-        UserResult result = userResultList
-                .find(withName(username))
-                .getOrElse(createNewUserResultAndSave(username));
-        result.addPoint();
-        this.userResultList = userResultList.sorted();
+    LeagueResults updateResults(MatchResult result, List<BetDTO> bets) {
+
+        List<BetDTO> correctBets = bets.filter(betDTO -> betDTO.getBetTyp().match(result));
+        List<UserResult> incorrectBetNotInQueue = getIncorrectBetsNotInQueue(bets, correctBets);
+
+        PriorityQueue<UserResult> results = userResultPriorityQueue
+                .enqueueAll(correctBets.filter(this::betNotInResultQueue).map(BetDTO::getUsername).map(this::createNewUserResult))
+                .map(userResult -> {
+                    for (BetDTO bet : correctBets) {
+                        if (userResult.hasName(bet.getUsername())) {
+                            return userResult.addPoint();
+                        }
+                    }
+                    return userResult;
+                })
+                .enqueueAll(incorrectBetNotInQueue);
+        return new LeagueResults(leagueUUID, results);
     }
 
-    private Supplier<UserResult> createNewUserResultAndSave(String user) {
+    private List<UserResult> getIncorrectBetsNotInQueue(List<BetDTO> bets, List<BetDTO> correctBets) {
+        return bets.removeAll(correctBets)
+                .filter(this::betNotInResultQueue)
+                .map(BetDTO::getUsername)
+                .map(this::createNewUserResult);
+    }
+
+    private boolean betNotInResultQueue(BetDTO betDTO) {
+        return userResultPriorityQueue.find(userResult -> userResult.hasName(betDTO.getUsername())).isEmpty();
+    }
+
+    private UserResult createNewUserResult(String user) {
         LOGGER.log(Level.INFO, "Create new user with name: " + user);
-        return () -> {
-            UserResult userResult = UserResult.create(user);
-            userResultList = userResultList.append(userResult);
-            return userResult;
-        };
+        return UserResult.create(user);
     }
 
     Option<UserResult> getUserResultForName(String username) {
-        return userResultList.find(withName(username));
+        return userResultPriorityQueue.find(withName(username));
     }
 
     private Predicate<UserResult> withName(String user) {
@@ -65,7 +84,7 @@ class LeagueResults {
     }
 
     LeagueResultsDTO toDTO() {
-        List<UserResultDTO> userResultListDTOS = userResultList.map(UserResult::toDTO);
+        List<UserResultDTO> userResultListDTOS = userResultPriorityQueue.toList().map(UserResult::toDTO);
         return new LeagueResultsDTO(userResultListDTOS, leagueUUID);
     }
 
@@ -83,12 +102,12 @@ class LeagueResults {
 
     @Override
     public int hashCode() {
-        return Objects.hash(leagueUUID, userResultList);
+        return Objects.hash(leagueUUID, userResultPriorityQueue);
     }
 
     LeagueResultsEntity toEntity() {
         LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
-        List<UserResultEntity> list = userResultList.map(r -> r.toEntity(entity));
+        List<UserResultEntity> list = userResultPriorityQueue.map(r -> r.toEntity(entity)).toList();
         entity.setUserResultList(list.toJavaList());
         return entity;
     }

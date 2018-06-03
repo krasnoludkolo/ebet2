@@ -25,8 +25,8 @@ class UserResult implements Comparable<UserResult> {
         this.pointCounter = pointCounter;
     }
 
-    void addPoint() {
-        pointCounter.addPoint();
+    UserResult addPoint() {
+        return new UserResult(name, pointCounter.addPoint());
     }
 
     boolean hasName(String name) {

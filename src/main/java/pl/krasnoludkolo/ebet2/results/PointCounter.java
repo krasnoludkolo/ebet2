@@ -4,7 +4,7 @@ import java.util.Objects;
 
 class PointCounter {
 
-    private int count;
+    private final int count;
 
     static PointCounter withCount(int count) {
         return new PointCounter(count);
@@ -18,8 +18,8 @@ class PointCounter {
         this.count = count;
     }
 
-    void addPoint() {
-        count++;
+    PointCounter addPoint() {
+        return withCount(count + 1);
     }
 
     int getCount() {
@@ -36,7 +36,6 @@ class PointCounter {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(count);
     }
 }

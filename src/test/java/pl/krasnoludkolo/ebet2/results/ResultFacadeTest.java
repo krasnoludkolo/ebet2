@@ -65,8 +65,8 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(matchUUID);
 
         //then
-        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        UserResultDTO userResult = dto.get();
+        UserResultDTO userResult = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+
         assertEquals(1, userResult.getPointCounter());
     }
 
@@ -184,6 +184,20 @@ public class ResultFacadeTest {
     @Test(expected = MatchNotFound.class)
     public void shouldNotUpdateNoExistingMatch() {
         resultFacade.updateLeagueResultsForMatch(UUID.randomUUID());
+    }
+
+    @Test
+    public void shouldCreateEmptyResultIfUserDidNotGetAnyPoint() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear));
+        //when
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        //then
+        UserResultDTO user = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
+        assertEquals(0, user.getPointCounter());
     }
 
 }
