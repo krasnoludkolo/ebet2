@@ -73,7 +73,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldNotAddPointForIncorrectBet() {
         //when
-        String user = "user";
+        String user = "user1";
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear));
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
@@ -82,8 +82,8 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(matchUUID);
 
         //then
-        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
-        assertTrue(dto.isEmpty());
+        UserResultDTO dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        assertEquals(0, dto.getPointCounter());
     }
 
     @Test
