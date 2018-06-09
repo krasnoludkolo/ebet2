@@ -21,7 +21,6 @@ class LeagueResults {
 
     private final static Logger LOGGER = getLogger(LeagueResults.class.getName());
 
-
     private final UUID leagueUUID;
     private final PriorityQueue<UserResult> userResultPriorityQueue;
 
@@ -43,27 +42,30 @@ class LeagueResults {
     LeagueResults updateResults(MatchResult result, List<BetDTO> bets) {
 
         List<BetDTO> correctBets = bets.filter(betDTO -> betDTO.getBetTyp().match(result));
-        List<UserResult> incorrectBetNotInQueue = getIncorrectBetsNotInQueue(bets, correctBets);
+        List<UserResult> userResultsWithIncorrectBetNotInQueue = getUserResultsWithIncorrectBetNotInQueue(bets, correctBets);
+        List<UserResult> userResultsWithCorrectBetsNotInQueue = getUserResultsForBetsNotInQueue(correctBets);
 
         PriorityQueue<UserResult> results = userResultPriorityQueue
-                .enqueueAll(correctBets.filter(this::betNotInResultQueue).map(BetDTO::getUsername).map(this::createNewUserResult))
-                .map(userResult -> {
-                    for (BetDTO bet : correctBets) {
-                        if (userResult.hasName(bet.getUsername())) {
-                            return userResult.addPoint();
-                        }
-                    }
-                    return userResult;
-                })
-                .enqueueAll(incorrectBetNotInQueue);
+                .enqueueAll(userResultsWithCorrectBetsNotInQueue)
+                .map(userResult -> addPointsForCorrectBet(correctBets, userResult))
+                .enqueueAll(userResultsWithIncorrectBetNotInQueue);
+
         return new LeagueResults(leagueUUID, results);
     }
 
-    private List<UserResult> getIncorrectBetsNotInQueue(List<BetDTO> bets, List<BetDTO> correctBets) {
-        return bets.removeAll(correctBets)
-                .filter(this::betNotInResultQueue)
-                .map(BetDTO::getUsername)
-                .map(this::createNewUserResult);
+    private UserResult addPointsForCorrectBet(final List<BetDTO> correctBets, final UserResult userResult) {
+        return correctBets
+                .find(betDTO -> userResult.hasName(betDTO.getUsername()))
+                .map(t -> userResult.addPoint())
+                .getOrElse(userResult);
+    }
+
+    private List<UserResult> getUserResultsWithIncorrectBetNotInQueue(List<BetDTO> bets, List<BetDTO> correctBets) {
+        return getUserResultsForBetsNotInQueue(bets.removeAll(correctBets));
+    }
+
+    private List<UserResult> getUserResultsForBetsNotInQueue(List<BetDTO> betsList) {
+        return betsList.filter(this::betNotInResultQueue).map(BetDTO::getUsername).map(this::createNewUserResult);
     }
 
     private boolean betNotInResultQueue(BetDTO betDTO) {
@@ -88,6 +90,13 @@ class LeagueResults {
         return new LeagueResultsDTO(userResultListDTOS, leagueUUID);
     }
 
+    LeagueResultsEntity toEntity() {
+        LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
+        List<UserResultEntity> list = userResultPriorityQueue.map(r -> r.toEntity(entity)).toList();
+        entity.setUserResultList(list.toJavaList());
+        return entity;
+    }
+
     UUID getLeagueUUID() {
         return leagueUUID;
     }
@@ -103,12 +112,5 @@ class LeagueResults {
     @Override
     public int hashCode() {
         return Objects.hash(leagueUUID, userResultPriorityQueue);
-    }
-
-    LeagueResultsEntity toEntity() {
-        LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
-        List<UserResultEntity> list = userResultPriorityQueue.map(r -> r.toEntity(entity)).toList();
-        entity.setUserResultList(list.toJavaList());
-        return entity;
     }
 }
