@@ -10,6 +10,7 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.Objects;
@@ -30,8 +31,14 @@ class LeagueUpdater {
         List<MatchInfo> matchInfoList = client.downloadAllRounds(config);
         List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
         List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
+        List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague).map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueDetails.getLeagueUUID()));
         newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
+        newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
         return leagueDetails;
+    }
+
+    private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
+        return new NewMatchDTO(matchInfo.getHostName(), matchInfo.getGuestName(), matchInfo.getRound(), leagueUUID, matchInfo.getMatchStartDate());
     }
 
     private void setMatchResultsAndUpdateResults(Tuple2<UUID, MatchResult> t) {
@@ -82,6 +89,15 @@ class LeagueUpdater {
 
     private boolean tupleWithNoNotSetResult(Tuple2<UUID, MatchResult> t) {
         return t._2 != MatchResult.NOT_SET;
+    }
+
+    private List<MatchInfo> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
+        return matchInfoList
+                .removeAll(matchInfo -> isInLeague(matchInfo, matchesFromLeague));
+    }
+
+    private boolean isInLeague(MatchInfo matchInfo, List<MatchDTO> matchesFromLeague) {
+        return matchesFromLeague.exists(matchDTO -> isSameMatch(matchDTO, matchInfo));
     }
 
 }

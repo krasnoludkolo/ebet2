@@ -255,5 +255,19 @@ public class LeagueFacadeTest {
         assertEquals("Team name cannot be null", message);
     }
 
+    @Test
+    public void shouldNotAddMatchWithEmptyHostName() {
+        UUID leagueUUID = facade.createLeague("test");
+        String message = facade.addMatchToLeague(new NewMatchDTO("", "guest", 1, leagueUUID, nextYear)).getLeft();
+        assertEquals("Team name cannot be empty", message);
+    }
+
+    @Test
+    public void shouldNotAddMatchWithEmptyGuestName() {
+        UUID leagueUUID = facade.createLeague("test");
+        String message = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, nextYear)).getLeft();
+        assertEquals("Team name cannot be empty", message);
+    }
+
 
 }

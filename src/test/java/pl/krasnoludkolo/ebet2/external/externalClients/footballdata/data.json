@@ -144,18 +144,14 @@
           "href": "http://api.football-data.org/v1/teams/538"
         }
       },
-      "date": "2017-08-05T18:00:00Z",
-      "status": "FINISHED",
-      "matchday": 1,
-      "homeTeamName": "FC Metz",
-      "awayTeamName": "EA Guingamp",
+      "date": "3017-08-05T18:00:00Z",
+      "status": "SCHEDULED",
+      "matchday": 11,
+      "homeTeamName": "",
+      "awayTeamName": "",
       "result": {
-        "goalsHomeTeam": 1,
-        "goalsAwayTeam": 3,
-        "halfTime": {
-          "goalsHomeTeam": 1,
-          "goalsAwayTeam": 1
-        }
+        "goalsHomeTeam": null,
+        "goalsAwayTeam": null
       },
       "odds": null
     },
@@ -174,18 +170,14 @@
           "href": "http://api.football-data.org/v1/teams/576"
         }
       },
-      "date": "2017-08-05T18:00:00Z",
-      "status": "FINISHED",
-      "matchday": 1,
+      "date": "3017-08-05T18:00:00Z",
+      "status": "TIMED",
+      "matchday": 11,
       "homeTeamName": "Olympique Lyonnais",
       "awayTeamName": "RC Strasbourg Alsace",
       "result": {
-        "goalsHomeTeam": 4,
-        "goalsAwayTeam": 0,
-        "halfTime": {
-          "goalsHomeTeam": 1,
-          "goalsAwayTeam": 0
-        }
+        "goalsHomeTeam": null,
+        "goalsAwayTeam": null
       },
       "odds": null
     }

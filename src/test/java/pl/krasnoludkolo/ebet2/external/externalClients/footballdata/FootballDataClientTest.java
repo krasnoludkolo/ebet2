@@ -52,7 +52,7 @@ public class FootballDataClientTest {
         //when
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
         //then
-        assertEquals(6, matchInfos.size());
+        assertEquals(5, matchInfos.size());
         for (MatchInfo info : matchInfos) {
             assertNotNull(info);
         }

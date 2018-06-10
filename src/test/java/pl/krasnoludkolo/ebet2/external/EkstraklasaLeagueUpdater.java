@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.external;
 
+import io.vavr.collection.List;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
@@ -7,6 +8,7 @@ import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
 import java.time.LocalDateTime;
@@ -51,7 +53,6 @@ public class EkstraklasaLeagueUpdater {
 
     }
 
-
     @Test
     public void shouldUpdateLeague() {
         //given
@@ -67,6 +68,21 @@ public class EkstraklasaLeagueUpdater {
         assertEquals("Draw sum", 2, drawSum);
         int notSetSum = leagueDTO.getMatchDTOS().stream().mapToInt(match -> match.getResult() == MatchResult.NOT_SET ? 1 : 0).sum();
         assertEquals("Not set sum", 2, notSetSum);
+    }
+
+    @Test
+    public void shouldAddMatchesWhenAddedToLeagueInExternal() {
+        //given
+        system.setExternalSourceMatchList(firstMatchList);
+        UUID uuid = externalFacade.initializeLeague(new ExternalSourceConfiguration(), "Mock", "ekstraklasa");
+        List<MatchInfo> matchInfosWithAdded = List.ofAll(firstMatchList);
+        matchInfosWithAdded = matchInfosWithAdded.append(new MatchInfo("x", "x", 12, false, MatchResult.NOT_SET, nextYear));
+        system.setExternalSourceMatchList(matchInfosWithAdded);
+        //when
+        externalFacade.updateLeague(uuid);
+        //then
+        java.util.List<MatchDTO> matchDTOS = leagueFacade.getLeagueByUUID(uuid).get().getMatchDTOS();
+        assertEquals("Number of matches after add one", 7, matchDTOS.size());
     }
 
 }

@@ -66,8 +66,12 @@ class LeagueManager {
     }
 
     private Either<String, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
-        if (Objects.isNull(newMatchDTO.getGuest()) || Objects.isNull(newMatchDTO.getHost())) {
+        String host = newMatchDTO.getHost();
+        String guest = newMatchDTO.getGuest();
+        if (Objects.isNull(guest) || Objects.isNull(host)) {
             return Either.left("Team name cannot be null");
+        } else if (host.isEmpty() || guest.isEmpty()) {
+            return Either.left("Team name cannot be empty");
         }
         return Either.right(newMatchDTO);
     }
