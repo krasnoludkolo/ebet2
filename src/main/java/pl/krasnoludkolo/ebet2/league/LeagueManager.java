@@ -10,6 +10,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import static io.vavr.API.*;
+import static io.vavr.API.Match;
+
 class LeagueManager {
 
     private Repository<League> leagueRepository;
@@ -66,14 +69,14 @@ class LeagueManager {
     }
 
     private Either<String, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
-        String host = newMatchDTO.getHost();
-        String guest = newMatchDTO.getGuest();
-        if (Objects.isNull(guest) || Objects.isNull(host)) {
-            return Either.left("Team name cannot be null");
-        } else if (host.isEmpty() || guest.isEmpty()) {
-            return Either.left("Team name cannot be empty");
-        }
-        return Either.right(newMatchDTO);
+        return Match(newMatchDTO)
+                .option(
+                        Case($(o -> Objects.isNull(o.getHost())), "Team name cannot be null"),
+                        Case($(o -> Objects.isNull(o.getGuest())), "Team name cannot be null"),
+                        Case($(o -> o.getHost().isEmpty()), "Team name cannot be empty"),
+                        Case($(o -> o.getGuest().isEmpty()), "Team name cannot be empty")
+                ).toEither(newMatchDTO)
+                .swap();
     }
 
     private UUID addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
