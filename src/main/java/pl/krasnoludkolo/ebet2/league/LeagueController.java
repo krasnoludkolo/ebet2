@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.league;
 
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -36,9 +37,11 @@ class LeagueController {
     }
 
     @PostMapping("/match")
-    public HttpEntity<UUID> addMatchToLeague(@RequestBody NewMatchDTO newMatchDTO) {
-        UUID uuid = leagueFacade.addMatchToLeague(newMatchDTO);
-        return new ResponseEntity<>(uuid, HttpStatus.CREATED);
+    public HttpEntity<String> addMatchToLeague(@RequestBody NewMatchDTO newMatchDTO) {
+        Either<String, UUID> uuidEither = leagueFacade.addMatchToLeague(newMatchDTO);
+        return uuidEither
+                .map(uuid -> new ResponseEntity<>(uuid.toString(), HttpStatus.CREATED))
+                .getOrElse(() -> new ResponseEntity<>(uuidEither.getLeft(), HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/match")

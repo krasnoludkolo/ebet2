@@ -1,6 +1,7 @@
 package pl.krasnoludkolo.ebet2.external;
 
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
@@ -37,9 +38,9 @@ class LeagueInitializer {
 
     private void addMatchToLeague(MatchInfo matchInfo, UUID leagueUUID) {
         NewMatchDTO newMatchDTO = createNewMatchDTO(matchInfo, leagueUUID);
-        UUID uuid = leagueFacade.addMatchToLeague(newMatchDTO);
+        Either<String, UUID> uuidEither = leagueFacade.addMatchToLeague(newMatchDTO);
         if (matchInfo.isFinished()) {
-            leagueFacade.setMatchResult(uuid, matchInfo.getResult());
+            uuidEither.peek(uuid -> leagueFacade.setMatchResult(uuidEither.get(), matchInfo.getResult()));
         }
     }
 

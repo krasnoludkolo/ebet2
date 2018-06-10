@@ -32,7 +32,7 @@ public class LeagueFacade {
         return leagueManager.getAllLeagues().map(l -> new LeagueDetailsDTO(l.getUuid(), l.getName()));
     }
 
-    public UUID addMatchToLeague(NewMatchDTO newMatchDTO) {
+    public Either<String, UUID> addMatchToLeague(NewMatchDTO newMatchDTO) {
         UUID leagueUUID = newMatchDTO.getLeagueUUID();
         return leagueManager.addMatchToLeague(leagueUUID, newMatchDTO);
     }

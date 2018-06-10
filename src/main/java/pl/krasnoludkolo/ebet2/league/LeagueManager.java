@@ -1,10 +1,12 @@
 package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.*;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -58,9 +60,21 @@ class LeagueManager {
         return leagueRepository.findAll().map(League::toDTO);
     }
 
-    UUID addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
+    Either<String, UUID> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
+        return validateParameters(newMatchDTO)
+                .map(newMatch -> addMatch(leagueUUID, newMatch));
+    }
+
+    private Either<String, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
+        if (Objects.isNull(newMatchDTO.getGuest()) || Objects.isNull(newMatchDTO.getHost())) {
+            return Either.left("Team name cannot be null");
+        }
+        return Either.right(newMatchDTO);
+    }
+
+    private UUID addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
         League league = findLeagueByUUID(leagueUUID).getOrElseThrow(LeagueNotFound::new);
-        Match match = matchManager.createNewMatch(newMatchDTO, league);
+        Match match = matchManager.createNewMatch(newMatch, league);
         league.addMatch(match);
         leagueRepository.update(leagueUUID, league);
         return match.getUuid();
