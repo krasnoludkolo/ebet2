@@ -1,6 +1,6 @@
 [
   {
-    "data": "12 grudnia, 20:30 ",
+    "data": "2017-08-05T18:00:00Z",
     "guest_result": "1",
     "guest_team": "\u015al\u0105sk Wroc\u0142aw",
     "host_result": "2",
@@ -11,7 +11,7 @@
     "status": "FINISHED"
   },
   {
-    "data": "13 grudnia, 20:30 ",
+    "data": "2017-06-05T12:00:00Z",
     "guest_result": "4",
     "guest_team": "Wis\u0142a Krak\u00f3w",
     "host_result": "1",
@@ -22,7 +22,7 @@
     "status": "FINISHED"
   },
   {
-    "data": "12 grudnia, 18:00 ",
+    "data": "3017-08-05T18:00:00Z",
     "guest_result": "1",
     "guest_team": "Korona Kielce",
     "host_result": "5",
@@ -33,7 +33,7 @@
     "status": "FINISHED"
   },
   {
-    "data": "13 grudnia, 18:00 ",
+    "data": "2017-08-05T18:00:00Z",
     "guest_result": "3",
     "guest_team": "Pogo\u0144 Szczecin",
     "host_result": "1",
@@ -44,7 +44,7 @@
     "status": "SCHEDULED"
   },
   {
-    "data": "12 grudnia, 18:00 ",
+    "data": "2017-08-05T18:00:00Z",
     "guest_result": "1",
     "guest_team": "Legia Warszawa",
     "host_result": "0",
@@ -55,7 +55,7 @@
     "status": "SCHEDULED"
   },
   {
-    "data": "13 grudnia, 20:30 ",
+    "data": "3017-08-05T18:00:00Z",
     "guest_result": "2",
     "guest_team": "Sandecja Nowy S\u0105cz",
     "host_result": "2",
