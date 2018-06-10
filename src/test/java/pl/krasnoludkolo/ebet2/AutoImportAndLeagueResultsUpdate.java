@@ -61,7 +61,7 @@ public class AutoImportAndLeagueResultsUpdate {
         UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
         Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user2");
         assertEquals(1, user1.getPointCounter());
-        assertTrue(user2.isEmpty());
+        assertTrue(user2.get().getPointCounter() == 0);
     }
 
 
