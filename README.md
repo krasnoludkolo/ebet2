@@ -9,14 +9,14 @@ Current features:
 - Automatically update user's score when match result is set.
 - Download matches info from external source.
 - Create user module to register users.
+- API security (JWT tokens)
 
 Under development:
 - Frond-end in angular (different project)
 - Scheduler to leagues auto-update
-- API security (JWT tokens)
+- Remove spring
 
 Planned features:
-- Remove spring
 - CQRS 
 
 
@@ -27,6 +27,7 @@ Planned features:
 * vavr
 * lombok
 * JOOQ
+* JWT
 
 Postgesql as database
 
