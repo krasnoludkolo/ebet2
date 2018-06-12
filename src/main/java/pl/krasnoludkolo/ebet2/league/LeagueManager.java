@@ -40,8 +40,7 @@ class LeagueManager {
     private boolean containsLeagueWithName(String name) {
         return leagueRepository
                 .findAll()
-                .find(withName(name))
-                .isDefined();
+                .exists(withName(name));
     }
 
     Option<League> findLeagueByName(String name) {
