@@ -23,11 +23,6 @@ public class ElkartoflichoClient implements ExternalSourceClient {
 
 
     @Override
-    public List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round) {
-        return downloadAllRounds(config).filter(matchInfo -> matchInfo.getRound() == round);
-    }
-
-    @Override
     public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
         JSONArray allRounds = downloader.downloadAllRounds(config);
         return mapper.mapToMatchInfoList(allRounds);

@@ -25,17 +25,6 @@ class FootballDataDownloader {
         return new JSONArray();
     }
 
-    JSONArray downloadRound(ExternalSourceConfiguration config, int round) {
-        try {
-            String leagueId = config.getParameter("leagueId");
-            String url = urlBeginning + "competitions/" + leagueId + "/fixtures?matchday=" + round;
-            return getMatches(url);
-        } catch (UnirestException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-        }
-        return new JSONArray();
-    }
-
     private JSONArray getMatches(String url) throws UnirestException {
         return getFixturesAsJsonArray(url);
     }

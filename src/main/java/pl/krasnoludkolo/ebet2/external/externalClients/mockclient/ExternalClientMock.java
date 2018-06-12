@@ -30,12 +30,6 @@ public class ExternalClientMock implements ExternalSourceClient {
     }
 
     @Override
-    public List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round) {
-        return matchList
-                .filter(m -> m.getRound() == round);
-    }
-
-    @Override
     public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
         return matchList;
     }

@@ -28,12 +28,6 @@ public class FootballDataClient implements ExternalSourceClient {
     }
 
     @Override
-    public List<MatchInfo> downloadRound(ExternalSourceConfiguration config, int round) {
-        JSONArray fixtures = downloader.downloadRound(config, round);
-        return mapper.getMatchInfosFromJsonArray(fixtures);
-    }
-
-    @Override
     public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
         JSONArray fixtures = downloader.downloadAllRounds(config);
         return mapper.getMatchInfosFromJsonArray(fixtures);
