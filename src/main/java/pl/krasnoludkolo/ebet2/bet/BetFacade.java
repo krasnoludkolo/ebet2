@@ -30,6 +30,7 @@ public class BetFacade {
         return betManager.findBetByUUID(betUUID);
     }
 
+    //TODO refactor
     public Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
         Either<String, String> username = userFacade.getUsername(auth);
         if (username.isLeft()) {

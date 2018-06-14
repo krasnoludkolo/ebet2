@@ -46,6 +46,10 @@ class Bet {
         return uuid;
     }
 
+    UUID getMatchUuid() {
+        return matchUuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

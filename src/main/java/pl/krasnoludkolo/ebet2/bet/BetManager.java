@@ -66,7 +66,11 @@ class BetManager {
         return repository
                 .findOne(betUUID)
                 .toEither("Bet not found")
-                .peek(bet -> updateBet(betUUID, betType, bet))
+                .peek(bet -> {
+                    if (!matchHasAlreadyBegun(bet.getMatchUuid())) {
+                        updateBet(betUUID, betType, bet);
+                    }
+                })
                 .map(Bet::getUuid);
     }
 
