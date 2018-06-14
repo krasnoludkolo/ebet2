@@ -92,7 +92,7 @@ class LeagueResults {
 
     LeagueResultsEntity toEntity() {
         LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
-        List<UserResultEntity> list = userResultPriorityQueue.map(r -> r.toEntity(entity)).toList();
+        List<UserResultEntity> list = userResultPriorityQueue.toList().map(r -> r.toEntity(entity));
         entity.setUserResultList(list.toJavaList());
         return entity;
     }
