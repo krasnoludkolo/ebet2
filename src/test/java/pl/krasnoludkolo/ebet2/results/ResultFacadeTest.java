@@ -31,6 +31,7 @@ public class ResultFacadeTest {
     private String auth;
     private String auth2;
     private String auth3;
+    private String user;
 
     @Before
     public void setUp() {
@@ -41,6 +42,7 @@ public class ResultFacadeTest {
         auth = system.getSampleUsersApiToken().get(0);
         auth2 = system.getSampleUsersApiToken().get(1);
         auth3 = system.getSampleUsersApiToken().get(2);
+        user = system.getSampleUsernameList().get(0);
     }
 
     @Test
@@ -54,8 +56,6 @@ public class ResultFacadeTest {
 
     @Test
     public void shouldAddPointForCorrectBet() {
-        //given
-        String user = "user1";
         //when
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
@@ -71,9 +71,8 @@ public class ResultFacadeTest {
     }
 
     @Test
-    public void shouldNotAddPointForIncorrectBet() {
+    public void shouldNotAddPointForIncorrectBetButCreateUserResult() {
         //when
-        String user = "user1";
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
@@ -88,7 +87,6 @@ public class ResultFacadeTest {
 
     @Test
     public void shouldAddPointForCorrectBetAndNotForIncorrect() {
-        String user = "user1";
         //given
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
@@ -110,7 +108,6 @@ public class ResultFacadeTest {
 
     @Test
     public void shouldAddDwoPointsToOneUser() {
-        String user = "user1";
         //given
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
@@ -184,20 +181,6 @@ public class ResultFacadeTest {
     @Test(expected = MatchNotFound.class)
     public void shouldNotUpdateNoExistingMatch() {
         resultFacade.updateLeagueResultsForMatch(UUID.randomUUID());
-    }
-
-    @Test
-    public void shouldCreateEmptyResultIfUserDidNotGetAnyPoint() {
-        //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
-        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
-        //when
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
-        resultFacade.updateLeagueResultsForMatch(matchUUID);
-        //then
-        UserResultDTO user = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
-        assertEquals(0, user.getPointCounter());
     }
 
 }
