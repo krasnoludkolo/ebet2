@@ -7,12 +7,15 @@ import pl.krasnoludkolo.ebet2.external.ExternalConfiguration;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
+import pl.krasnoludkolo.ebet2.infrastructure.TimeProvider;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.user.UserConfiguration;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
+
+import java.time.LocalDateTime;
 
 public class InMemorySystem {
 
@@ -24,15 +27,22 @@ public class InMemorySystem {
     private ExternalClientMock externalClientMock;
     private List<String> sampleUsersApiToken;
     private List<String> sampleUsernameList;
+    private TimeProvider timeProvider;
 
     public InMemorySystem() {
+        configureEnvironment();
         configureModules();
         addSampleUsers();
     }
 
+    private void configureEnvironment() {
+        timeProvider = TimeProvider.fromSystem();
+    }
+
+
     private void configureModules() {
         userFacade = new UserConfiguration().inMemoryUserFacade();
-        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade();
+        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(timeProvider);
         externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
         betFacade = new BetConfiguration().inMemoryBetFacade(userFacade, leagueFacade);
         resultFacade = new ResultConfiguration().inMemoryResult(betFacade, leagueFacade);
@@ -81,5 +91,13 @@ public class InMemorySystem {
 
     public List<String> getSampleUsernameList() {
         return sampleUsernameList;
+    }
+
+    public void setNow() {
+        timeProvider.setNow();
+    }
+
+    public void setFixedTime(LocalDateTime time) {
+        timeProvider.setFixed(time);
     }
 }

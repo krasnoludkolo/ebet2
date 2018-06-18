@@ -56,8 +56,8 @@ class Match {
         return this.round == round;
     }
 
-    boolean hasAlreadyBegun() {
-        return LocalDateTime.now().isAfter(matchStartDate);
+    boolean hasAlreadyBegun(LocalDateTime now) {
+        return now.isAfter(matchStartDate);
     }
 
     MatchDTO toDTO() {

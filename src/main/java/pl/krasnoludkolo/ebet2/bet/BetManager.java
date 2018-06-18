@@ -66,12 +66,16 @@ class BetManager {
         return repository
                 .findOne(betUUID)
                 .toEither("Bet not found")
-                .peek(bet -> {
-                    if (!matchHasAlreadyBegun(bet.getMatchUuid())) {
-                        updateBet(betUUID, betType, bet);
-                    }
-                })
+                .flatMap(this::canUpdate)
+                .peek(bet -> updateBet(betUUID, betType, bet))
                 .map(Bet::getUuid);
+    }
+
+    private Either<String, Bet> canUpdate(Bet bet) {
+        return matchHasAlreadyBegun(bet.getMatchUuid()) ?
+                Either.left("Match has already begun")
+                :
+                Either.right(bet);
     }
 
     private void updateBet(UUID betUUID, BetTyp betType, Bet bet) {

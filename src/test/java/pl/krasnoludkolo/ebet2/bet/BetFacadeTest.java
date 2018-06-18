@@ -30,10 +30,11 @@ public class BetFacadeTest {
     private String auth;
     private String auth2;
     private String auth3;
+    private InMemorySystem system;
 
     @Before
     public void init() {
-        InMemorySystem system = new InMemorySystem();
+        system = new InMemorySystem();
         betFacade = system.betFacade();
         leagueFacade = system.leagueFacade();
         auth = system.getSampleUsersApiToken().get(0);
@@ -63,6 +64,19 @@ public class BetFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, lastYear)).get();
         //when
         String errorMessage = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth).getLeft();
+        //then
+        assertEquals("Match has already begun", errorMessage);
+    }
+
+    @Test
+    public void shouldNotUpdateBetAfterMatchStarts() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        UUID betUUID = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth).get();
+        //when
+        system.setFixedTime(nextYear.plusDays(1));
+        String errorMessage = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth).getLeft();
         //then
         assertEquals("Match has already begun", errorMessage);
     }
