@@ -13,12 +13,16 @@ public class TimeProvider {
         return new TimeProvider(Clock.systemDefaultZone());
     }
 
-    public void setNow() {
-        clock = Clock.systemDefaultZone();
+    public static TimeProvider fromClock(Clock clock) {
+        return new TimeProvider(clock);
     }
 
     private TimeProvider(Clock clock) {
         this.clock = clock;
+    }
+
+    public void setNow() {
+        clock = Clock.systemDefaultZone();
     }
 
     public void setFixed(LocalDateTime fixed) {
