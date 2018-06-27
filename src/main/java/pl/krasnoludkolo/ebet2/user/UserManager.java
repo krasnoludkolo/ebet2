@@ -17,7 +17,7 @@ class UserManager {
         this.tokenManager = tokenManager;
     }
 
-    Either<String, String> registerUser(String username, String password) {
+    synchronized Either<String, String> registerUser(String username, String password) {
         Option<String> parametersErrors = validateParameters(username, password);
         if (!parametersErrors.isEmpty()) {
             return Either.left(parametersErrors.get());
