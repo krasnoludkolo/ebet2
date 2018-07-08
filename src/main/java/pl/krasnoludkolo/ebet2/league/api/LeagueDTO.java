@@ -12,11 +12,13 @@ public class LeagueDTO {
     private final UUID uuid;
     private final String name;
     private final java.util.List<MatchDTO> matchDTOS;
+    private final boolean archived;
 
-    public LeagueDTO(UUID uuid, String name, List<MatchDTO> matchDTOS) {
+    public LeagueDTO(UUID uuid, String name, List<MatchDTO> matchDTOS, boolean archived) {
         this.uuid = uuid;
         this.name = name;
         this.matchDTOS = matchDTOS.asJava();
+        this.archived = archived;
     }
 
     @Override
@@ -32,4 +34,5 @@ public class LeagueDTO {
 
         return Objects.hash(uuid, name, matchDTOS);
     }
+
 }

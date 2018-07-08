@@ -22,6 +22,7 @@ class League {
     private String name;
     @OneToMany(mappedBy = "league")
     private java.util.List<Match> matches = new ArrayList<>();
+    private boolean archived;
 
     static League createWithName(String name) {
         return new League(name);
@@ -30,6 +31,7 @@ class League {
     private League(String name) {
         this.uuid = UUID.randomUUID();
         this.name = name;
+        this.archived = false;
     }
 
     void addMatch(Match match) {
@@ -54,6 +56,10 @@ class League {
         return Objects.equals(this.name, name);
     }
 
+    void archive() {
+        this.archived = true;
+    }
+
     UUID getUuid() {
         return uuid;
     }
@@ -73,6 +79,6 @@ class League {
 
     LeagueDTO toDTO() {
         List<MatchDTO> matchDTOS = List.ofAll(matches).map(Match::toDTO);
-        return new LeagueDTO(uuid, name, matchDTOS);
+        return new LeagueDTO(uuid, name, matchDTOS, archived);
     }
 }

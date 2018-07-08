@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
+import static io.vavr.API.Match;
 
 class LeagueManager {
 
@@ -98,5 +99,11 @@ class LeagueManager {
 
     public List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
         return leagueRepository.findOne(uuid).map(League::getAllMatches).getOrElse(List::empty);
+    }
+
+    public void archiveLeague(UUID leagueUUID) {
+        League league = leagueRepository.findOne(leagueUUID).getOrElseThrow(LeagueNotFound::new);
+        league.archive();
+        leagueRepository.save(leagueUUID, league);
     }
 }

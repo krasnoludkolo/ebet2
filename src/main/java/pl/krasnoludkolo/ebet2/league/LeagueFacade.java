@@ -32,7 +32,7 @@ public class LeagueFacade {
     }
 
     public List<LeagueDetailsDTO> getAllLeaguesDetails() {
-        return leagueManager.getAllLeagues().map(l -> new LeagueDetailsDTO(l.getUuid(), l.getName()));
+        return leagueManager.getAllLeagues().map(l -> new LeagueDetailsDTO(l.getUuid(), l.getName(), l.isArchived()));
     }
 
     public Either<String, UUID> addMatchToLeague(NewMatchDTO newMatchDTO) {
@@ -73,5 +73,10 @@ public class LeagueFacade {
                 .findByUUID(matchUUID)
                 .toEither("Match not found")
                 .map(match -> match.hasAlreadyBegun(timeProvider.now()));
+    }
+
+    public void archiveLeague(UUID leagueUUID) {
+        leagueManager.archiveLeague(leagueUUID);
+
     }
 }

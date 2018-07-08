@@ -269,5 +269,18 @@ public class LeagueFacadeTest {
         assertEquals("Team name cannot be empty", message);
     }
 
+    @Test
+    public void shouldArchiveLeague() {
+        UUID leagueUUID = facade.createLeague("test");
+        facade.archiveLeague(leagueUUID);
+        boolean archived = facade.getLeagueByUUID(leagueUUID).get().isArchived();
+        assertTrue(archived);
+    }
+
+    @Test(expected = LeagueNotFound.class)
+    public void shouldNotArchiveNoExistingLeague() {
+        facade.archiveLeague(UUID.randomUUID());
+    }
+
 
 }

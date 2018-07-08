@@ -11,5 +11,6 @@ public class LeagueDetailsDTO {
 
     private UUID leagueUUID;
     private String name;
+    private boolean archived;
 
 }
