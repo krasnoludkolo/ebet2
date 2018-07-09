@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
-import static io.vavr.API.Match;
 
 class LeagueManager {
 
