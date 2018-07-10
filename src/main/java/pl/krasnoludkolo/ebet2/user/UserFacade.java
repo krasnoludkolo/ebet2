@@ -1,7 +1,6 @@
 package pl.krasnoludkolo.ebet2.user;
 
 import io.vavr.control.Either;
-import io.vavr.control.Option;
 
 public class UserFacade {
 
@@ -26,7 +25,8 @@ public class UserFacade {
     }
 
     public Either<String, String> getUsername(String token) {
-        Option<String> username = tokenManager.getUsername(token);
-        return username.isDefined() ? Either.right(username.get()) : Either.left("Wrong token");
+        return tokenManager
+                .getUsername(token)
+                .toEither("Wrong token");
     }
 }
