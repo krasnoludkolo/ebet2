@@ -19,6 +19,6 @@ class UserResultEntity {
     private String name;
     private int pointCounter;
     @ManyToOne(fetch = FetchType.EAGER)
-    private LeagueResultsEntity leagueResultsEntity;
+    private RoundResultsEntity roundResultsEntity;
 
 }

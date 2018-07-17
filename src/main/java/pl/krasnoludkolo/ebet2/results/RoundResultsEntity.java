@@ -17,11 +17,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-class LeagueResultsEntity {
+class RoundResultsEntity {
 
     @Id
+    private UUID uuid;
     private UUID leagueUUID;
     @OneToMany(mappedBy = "leagueResultsEntity", cascade = CascadeType.ALL)
     private List<UserResultEntity> userResultList;
+    private int round;
 
 }

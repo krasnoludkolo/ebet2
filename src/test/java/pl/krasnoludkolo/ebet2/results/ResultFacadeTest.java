@@ -2,6 +2,7 @@ package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.control.Option;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
@@ -143,13 +144,13 @@ public class ResultFacadeTest {
 
 
         //then
-        int numberOfUserResults = resultFacade.getResultsForLeague(leagueUUID).get().getUserResultDTOS().size();
+        int numberOfUserResults = resultFacade.getResultsForLeague(leagueUUID).get().getGeneralResult().size();
         assertEquals(1, numberOfUserResults);
     }
 
     @Test
     public void resultsFromLeagueShouldBeInDecreasingOrder() {
-        //when
+        //given
         UUID leagueUUID = leagueFacade.createLeague("new");
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
@@ -163,6 +164,7 @@ public class ResultFacadeTest {
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3);
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3);
+        //when
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
@@ -170,12 +172,108 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(matchUUID2);
         resultFacade.updateLeagueResultsForMatch(matchUUID3);
         //then
-        List<UserResultDTO> userResultDTOS = resultFacade.getResultsForLeague(leagueUUID).get().getUserResultDTOS();
+        List<UserResultDTO> userResultDTOS = resultFacade.getResultsForLeague(leagueUUID).get().getGeneralResult();
         for (int i = 0; i < userResultDTOS.size() - 1; i++) {
             int current = userResultDTOS.get(i).getPointCounter();
             int next = userResultDTOS.get(i + 1).getPointCounter();
             assertTrue(current >= next);
         }
+    }
+
+    @Test
+    public void everyRoundShouldHaveAllUsers() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
+        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth2);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth2);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID3), auth2);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3);
+        //when
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        resultFacade.updateLeagueResultsForMatch(matchUUID2);
+        resultFacade.updateLeagueResultsForMatch(matchUUID3);
+        //then
+        List<List<UserResultDTO>> roundResults = resultFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
+        roundResults
+                .forEach(list -> assertEquals(3, list.size()));
+    }
+
+    @Test
+    public void userShouldHaveCorrectResultInEveryRound() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        UUID matchUUID1 = leagueFacade.addMatchToLeague(new NewMatchDTO("host1", "guest1", 1, leagueUUID, nextYear)).get();
+        UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
+        UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host3", "guest3", 2, leagueUUID, nextYear)).get();
+        UUID matchUUID4 = leagueFacade.addMatchToLeague(new NewMatchDTO("host4", "guest4", 3, leagueUUID, nextYear)).get();
+        UUID matchUUID5 = leagueFacade.addMatchToLeague(new NewMatchDTO("host5", "guest5", 3, leagueUUID, nextYear)).get();
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID1), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID4), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID5), auth);
+        //when
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID1, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID4, MatchResult.DRAW);
+        leagueFacade.setMatchResult(matchUUID5, MatchResult.DRAW);
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        resultFacade.updateLeagueResultsForMatch(matchUUID1);
+        resultFacade.updateLeagueResultsForMatch(matchUUID2);
+        resultFacade.updateLeagueResultsForMatch(matchUUID3);
+        resultFacade.updateLeagueResultsForMatch(matchUUID4);
+        resultFacade.updateLeagueResultsForMatch(matchUUID5);
+        //then
+        List<List<UserResultDTO>> roundResults = resultFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
+        assertEquals(2, roundResults.get(0).get(0).getPointCounter());
+        assertEquals(1, roundResults.get(1).get(0).getPointCounter());
+        assertEquals(0, roundResults.get(2).get(0).getPointCounter());
+    }
+
+    @Ignore
+    @Test
+    public void shouldAddPointsOnceEvenIfResultForMatchIsUpdatedMoreThenOnce() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        //when
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        //then
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        assertEquals(1, userResultDTO.getPointCounter());
+    }
+
+    @Test
+    public void shouldNotUpdateResultsIfResultIsNotSetAndUpdateAfterResultIsSet() {
+        //given
+        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        //when
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
+        resultFacade.updateLeagueResultsForMatch(matchUUID);
+        //then
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        assertEquals(1, userResultDTO.getPointCounter());
     }
 
     @Test(expected = MatchNotFound.class)

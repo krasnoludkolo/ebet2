@@ -1,15 +1,13 @@
 package pl.krasnoludkolo.ebet2.results;
 
-import io.vavr.collection.List;
-import io.vavr.collection.PriorityQueue;
-import io.vavr.control.Option;
+import io.vavr.Tuple;
+import io.vavr.collection.*;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -22,35 +20,44 @@ class LeagueResults {
     private final static Logger LOGGER = getLogger(LeagueResults.class.getName());
 
     private final UUID leagueUUID;
-    private final PriorityQueue<UserResult> userResultPriorityQueue;
+
+    private Map<Integer, PriorityQueue<UserResult>> roundsResults;
 
     static LeagueResults create(UUID leagueUUID) {
-        return new LeagueResults(leagueUUID, PriorityQueue.empty());
+        return new LeagueResults(leagueUUID, HashMap.empty());
     }
 
-    static LeagueResults fromEntity(LeagueResultsEntity leagueResultsEntity) {
-        UUID leagueUUID = leagueResultsEntity.getLeagueUUID();
-        List<UserResult> list = List.ofAll(leagueResultsEntity.getUserResultList()).map(UserResult::fromEntity);
-        return new LeagueResults(leagueUUID, PriorityQueue.ofAll(list));
+    static LeagueResults fromEntity(List<RoundResultsEntity> roundResultsEntity) {
+        UUID leagueUUID = roundResultsEntity.headOption().getOrElseThrow(IllegalStateException::new).getLeagueUUID();
+
+        Map<Integer, PriorityQueue<UserResult>> resultsInRounds =
+                roundResultsEntity
+                        .toMap(entity -> Tuple.of(entity.getRound(), List.ofAll(entity.getUserResultList())))
+                        .mapValues(l -> l.map(UserResult::fromEntity).toPriorityQueue());
+
+        return new LeagueResults(leagueUUID, resultsInRounds);
     }
 
-    private LeagueResults(UUID leagueUUID, PriorityQueue<UserResult> userResultPriorityQueue) {
+    private LeagueResults(UUID leagueUUID, Map<Integer, PriorityQueue<UserResult>> roundsResults) {
         this.leagueUUID = leagueUUID;
-        this.userResultPriorityQueue = userResultPriorityQueue;
+        this.roundsResults = roundsResults;
     }
 
-    LeagueResults updateResults(MatchResult result, List<BetDTO> bets) {
+    LeagueResults updateResults(MatchResult result, List<BetDTO> bets, int round) {
 
         List<BetDTO> correctBets = bets.filter(betDTO -> betDTO.getBetTyp().match(result));
-        List<UserResult> userResultsWithIncorrectBetNotInQueue = getUserResultsWithIncorrectBetNotInQueue(bets, correctBets);
-        List<UserResult> userResultsWithCorrectBetsNotInQueue = getUserResultsForBetsNotInQueue(correctBets);
+        List<UserResult> userResultsWithIncorrectBetNotInQueue = getUserResultsWithIncorrectBetNotInQueue(bets, correctBets, round);
+        List<UserResult> userResultsWithCorrectBetsNotInQueue = getUserResultsForBetsNotInQueue(correctBets, round);
 
+        PriorityQueue<UserResult> userResultPriorityQueue = roundsResults.getOrElse(round, PriorityQueue.empty());
         PriorityQueue<UserResult> results = userResultPriorityQueue
                 .enqueueAll(userResultsWithCorrectBetsNotInQueue)
                 .map(userResult -> addPointsForCorrectBet(correctBets, userResult))
                 .enqueueAll(userResultsWithIncorrectBetNotInQueue);
 
-        return new LeagueResults(leagueUUID, results);
+        Map<Integer, PriorityQueue<UserResult>> resultMap = roundsResults.put(round, results);
+
+        return new LeagueResults(leagueUUID, resultMap);
     }
 
     private UserResult addPointsForCorrectBet(final List<BetDTO> correctBets, final UserResult userResult) {
@@ -60,16 +67,21 @@ class LeagueResults {
                 .getOrElse(userResult);
     }
 
-    private List<UserResult> getUserResultsWithIncorrectBetNotInQueue(List<BetDTO> bets, List<BetDTO> correctBets) {
-        return getUserResultsForBetsNotInQueue(bets.removeAll(correctBets));
+    private List<UserResult> getUserResultsWithIncorrectBetNotInQueue(List<BetDTO> bets, List<BetDTO> correctBets, int round) {
+        List<BetDTO> betsListWithoutCorrectBets = bets.removeAll(correctBets);
+        return getUserResultsForBetsNotInQueue(betsListWithoutCorrectBets, round);
     }
 
-    private List<UserResult> getUserResultsForBetsNotInQueue(List<BetDTO> betsList) {
-        return betsList.filter(this::betNotInResultQueue).map(BetDTO::getUsername).map(this::createNewUserResult);
+    private List<UserResult> getUserResultsForBetsNotInQueue(List<BetDTO> betsList, int round) {
+        return betsList.filter(betDTO -> betNotInResultQueue(betDTO, round))
+                .map(BetDTO::getUsername)
+                .map(this::createNewUserResult);
     }
 
-    private boolean betNotInResultQueue(BetDTO betDTO) {
-        return userResultPriorityQueue.find(userResult -> userResult.hasName(betDTO.getUsername())).isEmpty();
+    private boolean betNotInResultQueue(BetDTO betDTO, int round) {
+        return roundsResults.get(round).getOrElse(PriorityQueue.empty())
+                .find(userResult -> userResult.hasName(betDTO.getUsername()))
+                .isEmpty();
     }
 
     private UserResult createNewUserResult(String user) {
@@ -77,8 +89,11 @@ class LeagueResults {
         return UserResult.create(user);
     }
 
-    Option<UserResult> getUserResultForName(String username) {
-        return userResultPriorityQueue.find(withName(username));
+    List<UserResult> getGeneralUserResult(String username) {
+        return roundsResults
+                .values()
+                .map(queue -> queue.find(userResult -> userResult.hasName(username)).getOrElse(UserResult.create(username)))
+                .toList();
     }
 
     private Predicate<UserResult> withName(String user) {
@@ -86,31 +101,55 @@ class LeagueResults {
     }
 
     LeagueResultsDTO toDTO() {
-        List<UserResultDTO> userResultListDTOS = userResultPriorityQueue.toList().map(UserResult::toDTO);
-        return new LeagueResultsDTO(userResultListDTOS, leagueUUID);
+        List<List<UserResultDTO>> roundsResult = getRoundsResults();
+        List<UserResultDTO> generalResult = getGeneralResult();
+        return new LeagueResultsDTO(generalResult, roundsResult, leagueUUID);
     }
 
-    LeagueResultsEntity toEntity() {
-        LeagueResultsEntity entity = new LeagueResultsEntity(leagueUUID, new ArrayList<>());
-        List<UserResultEntity> list = userResultPriorityQueue.toList().map(r -> r.toEntity(entity));
-        entity.setUserResultList(list.toJavaList());
-        return entity;
+    private List<List<UserResultDTO>> getRoundsResults() {
+        return roundsResults
+                .mapValues(queue -> queue.toList().map(UserResult::toDTO))
+                .toList()
+                .map(t -> t._2.toList());
+    }
+
+    private List<UserResultDTO> getGeneralResult() {
+        Set<String> allUsers = getAllUsers();
+        return allUsers.
+                map(name -> {
+                    int points = roundsResults
+                            .values()
+                            .map(round -> getUserResultFromRound(name, round))
+                            .sum()
+                            .intValue();
+                    return new UserResultDTO(name, points);
+                })
+                .toList()
+                .sorted()
+                .reverse();
+    }
+
+    private int getUserResultFromRound(String name, PriorityQueue<UserResult> round) {
+        return round.find(withName(name)).map(UserResult::getUserPointResult).getOrElse(0);
+    }
+
+    private Set<String> getAllUsers() {
+        return roundsResults
+                .mapValues(queue -> queue.map(e -> e.toDTO().getName()))
+                .values()
+                .flatMap(l -> l)
+                .toSet();
+    }
+
+    List<RoundResultsEntity> toEntity() {
+        return roundsResults.toList().map(t -> {
+            RoundResultsEntity roundResultsEntity = new RoundResultsEntity(UUID.randomUUID(), leagueUUID, new ArrayList<>(), t._1);
+            roundResultsEntity.setUserResultList(t._2.map(e -> e.toEntity(roundResultsEntity)).toJavaList());
+            return roundResultsEntity;
+        });
     }
 
     UUID getLeagueUUID() {
         return leagueUUID;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LeagueResults that = (LeagueResults) o;
-        return Objects.equals(leagueUUID, that.leagueUUID);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(leagueUUID, userResultPriorityQueue);
     }
 }

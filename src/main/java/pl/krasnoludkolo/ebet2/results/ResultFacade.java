@@ -7,7 +7,6 @@ import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchNotFound;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
@@ -37,7 +36,10 @@ public class ResultFacade {
     }
 
     public Option<UserResultDTO> getResultsFromLeagueToUser(UUID leagueUUID, String user) {
-        return crudService.getResultsFromLeagueToUser(leagueUUID, user).map(UserResult::toDTO);
+        return Option.of(crudService
+                .getResultsFromLeagueToUser(leagueUUID, user)
+                .map(UserResult::toDTO)
+                .reduce((a, b) -> new UserResultDTO(a.getName(), a.getPointCounter() + b.getPointCounter())));
     }
 
     public void updateLeagueResultsForMatch(UUID matchUUID) {
@@ -45,10 +47,9 @@ public class ResultFacade {
         LOGGER.log(Level.INFO, "Updating results for match " + matchDTO.getHost() + " : " + matchDTO.getGuest() + " with uuid: " + matchDTO.getUuid());
         UUID leagueUUID = matchDTO.getLeagueUUID();
         LeagueResults resultsForLeague = crudService.getResultsForLeague(leagueUUID);
-        MatchResult matchResult = matchDTO.getResult();
         List<BetDTO> bets = betFacade.getAllBetsForMatch(matchDTO.getUuid());
         LOGGER.log(Level.INFO, "Found " + bets.length() + " bets to update");
-        leagueResultsUpdater.updateResultsForMatchInLeague(resultsForLeague, matchResult, bets);
+        leagueResultsUpdater.updateResultsForMatchInLeague(resultsForLeague, matchDTO, bets);
     }
 
 }

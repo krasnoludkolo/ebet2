@@ -25,7 +25,7 @@ class ResultThymeleafController {
 
     @GetMapping("/league/{uuid}/results")
     public ModelAndView getAllResultsInLeague(@PathVariable UUID uuid) {
-        List<UserResultDTO> userResultList = resultFacade.getResultsForLeague(uuid).getOrElseThrow(LeagueNotFound::new).getUserResultDTOS();
+        List<UserResultDTO> userResultList = resultFacade.getResultsForLeague(uuid).getOrElseThrow(LeagueNotFound::new).getGeneralResult();
         ModelAndView modelAndView = new ModelAndView("leagueResults");
         modelAndView.addObject("userResultList", userResultList);
         return modelAndView;

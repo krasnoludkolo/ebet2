@@ -33,6 +33,10 @@ class UserResult implements Comparable<UserResult> {
         return Objects.equals(this.name, name);
     }
 
+    int getUserPointResult() {
+        return pointCounter.getCount();
+    }
+
     UserResultDTO toDTO() {
         return new UserResultDTO(name, pointCounter.getCount());
     }
@@ -51,7 +55,7 @@ class UserResult implements Comparable<UserResult> {
         return Objects.hash(name, pointCounter);
     }
 
-    public UserResultEntity toEntity(LeagueResultsEntity entity) {
+    public UserResultEntity toEntity(RoundResultsEntity entity) {
         return new UserResultEntity(name, pointCounter.getCount(), entity);
     }
 
