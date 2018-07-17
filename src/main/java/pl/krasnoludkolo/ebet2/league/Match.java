@@ -57,7 +57,14 @@ class Match {
     }
 
     boolean hasAlreadyBegun(LocalDateTime now) {
+        if (matchHasNoDate()) {
+            return true;
+        }
         return now.isAfter(matchStartDate);
+    }
+
+    private boolean matchHasNoDate() {
+        return matchStartDate == null;
     }
 
     MatchDTO toDTO() {

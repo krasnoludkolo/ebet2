@@ -235,8 +235,19 @@ public class LeagueFacadeTest {
     }
 
     @Test
+    public void shouldReturnFalseForMatchWithoutDate() {
+        //given
+        UUID leagueUUID = facade.createLeague("test");
+        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, null)).get();
         //when
+        boolean ifMatchBegun = facade.hasMatchAlreadyBegun(matchUUID).get();
+        assertTrue(ifMatchBegun);
+
+    }
+
+    @Test
     public void shouldReturnMatchNotFoundForNoExistingMatch() {
+        //when
         String errorMessage = facade.hasMatchAlreadyBegun(UUID.randomUUID()).getLeft();
         assertEquals("Match not found", errorMessage);
     }
