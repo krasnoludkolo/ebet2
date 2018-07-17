@@ -22,7 +22,7 @@ class RoundResultsEntity {
     @Id
     private UUID uuid;
     private UUID leagueUUID;
-    @OneToMany(mappedBy = "leagueResultsEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "roundResultsEntity", cascade = CascadeType.ALL)
     private List<UserResultEntity> userResultList;
     private int round;
 
