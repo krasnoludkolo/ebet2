@@ -1,6 +1,7 @@
 package pl.krasnoludkolo.ebet2.external.externalClients.elkartoflicho;
 
 import io.vavr.collection.List;
+import io.vavr.control.Try;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
@@ -15,6 +16,9 @@ class ElkartoflichoMapper {
         for (int i = 0; i < allRounds.length(); i++) {
             JSONObject match = allRounds.getJSONObject(i);
             MatchInfo matchInfo = mapToMatchInfo(match);
+            if (matchInfo.getMatchStartDate() == null) {
+                continue;
+            }
             result = result.append(matchInfo);
         }
         return result;
@@ -36,6 +40,10 @@ class ElkartoflichoMapper {
     }
 
     private LocalDateTime getDataFromMatchJSONObject(JSONObject match) {
+        return Try.of(() -> parseDateFromJson(match)).getOrNull();
+    }
+
+    private LocalDateTime parseDateFromJson(JSONObject match) {
         return ZonedDateTime.parse(match.getString("data")).toLocalDateTime();
     }
 

@@ -64,5 +64,16 @@
     "league_id": "ekstraklasa",
     "match_day": 21,
     "status": "SCHEDULED"
+  },
+  {
+    "data": null,
+    "guest_result": "NotSet",
+    "guest_team": "Zag\u0142\u0119bie Lubin",
+    "host_result": "NotSet",
+    "host_team": "Mied\u017a Legnica",
+    "id": 55920,
+    "league_id": "ekstraklasa",
+    "match_day": 7,
+    "status": "SCHEDULED"
   }
 ]

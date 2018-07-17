@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -77,6 +78,12 @@ public class ElkartoflichoClientTest {
     public void shouldNotBeAnyNulls() {
         List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
         matchInfos.forEach(Assert::assertNotNull);
+    }
+
+    @Test
+    public void shouldSkipMatchesWithoutDate() {
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
+        assertEquals(6, matchInfos.size());
     }
 
 }
