@@ -8,7 +8,6 @@ import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 class ElkartoflichoMapper {
     public List<MatchInfo> mapToMatchInfoList(JSONArray allRounds) {
@@ -44,7 +43,7 @@ class ElkartoflichoMapper {
     }
 
     private LocalDateTime parseDateFromJson(JSONObject match) {
-        return ZonedDateTime.parse(match.getString("data")).toLocalDateTime();
+        return LocalDateTime.parse(match.getString("data"));
     }
 
 }
