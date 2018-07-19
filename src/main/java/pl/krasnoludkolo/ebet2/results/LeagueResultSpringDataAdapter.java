@@ -22,9 +22,9 @@ class LeagueResultSpringDataAdapter implements Repository<LeagueResults> {
     }
 
     @Override
-    public Option<LeagueResults> findOne(UUID uuid) {
+    public Option<LeagueResults> findOne(UUID leagueUUID) {
         List<RoundResultsEntity> entities = List.ofAll(springRepository.findAll())
-                .filter(e -> e.getLeagueUUID().equals(uuid));
+                .filter(e -> e.getLeagueUUID().equals(leagueUUID));
         if (entities.isEmpty()) {
             return Option.none();
         }
