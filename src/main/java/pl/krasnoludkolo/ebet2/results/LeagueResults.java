@@ -144,7 +144,7 @@ class LeagueResults {
     List<RoundResultsEntity> toEntity() {
         return roundsResults.toList().map(t -> {
             RoundResultsEntity roundResultsEntity = new RoundResultsEntity(UUID.randomUUID(), leagueUUID, new ArrayList<>(), t._1);
-            roundResultsEntity.setUserResultList(t._2.map(e -> e.toEntity(roundResultsEntity)).toJavaList());
+            roundResultsEntity.setUserResultList(t._2.toList().map(e -> e.toEntity(roundResultsEntity)).toJavaList());
             return roundResultsEntity;
         });
     }
