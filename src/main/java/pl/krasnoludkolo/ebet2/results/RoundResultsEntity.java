@@ -24,11 +24,11 @@ class RoundResultsEntity {
     private List<UserResultEntity> userResultList;
     private int round;
 
-    RoundResultsEntity(UUID leagueUUID, List<UserResultEntity> userResultList, int round, String username) {
+    RoundResultsEntity(UUID leagueUUID, List<UserResultEntity> userResultList, int round) {
         this.leagueUUID = leagueUUID;
         this.userResultList = userResultList;
         this.round = round;
-        this.uuid = leagueUUID.toString() + "_" + username + "_" + round;
+        this.uuid = leagueUUID.toString() + "_" + round;
     }
 
 }
