@@ -3,9 +3,11 @@ package pl.krasnoludkolo.ebet2.external;
 import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
+import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 
 import java.util.UUID;
 
@@ -29,11 +31,11 @@ public class ExternalFacade {
         autoUpdaterScheduler = new AutoUpdaterScheduler(this);
     }
 
-    public UUID initializeLeague(ExternalSourceConfiguration config, String clientShortcut, String leagueName) {
+    public Either<LeagueError, UUID> initializeLeague(ExternalSourceConfiguration config, String clientShortcut, String leagueName) {
         ExternalSourceClient client = clientsMap.get(clientShortcut).getOrElseThrow(IllegalArgumentException::new);
-        LeagueDetails leagueDetails = leagueInitializer.initializeLeague(client, config, leagueName);
-        leagueDetailsRepository.save(leagueDetails.getLeagueUUID(), leagueDetails);
-        return leagueDetails.getLeagueUUID();
+        Either<LeagueError, LeagueDetails> leagueDetails = leagueInitializer.initializeLeague(client, config, leagueName);
+        leagueDetails.peek(details -> leagueDetailsRepository.save(details.getLeagueUUID(), details));
+        return leagueDetails.map(LeagueDetails::getLeagueUUID);
     }
 
     //TODO async

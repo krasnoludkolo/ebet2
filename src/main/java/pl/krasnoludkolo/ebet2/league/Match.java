@@ -1,6 +1,8 @@
 package pl.krasnoludkolo.ebet2.league;
 
+import io.vavr.control.Either;
 import lombok.NoArgsConstructor;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
@@ -45,11 +47,12 @@ class Match {
         this.matchStartDate = startDate;
     }
 
-    void setMatchResult(MatchResult matchResult) {
+    Either<LeagueError, Match> setMatchResult(MatchResult matchResult) {
         if (matchResult.equals(MatchResult.NOT_SET)) {
-            throw new IllegalArgumentException("Cannot set NOT_SET match result");
+            return Either.left(LeagueError.SET_NOT_SET_RESULT);
         }
         result = matchResult;
+        return Either.right(this);
     }
 
     boolean hasRoundNumber(int round) {
@@ -57,10 +60,7 @@ class Match {
     }
 
     boolean hasAlreadyBegun(LocalDateTime now) {
-        if (matchHasNoDate()) {
-            return true;
-        }
-        return now.isAfter(matchStartDate);
+        return matchHasNoDate() || now.isAfter(matchStartDate);
     }
 
     private boolean matchHasNoDate() {

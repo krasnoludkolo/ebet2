@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static io.vavr.API.*;
+import static io.vavr.API.Match;
 
 class LeagueManager {
 
@@ -22,15 +23,19 @@ class LeagueManager {
         this.matchManager = matchManager;
     }
 
-    League createLeague(String name) {
+    Either<LeagueError, League> createLeague(String name) {
+        return validateName(name)
+                .map(League::createWithName)
+                .peek(league -> leagueRepository.save(league.getUuid(), league));
+    }
+
+    private Either<LeagueError, String> validateName(String name) {
         if (invalidName(name)) {
-            throw new LeagueNameException("Name is null or empty");
+            return Either.left(LeagueError.WRONG_NAME_EXCEPTION);
         } else if (containsLeagueWithName(name)) {
-            throw new LeagueNameDuplicationException("Duplication name");
+            return Either.left(LeagueError.LEAGUE_NAME_DUPLICATION);
         }
-        League league = League.createWithName(name);
-        leagueRepository.save(league.getUuid(), league);
-        return league;
+        return Either.right(name);
     }
 
     private boolean invalidName(String name) {
@@ -100,9 +105,13 @@ class LeagueManager {
         return leagueRepository.findOne(uuid).map(League::getAllMatches).getOrElse(List::empty);
     }
 
-    public void archiveLeague(UUID leagueUUID) {
-        League league = leagueRepository.findOne(leagueUUID).getOrElseThrow(LeagueNotFound::new);
-        league.archive();
-        leagueRepository.save(leagueUUID, league);
+    public Either<LeagueError, League> archiveLeague(UUID leagueUUID) {
+        Either<LeagueError, League> league = leagueRepository.findOne(leagueUUID).toEither(LeagueError.LEAGUE_NOT_FOUND);
+        return league
+                .peek(l -> {
+                    l.archive();
+                    leagueRepository.save(leagueUUID, l);
+                });
+
     }
 }

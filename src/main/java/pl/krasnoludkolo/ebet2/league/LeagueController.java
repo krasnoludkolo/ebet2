@@ -26,7 +26,7 @@ class LeagueController {
 
     @PostMapping("/league")
     public HttpEntity<String> createNewLeague(@RequestBody String name) {
-        UUID leagueUUID = leagueFacade.createLeague(name);
+        UUID leagueUUID = leagueFacade.createLeague(name).get();
         return new ResponseEntity<>(leagueUUID.toString(), HttpStatus.CREATED);
     }
 

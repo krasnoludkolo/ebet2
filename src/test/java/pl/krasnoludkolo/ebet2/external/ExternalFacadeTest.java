@@ -33,7 +33,7 @@ public class ExternalFacadeTest {
         //given
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         //when
-        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName").get();
         //then
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
         List<MatchDTO> matchDTOS = leagueDTO.getMatchDTOS();

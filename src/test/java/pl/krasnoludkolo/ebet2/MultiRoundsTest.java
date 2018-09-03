@@ -46,7 +46,7 @@ public class MultiRoundsTest {
     public void fiveRoundThreeCorrect() {
         //when
         String user = "user1";
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
@@ -80,7 +80,7 @@ public class MultiRoundsTest {
         String user1 = "user1";
         String user2 = "user2";
         String user3 = "user3";
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();

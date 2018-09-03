@@ -6,6 +6,7 @@ import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import java.time.LocalDateTime;
@@ -19,20 +20,20 @@ class LeagueInitializer {
         this.leagueFacade = leagueFacade;
     }
 
-    LeagueDetails initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config, String leagueName) {
+    Either<LeagueError, LeagueDetails> initializeLeague(ExternalSourceClient client, ExternalSourceConfiguration config, String leagueName) {
         List<MatchInfo> matchInfos = client.downloadAllRounds(config);
-        UUID leagueUUID = initializeLeagueInLeagueModule(matchInfos, leagueName);
+        Either<LeagueError, UUID> leagueUUID = initializeLeagueInLeagueModule(matchInfos, leagueName);
         String shortcut = client.getShortcut();
-        return LeagueDetailsCreator.fromExternalSourceConfiguration(leagueUUID, config, shortcut);
+        return leagueUUID.map(uuid -> LeagueDetailsCreator.fromExternalSourceConfiguration(uuid, config, shortcut));
     }
 
-    private UUID initializeLeagueInLeagueModule(List<MatchInfo> matchInfos, String leagueName) {
-        UUID leagueUUID = createLeague(leagueName);
-        matchInfos.forEach(matchInfo -> addMatchToLeague(matchInfo, leagueUUID));
+    private Either<LeagueError, UUID> initializeLeagueInLeagueModule(List<MatchInfo> matchInfos, String leagueName) {
+        Either<LeagueError, UUID> leagueUUID = createLeague(leagueName);
+        leagueUUID.peek(uuid -> matchInfos.forEach(matchInfo -> addMatchToLeague(matchInfo, uuid)));
         return leagueUUID;
     }
 
-    private UUID createLeague(String leagueName) {
+    private Either<LeagueError, UUID> createLeague(String leagueName) {
         return leagueFacade.createLeague(leagueName);
     }
 

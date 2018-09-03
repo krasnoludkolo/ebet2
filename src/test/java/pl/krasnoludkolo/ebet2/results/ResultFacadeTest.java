@@ -49,7 +49,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldCreateResultsToLeague() {
         //when
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         //then
         Option<LeagueResultsDTO> dto = resultFacade.getResultsForLeague(leagueUUID);
         assertFalse(dto.isEmpty());
@@ -58,7 +58,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldAddPointForCorrectBet() {
         //when
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
@@ -74,7 +74,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldNotAddPointForIncorrectBetButCreateUserResult() {
         //when
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
@@ -89,7 +89,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldAddPointForCorrectBetAndNotForIncorrect() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
@@ -110,7 +110,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldAddDwoPointsToOneUser() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
@@ -130,7 +130,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldBeOnlyOneUserResultToOneUser() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
@@ -151,7 +151,7 @@ public class ResultFacadeTest {
     @Test
     public void resultsFromLeagueShouldBeInDecreasingOrder() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
@@ -183,7 +183,7 @@ public class ResultFacadeTest {
     @Test
     public void everyRoundShouldHaveAllUsers() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
@@ -212,7 +212,7 @@ public class ResultFacadeTest {
     @Test
     public void userShouldHaveCorrectResultInEveryRound() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID1 = leagueFacade.addMatchToLeague(new NewMatchDTO("host1", "guest1", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
@@ -249,7 +249,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldAddPointsOnceEvenIfResultForMatchIsUpdatedMoreThenOnce() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
@@ -264,7 +264,7 @@ public class ResultFacadeTest {
     @Test
     public void shouldNotUpdateResultsIfResultIsNotSetAndUpdateAfterResultIsSet() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("new");
+        UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
         //when

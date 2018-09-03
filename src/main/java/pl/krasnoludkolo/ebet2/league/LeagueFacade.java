@@ -22,9 +22,10 @@ public class LeagueFacade {
         this.timeProvider = timeProvider;
     }
 
-    public UUID createLeague(String name) {
-        League league = leagueManager.createLeague(name);
-        return league.getUuid();
+    public Either<LeagueError, UUID> createLeague(String name) {
+        return leagueManager
+                .createLeague(name)
+                .map(League::getUuid);
     }
 
     public Option<LeagueDTO> findLeagueByName(String name) {
@@ -52,8 +53,8 @@ public class LeagueFacade {
         return leagueManager.findLeagueByUUID(uuid).map(League::toDTO);
     }
 
-    public void setMatchResult(UUID matchUUID, MatchResult result) {
-        matchManager.setMatchResult(matchUUID, result);
+    public Either<LeagueError, Match> setMatchResult(UUID matchUUID, MatchResult result) {
+        return matchManager.setMatchResult(matchUUID, result);
     }
 
     public void removeMatch(UUID matchUUID) {
@@ -68,15 +69,14 @@ public class LeagueFacade {
         return leagueManager.getAllMatchesFromLeague(uuid);
     }
 
-    public Either<String, Boolean> hasMatchAlreadyBegun(UUID matchUUID) {
+    public Either<LeagueError, Boolean> hasMatchAlreadyBegun(UUID matchUUID) {
         return matchManager
                 .findByUUID(matchUUID)
-                .toEither("Match not found")
+                .toEither(LeagueError.MATCH_NOT_FOUND)
                 .map(match -> match.hasAlreadyBegun(timeProvider.now()));
     }
 
-    public void archiveLeague(UUID leagueUUID) {
-        leagueManager.archiveLeague(leagueUUID);
-
+    public Either<LeagueError, League> archiveLeague(UUID leagueUUID) {
+        return leagueManager.archiveLeague(leagueUUID);
     }
 }

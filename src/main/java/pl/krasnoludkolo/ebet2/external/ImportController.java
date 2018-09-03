@@ -31,7 +31,7 @@ class ImportController {
         Map<String, String> clientConfig = (Map<String, String>) config.get("clientConfig");
         ExternalSourceConfiguration externalSourceConfiguration = new ExternalSourceConfiguration(clientConfig);
         String leagueName = (String) config.get("leagueName");
-        UUID leagueUUID = externalFacade.initializeLeague(externalSourceConfiguration, clientShortcut, leagueName);
+        UUID leagueUUID = externalFacade.initializeLeague(externalSourceConfiguration, clientShortcut, leagueName).get();
         return new ResponseEntity<>(leagueUUID, HttpStatus.OK);
     }
 

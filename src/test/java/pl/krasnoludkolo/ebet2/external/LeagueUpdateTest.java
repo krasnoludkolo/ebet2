@@ -55,7 +55,7 @@ public class LeagueUpdateTest {
         //given
         ExternalSourceConfiguration config = new ExternalSourceConfiguration();
         system.setExternalSourceMatchList(firstMatchList);
-        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName");
+        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName").get();
         system.setExternalSourceMatchList(updated);
         //when
         externalFacade.updateLeague(uuid);
