@@ -1,0 +1,79 @@
+[
+  {
+    "data": "2017-08-05T18:00:00",
+    "guest_result": "1",
+    "guest_team": "\u015al\u0105sk Wroc\u0142aw",
+    "host_result": "2",
+    "host_team": "Bruk-Bet Termalica Nieciecza",
+    "id": 7458,
+    "league_id": "ekstraklasa",
+    "match_day": 20,
+    "status": "FINISHED"
+  },
+  {
+    "data": "2017-06-05T12:00:00",
+    "guest_result": "4",
+    "guest_team": "Wis\u0142a Krak\u00f3w",
+    "host_result": "1",
+    "host_team": "Cracovia",
+    "id": 7459,
+    "league_id": "ekstraklasa",
+    "match_day": 20,
+    "status": "FINISHED"
+  },
+  {
+    "data": "3017-08-05T18:00:00",
+    "guest_result": "1",
+    "guest_team": "Korona Kielce",
+    "host_result": "5",
+    "host_team": "Jagiellonia Bia\u0142ystok",
+    "id": 7460,
+    "league_id": "ekstraklasa",
+    "match_day": 20,
+    "status": "FINISHED"
+  },
+  {
+    "data": "2017-08-05T18:00:00",
+    "guest_result": "3",
+    "guest_team": "Pogo\u0144 Szczecin",
+    "host_result": "1",
+    "host_team": "Lechia Gda\u0144sk",
+    "id": 7461,
+    "league_id": "ekstraklasa",
+    "match_day": 21,
+    "status": "SCHEDULED"
+  },
+  {
+    "data": "2017-08-05T18:00:00",
+    "guest_result": "1",
+    "guest_team": "Legia Warszawa",
+    "host_result": "0",
+    "host_team": "Piast Gliwice",
+    "id": 7462,
+    "league_id": "ekstraklasa",
+    "match_day": 21,
+    "status": "SCHEDULED"
+  },
+  {
+    "data": "3017-08-05T18:00:00",
+    "guest_result": "2",
+    "guest_team": "Sandecja Nowy S\u0105cz",
+    "host_result": "2",
+    "host_team": "Wis\u0142a P\u0142ock",
+    "id": 7463,
+    "league_id": "ekstraklasa",
+    "match_day": 21,
+    "status": "SCHEDULED"
+  },
+  {
+    "data": null,
+    "guest_result": "NotSet",
+    "guest_team": "Zag\u0142\u0119bie Lubin",
+    "host_result": "NotSet",
+    "host_team": "Mied\u017a Legnica",
+    "id": 55920,
+    "league_id": "ekstraklasa",
+    "match_day": 7,
+    "status": "SCHEDULED"
+  }
+]

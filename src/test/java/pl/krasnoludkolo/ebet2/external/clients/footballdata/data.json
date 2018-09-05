@@ -1,0 +1,185 @@
+{
+  "_links": {
+    "self": {
+      "href": "http://api.football-data.org/v1/competitions/450/fixtures"
+    },
+    "competition": {
+      "href": "http://api.football-data.org/v1/competitions/450"
+    }
+  },
+  "count": 6,
+  "fixtures": [
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161661"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/548"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/511"
+        }
+      },
+      "date": "2017-08-04T18:45:00Z",
+      "status": "FINISHED",
+      "matchday": 1,
+      "homeTeamName": "AS Monaco FC",
+      "awayTeamName": "Toulouse FC",
+      "result": {
+        "goalsHomeTeam": 3,
+        "goalsAwayTeam": 2,
+        "halfTime": {
+          "goalsHomeTeam": 1,
+          "goalsAwayTeam": 1
+        }
+      },
+      "odds": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161665"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/524"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/530"
+        }
+      },
+      "date": "2017-08-05T15:15:00Z",
+      "status": "FINISHED",
+      "matchday": 1,
+      "homeTeamName": "Paris Saint-Germain",
+      "awayTeamName": "Amiens SC",
+      "result": {
+        "goalsHomeTeam": 2,
+        "goalsAwayTeam": 0,
+        "halfTime": {
+          "goalsHomeTeam": 1,
+          "goalsAwayTeam": 0
+        }
+      },
+      "odds": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161662"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/518"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/514"
+        }
+      },
+      "date": "2017-08-05T18:00:00Z",
+      "status": "FINISHED",
+      "matchday": 1,
+      "homeTeamName": "Montpellier Hérault SC",
+      "awayTeamName": "SM Caen",
+      "result": {
+        "goalsHomeTeam": 1,
+        "goalsAwayTeam": 0,
+        "halfTime": {
+          "goalsHomeTeam": 0,
+          "goalsAwayTeam": 0
+        }
+      },
+      "odds": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161667"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/531"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/529"
+        }
+      },
+      "date": "2017-08-05T18:00:00Z",
+      "status": "FINISHED",
+      "matchday": 1,
+      "homeTeamName": "ES Troyes AC",
+      "awayTeamName": "Stade Rennais FC",
+      "result": {
+        "goalsHomeTeam": 1,
+        "goalsAwayTeam": 1,
+        "halfTime": {
+          "goalsHomeTeam": 0,
+          "goalsAwayTeam": 0
+        }
+      },
+      "odds": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161660"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/545"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/538"
+        }
+      },
+      "date": "3017-08-05T18:00:00Z",
+      "status": "SCHEDULED",
+      "matchday": 11,
+      "homeTeamName": "",
+      "awayTeamName": "",
+      "result": {
+        "goalsHomeTeam": null,
+        "goalsAwayTeam": null
+      },
+      "odds": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "http://api.football-data.org/v1/fixtures/161663"
+        },
+        "competition": {
+          "href": "http://api.football-data.org/v1/competitions/450"
+        },
+        "homeTeam": {
+          "href": "http://api.football-data.org/v1/teams/523"
+        },
+        "awayTeam": {
+          "href": "http://api.football-data.org/v1/teams/576"
+        }
+      },
+      "date": "3017-08-05T18:00:00Z",
+      "status": "TIMED",
+      "matchday": 11,
+      "homeTeamName": "Olympique Lyonnais",
+      "awayTeamName": "RC Strasbourg Alsace",
+      "result": {
+        "goalsHomeTeam": null,
+        "goalsAwayTeam": null
+      },
+      "odds": null
+    }
+  ]
+}
