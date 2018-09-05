@@ -1,5 +1,6 @@
 package pl.krasnoludkolo.ebet2.league;
 
+import io.vavr.API;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
@@ -10,8 +11,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static io.vavr.API.*;
-import static io.vavr.API.Match;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
 
 class LeagueManager {
 
@@ -72,7 +73,7 @@ class LeagueManager {
     }
 
     private Either<String, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
-        return Match(newMatchDTO)
+        return API.Match(newMatchDTO)
                 .option(
                         Case($(o -> Objects.isNull(o.getHost())), "Team name cannot be null"),
                         Case($(o -> Objects.isNull(o.getGuest())), "Team name cannot be null"),
