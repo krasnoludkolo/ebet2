@@ -15,7 +15,7 @@ class JWTTokenManager {
 
     private String secret = UUID.randomUUID().toString();
 
-    private final static Logger LOGGER = Logger.getLogger(JWTTokenManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JWTTokenManager.class.getName());
 
 
     String generateTokenFor(String username) {

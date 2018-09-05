@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class ResultFacade {
 
-    private final static Logger LOGGER = Logger.getLogger(ResultFacade.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResultFacade.class.getName());
 
 
     private LeagueResultsManager crudService;

@@ -17,8 +17,8 @@ import static org.jooq.impl.DSL.table;
 
 class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
 
+    private static final String BET_ENTITY = "bet_entity";
     private ModelMapper modelMapper;
-    private String BET_ENTITY = "bet_entity";
 
     BetJOOQRepository(Function<Bet, BetEntity> d2e, Function<BetEntity, Bet> e2d) {
         super(d2e, e2d);
@@ -53,8 +53,8 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     @Override
     protected BetEntity convertRecordToEntity(Record record) {
         BetEntity entity = modelMapper.map(record, BetEntity.class);
-        Integer bet_typ = (Integer) record.getValue(1);
-        entity.setBetTyp(BetTyp.values()[bet_typ]);
+        Integer betTyp = (Integer) record.getValue(1);
+        entity.setBetTyp(BetTyp.values()[betTyp]);
         return entity;
     }
 

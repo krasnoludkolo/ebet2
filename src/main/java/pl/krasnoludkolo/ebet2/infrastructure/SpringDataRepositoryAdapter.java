@@ -24,8 +24,7 @@ public class SpringDataRepositoryAdapter<D, E> implements Repository<D> {
     @Override
     public Option<D> findOne(UUID uuid) {
         Option<E> entity = Option.of(repository.findOne(uuid));
-        Option<D> domain = entity.map(entityToDomainMapper);
-        return domain;
+        return entity.map(entityToDomainMapper);
     }
 
     @Override
@@ -40,7 +39,6 @@ public class SpringDataRepositoryAdapter<D, E> implements Repository<D> {
 
     @Override
     public void update(UUID uuid, D d) {
-        E entity = domainToEntityMapper.apply(d);
-        repository.save(entity);
+        save(uuid, d);
     }
 }

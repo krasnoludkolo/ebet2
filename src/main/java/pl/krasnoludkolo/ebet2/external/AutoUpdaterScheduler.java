@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 class AutoUpdaterScheduler {
 
-    private final static Logger LOGGER = Logger.getLogger(ExternalFacade.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ExternalFacade.class.getName());
 
     private final ExternalFacade externalFacade;
     private List<UUID> leaguesToUpdate = new ArrayList<>();

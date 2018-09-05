@@ -6,7 +6,7 @@ import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.external.ExternalConfiguration;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.external.externalClients.mockclient.ExternalClientMock;
+import pl.krasnoludkolo.ebet2.external.clients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.TimeProvider;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;

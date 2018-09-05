@@ -16,7 +16,7 @@ import static java.util.logging.Logger.getLogger;
 
 class RoundResult {
 
-    private final static Logger LOGGER = getLogger(RoundResult.class.getName());
+    private static final Logger LOGGER = getLogger(RoundResult.class.getName());
 
     private PriorityQueue<UserResult> userResults;
 

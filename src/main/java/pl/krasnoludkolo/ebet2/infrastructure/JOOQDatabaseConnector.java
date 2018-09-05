@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
 
-    private final static Logger LOGGER = Logger.getLogger(JOOQDatabaseConnector.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JOOQDatabaseConnector.class.getName());
 
     private DatabaseConnectionInfo dbConnectionInfo = new DatabaseConnectionInfo();
     private Function<D, E> domainToEntityMapper;
