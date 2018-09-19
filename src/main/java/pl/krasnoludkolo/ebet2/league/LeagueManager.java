@@ -91,11 +91,11 @@ class LeagueManager {
         return match.getUuid();
     }
 
-    List<MatchDTO> getMatchesFromRound(UUID leagueUUID, int round) {
+    Either<LeagueError, List<MatchDTO>> getMatchesFromRound(UUID leagueUUID, int round) {
         return leagueRepository
                 .findOne(leagueUUID)
-                .getOrElseThrow(LeagueNotFound::new)
-                .getMatchesForRound(round);
+                .map(league -> league.getMatchesForRound(round))
+                .toEither(LeagueError.LEAGUE_NOT_FOUND);
     }
 
     public void removeMatchUUID(UUID leagueUUID) {

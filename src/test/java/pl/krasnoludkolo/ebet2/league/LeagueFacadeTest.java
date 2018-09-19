@@ -98,7 +98,7 @@ public class LeagueFacadeTest {
         //when
         facade.addMatchToLeague(newMatchDTO);
         //then
-        List<MatchDTO> matchesList = facade.getMatchesFromRound(leagueUUID, 1);
+        List<MatchDTO> matchesList = facade.getMatchesFromRound(leagueUUID, 1).get();
         assertTrue(matchesList.map(MatchDTO::getHost).contains("host"));
     }
 
@@ -112,8 +112,8 @@ public class LeagueFacadeTest {
         facade.addMatchToLeague(newMatchDTO);
         facade.addMatchToLeague(newMatchDTO2);
         //then
-        List<MatchDTO> matchesList1 = facade.getMatchesFromRound(leagueUUID, 1);
-        List<MatchDTO> matchesList2 = facade.getMatchesFromRound(leagueUUID, 2);
+        List<MatchDTO> matchesList1 = facade.getMatchesFromRound(leagueUUID, 1).get();
+        List<MatchDTO> matchesList2 = facade.getMatchesFromRound(leagueUUID, 2).get();
         assertTrue(matchesList1.map(MatchDTO::getHost).contains("host"));
         assertTrue(matchesList2.map(MatchDTO::getHost).contains("host2"));
     }
@@ -149,7 +149,7 @@ public class LeagueFacadeTest {
         facade.addMatchToLeague(newMatchDTO);
         facade.addMatchToLeague(newMatchDTO2);
         //then
-        List<MatchDTO> matchesFromRound = facade.getMatchesFromRound(leagueUUID, 1);
+        List<MatchDTO> matchesFromRound = facade.getMatchesFromRound(leagueUUID, 1).get();
         assertEquals(2, matchesFromRound.size());
     }
 
