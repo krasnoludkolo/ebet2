@@ -93,7 +93,7 @@ class RoundResult {
 
     RoundResultsEntity toEntity(UUID leagueUUID, int round) {
         RoundResultsEntity roundResultsEntity = new RoundResultsEntity(leagueUUID, new ArrayList<>(), round);
-        java.util.List<UserResultEntity> entities = userResults.map(e -> e.toEntity(roundResultsEntity)).toJavaList();
+        java.util.List<UserResultEntity> entities = userResults.toList().map(e -> e.toEntity(roundResultsEntity)).toJavaList();
         roundResultsEntity.setUserResultList(entities);
         return roundResultsEntity;
     }
