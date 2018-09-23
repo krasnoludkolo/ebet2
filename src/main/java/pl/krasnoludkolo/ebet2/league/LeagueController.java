@@ -45,7 +45,7 @@ class LeagueController {
     }
 
     @GetMapping("/match")
-    public HttpEntity<MatchDTO> addMatchToLeague(@RequestParam UUID uuid) {
+    public HttpEntity<MatchDTO> getMatchByUUID(@RequestParam UUID uuid) {
         Option<MatchDTO> matchDTOS = leagueFacade.getMatchByUUID(uuid);
         return matchDTOS
                 .map(matchDTO -> new ResponseEntity<>(matchDTO, HttpStatus.OK))
