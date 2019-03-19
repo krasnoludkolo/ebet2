@@ -68,9 +68,8 @@ class RoundResult {
     }
 
     private boolean betNotInResultQueue(BetDTO betDTO) {
-        return userResults
-                .find(userResult -> userResult.hasName(betDTO.getUsername()))
-                .isEmpty();
+        return !userResults
+                .exists(userResult -> userResult.hasName(betDTO.getUsername()));
     }
 
     private UserResult createNewUserResult(String user) {
