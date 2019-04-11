@@ -3,7 +3,6 @@ package pl.krasnoludkolo.ebet2.external.clients.footballdata;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
 import java.util.HashMap;
@@ -40,12 +39,11 @@ class FootballDataDownloader {
     }
 
     private JSONArray getFixturesAsJsonArray(String url) throws UnirestException {
-        JSONObject object = Unirest.get(url)
+        return Unirest.get(url)
                 .headers(headers)
                 .asJson()
                 .getBody()
-                .getObject();
-        return object
+                .getObject()
                 .getJSONArray("matches");
     }
 }
