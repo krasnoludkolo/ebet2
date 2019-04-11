@@ -28,13 +28,13 @@ public class LeagueFacadeTest {
     @Test
     public void shouldNotCreateLeagueWithNoName() {
         LeagueError leagueError = facade.createLeague("").left().get();
-        assertTrue(leagueError.equals(LeagueError.WRONG_NAME_EXCEPTION));
+        assertEquals(LeagueError.WRONG_NAME_EXCEPTION, leagueError);
     }
 
     @Test
     public void shouldNotCreateLeagueWithNullName() {
         LeagueError leagueError = facade.createLeague(null).left().get();
-        assertTrue(leagueError.equals(LeagueError.WRONG_NAME_EXCEPTION));
+        assertEquals(LeagueError.WRONG_NAME_EXCEPTION, leagueError);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class LeagueFacadeTest {
         //when
         facade.createLeague("new");
         LeagueError leagueError = facade.createLeague("new").left().get();
-        assertTrue(leagueError.equals(LeagueError.LEAGUE_NAME_DUPLICATION));
+        assertEquals(LeagueError.LEAGUE_NAME_DUPLICATION, leagueError);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class LeagueFacadeTest {
         UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get();
         //when
         LeagueError leagueError = facade.setMatchResult(matchUUID, MatchResult.NOT_SET).left().get();
-        assertTrue(leagueError.equals(LeagueError.SET_NOT_SET_RESULT));
+        assertEquals(LeagueError.SET_NOT_SET_RESULT, leagueError);
     }
 
     @Test
@@ -259,29 +259,29 @@ public class LeagueFacadeTest {
     @Test
     public void shouldNotAddMatchWithNullHostName() {
         UUID leagueUUID = facade.createLeague("test").get();
-        String message = facade.addMatchToLeague(new NewMatchDTO(null, "guest", 1, leagueUUID, nextYear)).getLeft();
-        assertEquals("Team name cannot be null", message);
+        LeagueError error = facade.addMatchToLeague(new NewMatchDTO(null, "guest", 1, leagueUUID, nextYear)).getLeft();
+        assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithNullGuestName() {
         UUID leagueUUID = facade.createLeague("test").get();
-        String message = facade.addMatchToLeague(new NewMatchDTO("host", null, 1, leagueUUID, nextYear)).getLeft();
-        assertEquals("Team name cannot be null", message);
+        LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", null, 1, leagueUUID, nextYear)).getLeft();
+        assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithEmptyHostName() {
         UUID leagueUUID = facade.createLeague("test").get();
-        String message = facade.addMatchToLeague(new NewMatchDTO("", "guest", 1, leagueUUID, nextYear)).getLeft();
-        assertEquals("Team name cannot be empty", message);
+        LeagueError error = facade.addMatchToLeague(new NewMatchDTO("", "guest", 1, leagueUUID, nextYear)).getLeft();
+        assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithEmptyGuestName() {
         UUID leagueUUID = facade.createLeague("test").get();
-        String message = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, nextYear)).getLeft();
-        assertEquals("Team name cannot be empty", message);
+        LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, nextYear)).getLeft();
+        assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
@@ -295,7 +295,7 @@ public class LeagueFacadeTest {
     @Test
     public void shouldNotArchiveNoExistingLeague() {
         LeagueError leagueError = facade.archiveLeague(UUID.randomUUID()).left().get();
-        assertTrue(leagueError.equals(LeagueError.LEAGUE_NOT_FOUND));
+        assertEquals(LeagueError.LEAGUE_NOT_FOUND, leagueError);
     }
 
 
