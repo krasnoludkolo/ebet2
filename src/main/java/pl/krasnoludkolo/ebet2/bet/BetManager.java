@@ -23,7 +23,7 @@ class BetManager {
         this.leagueFacade = leagueFacade;
     }
 
-    public Either<String, UUID> addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO, String username) {
+    Either<String, UUID> addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO, String username) {
         return validateParameters(matchUUID, username)
                 .flatMap(this::matchExist)
                 .map(match -> {
@@ -58,11 +58,11 @@ class BetManager {
         return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUsername(username)).isDefined();
     }
 
-    public Option<BetDTO> findBetByUUID(UUID betUUID) {
+    Option<BetDTO> findBetByUUID(UUID betUUID) {
         return repository.findOne(betUUID).map(Bet::toDto);
     }
 
-    public Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType) {
+    Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType) {
         return repository
                 .findOne(betUUID)
                 .toEither("Bet not found")
@@ -83,11 +83,11 @@ class BetManager {
         repository.update(betUUID, bet);
     }
 
-    public void removeBet(UUID betUUID) {
+    void removeBet(UUID betUUID) {
         repository.delete(betUUID);
     }
 
-    public List<Bet> getAllBetsForMatch(UUID matchUUID) {
+    List<Bet> getAllBetsForMatch(UUID matchUUID) {
         return repository.findAll().filter(correspondMatch(matchUUID));
     }
 
@@ -95,7 +95,7 @@ class BetManager {
         return bet -> bet.isCorrespondedToMatch(matchUUID);
     }
 
-    public boolean correspondingUsername(UUID betUUID, String username) {
+    boolean correspondingUsername(UUID betUUID, String username) {
         return repository.findOne(betUUID).map(bet -> bet.hasUsername(username)).getOrElse(false);
     }
 }
