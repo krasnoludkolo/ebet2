@@ -46,9 +46,7 @@ class LeagueController {
     @GetMapping("/match")
     public HttpEntity<MatchDTO> getMatchByUUID(@RequestParam UUID uuid) {
         Option<MatchDTO> matchDTOS = leagueFacade.getMatchByUUID(uuid);
-        return matchDTOS
-                .map(matchDTO -> new ResponseEntity<>(matchDTO, HttpStatus.OK))
-                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return ResponseResolver.resolve(matchDTOS);
     }
 
     @GetMapping("/matches")
@@ -61,9 +59,7 @@ class LeagueController {
     @GetMapping("league/{leagueUUID}/matches")
     public HttpEntity<LeagueDTO> getAllMatchesFromLeague(@PathVariable UUID leagueUUID) {
         Option<LeagueDTO> leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID);
-        return leagueDTO
-                .map(l -> new ResponseEntity<>(l, HttpStatus.OK))
-                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return ResponseResolver.resolve(leagueDTO);
     }
 
     @PostMapping("/match/{uuid}/result")

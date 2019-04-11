@@ -1,6 +1,7 @@
 package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,8 @@ class BetController {
 
     @GetMapping("/bet")
     public HttpEntity<BetDTO> getBetByUuid(@RequestParam UUID uuid) {
-        return betFacade.findBetByUUID(uuid)
-                .map(betDTO -> new ResponseEntity<>(betDTO, HttpStatus.CREATED))
-                .getOrElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Option<BetDTO> bet = betFacade.findBetByUUID(uuid);
+        return ResponseResolver.resolve(bet);
     }
 
     @GetMapping("/bets")
