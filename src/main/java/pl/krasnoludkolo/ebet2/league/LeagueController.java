@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.krasnoludkolo.ebet2.infrastructure.ResponseResolver;
 import pl.krasnoludkolo.ebet2.league.api.*;
 import pl.krasnoludkolo.ebet2.league.query.AllMatchesFromRoundFromLeagueQueryList;
 
@@ -37,11 +38,9 @@ class LeagueController {
     }
 
     @PostMapping("/match")
-    public HttpEntity<String> addMatchToLeague(@RequestBody NewMatchDTO newMatchDTO) {
-        Either<String, UUID> uuidEither = leagueFacade.addMatchToLeague(newMatchDTO);
-        return uuidEither
-                .map(uuid -> new ResponseEntity<>(uuid.toString(), HttpStatus.CREATED))
-                .getOrElse(() -> new ResponseEntity<>(uuidEither.getLeft(), HttpStatus.BAD_REQUEST));
+    public ResponseEntity addMatchToLeague(@RequestBody NewMatchDTO newMatchDTO) {
+        Either<LeagueError, UUID> uuid = leagueFacade.addMatchToLeague(newMatchDTO);
+        return ResponseResolver.resolve(uuid);
     }
 
     @GetMapping("/match")

@@ -67,18 +67,18 @@ class LeagueManager {
         return leagueRepository.findAll().map(League::toDTO);
     }
 
-    Either<String, UUID> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
+    Either<LeagueError, UUID> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
         return validateParameters(newMatchDTO)
                 .map(newMatch -> addMatch(leagueUUID, newMatch));
     }
 
-    private Either<String, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
+    private Either<LeagueError, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
         return API.Match(newMatchDTO)
                 .option(
-                        Case($(o -> Objects.isNull(o.getHost())), "Team name cannot be null"),
-                        Case($(o -> Objects.isNull(o.getGuest())), "Team name cannot be null"),
-                        Case($(o -> o.getHost().isEmpty()), "Team name cannot be empty"),
-                        Case($(o -> o.getGuest().isEmpty()), "Team name cannot be empty")
+                        Case($(o -> Objects.isNull(o.getHost())), LeagueError.EMPTY_OR_NULL_NAME),
+                        Case($(o -> Objects.isNull(o.getGuest())), LeagueError.EMPTY_OR_NULL_NAME),
+                        Case($(o -> o.getHost().isEmpty()), LeagueError.EMPTY_OR_NULL_NAME),
+                        Case($(o -> o.getGuest().isEmpty()), LeagueError.EMPTY_OR_NULL_NAME)
                 ).toEither(newMatchDTO)
                 .swap();
     }
@@ -98,15 +98,15 @@ class LeagueManager {
                 .toEither(LeagueError.LEAGUE_NOT_FOUND);
     }
 
-    public void removeMatchUUID(UUID leagueUUID) {
+    void removeMatchUUID(UUID leagueUUID) {
         leagueRepository.delete(leagueUUID);
     }
 
-    public List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
+    List<MatchDTO> getAllMatchesFromLeague(UUID uuid) {
         return leagueRepository.findOne(uuid).map(League::getAllMatches).getOrElse(List::empty);
     }
 
-    public Either<LeagueError, League> archiveLeague(UUID leagueUUID) {
+    Either<LeagueError, League> archiveLeague(UUID leagueUUID) {
         Either<LeagueError, League> league = leagueRepository.findOne(leagueUUID).toEither(LeagueError.LEAGUE_NOT_FOUND);
         return league
                 .peek(l -> {

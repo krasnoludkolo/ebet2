@@ -36,7 +36,7 @@ public class LeagueFacade {
         return leagueManager.getAllLeagues().map(l -> new LeagueDetailsDTO(l.getUuid(), l.getName(), l.isArchived()));
     }
 
-    public Either<String, UUID> addMatchToLeague(NewMatchDTO newMatchDTO) {
+    public Either<LeagueError, UUID> addMatchToLeague(NewMatchDTO newMatchDTO) {
         UUID leagueUUID = newMatchDTO.getLeagueUUID();
         return leagueManager.addMatchToLeague(leagueUUID, newMatchDTO);
     }
