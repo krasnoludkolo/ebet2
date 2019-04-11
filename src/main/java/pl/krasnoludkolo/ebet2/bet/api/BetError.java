@@ -1,6 +1,8 @@
 package pl.krasnoludkolo.ebet2.bet.api;
 
-public enum BetError {
+import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+
+public enum BetError implements ResponseError {
     BET_NOT_FOUND("Bet not found", 404),
     BET_ALREADY_SET("Bet already set", 400),
     MATCH_ALREADY_STARTED("Match already started", 400),
