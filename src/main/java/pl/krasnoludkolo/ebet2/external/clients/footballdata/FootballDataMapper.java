@@ -25,17 +25,17 @@ class FootballDataMapper {
     }
 
     private Option<MatchInfo> createMatchInfo(JSONObject fixture) {
-        String homeTeamName = fixture.getString("homeTeamName");
-        String awayTeamName = fixture.getString("awayTeamName");
+        String homeTeamName = fixture.getJSONObject("homeTeam").getString("name");
+        String awayTeamName = fixture.getJSONObject("awayTeam").getString("name");
         int round = fixture.getInt("matchday");
         String status = fixture.getString("status");
         boolean finished = status.equals("FINISHED");
         LocalDateTime startDate = getDateFromFixtureJSONObject(fixture);
         MatchResult result = MatchResult.NOT_SET;
         if (finished) {
-            JSONObject matchResult = fixture.getJSONObject("result");
-            int goalsHomeTeam = matchResult.getInt("goalsHomeTeam");
-            int goalsAwayTeam = matchResult.getInt("goalsAwayTeam");
+            JSONObject matchResult = fixture.getJSONObject("score").getJSONObject("fullTime");
+            int goalsHomeTeam = matchResult.getInt("homeTeam");
+            int goalsAwayTeam = matchResult.getInt("awayTeam");
             result = MatchResult.fromResult(goalsHomeTeam, goalsAwayTeam);
         }
         if (homeTeamName.equals("") || awayTeamName.equals("")) {
@@ -46,7 +46,7 @@ class FootballDataMapper {
     }
 
     private LocalDateTime getDateFromFixtureJSONObject(JSONObject fixture) {
-        return ZonedDateTime.parse(fixture.getString("date")).toLocalDateTime();
+        return ZonedDateTime.parse(fixture.getString("utcDate")).toLocalDateTime();
     }
 
 }
