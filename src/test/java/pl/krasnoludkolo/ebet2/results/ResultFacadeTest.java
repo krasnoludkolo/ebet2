@@ -281,4 +281,12 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(UUID.randomUUID());
     }
 
+    @Test
+    public void shouldCreateResultsForEmptyLeague() {
+        UUID uuid = leagueFacade.createLeague("new").get();
+
+        Option<LeagueResultsDTO> results = resultFacade.getResultsForLeague(uuid);
+
+        assertTrue(results.isDefined());
+    }
 }
