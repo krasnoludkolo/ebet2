@@ -39,7 +39,7 @@ class LeagueInitializer {
 
     private void addMatchToLeague(MatchInfo matchInfo, UUID leagueUUID) {
         NewMatchDTO newMatchDTO = createNewMatchDTO(matchInfo, leagueUUID);
-        Either<String, UUID> uuidEither = leagueFacade.addMatchToLeague(newMatchDTO);
+        Either<LeagueError, UUID> uuidEither = leagueFacade.addMatchToLeague(newMatchDTO);
         if (matchInfo.isFinished()) {
             uuidEither.peek(uuid -> leagueFacade.setMatchResult(uuidEither.get(), matchInfo.getResult()));
         }
