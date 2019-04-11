@@ -4,10 +4,13 @@ import io.vavr.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
+import pl.krasnoludkolo.ebet2.user.api.UserError;
+import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class UserFacadeTest {
 
@@ -24,75 +27,68 @@ public class UserFacadeTest {
 
     @Test
     public void shouldRegisterUser() {
-        Either<String, String> token = userFacade.registerUser(username, password);
-        assertTrue(token.isRight());
-        String s = token.get();
-        String[] split = s.split("\\.");
+        String token = userFacade.registerUser(new UserInfo(username, password)).get();
+        String[] split = token.split("\\.");
         assertEquals(3, split.length);
         Arrays.asList(split).forEach(part -> assertTrue(part.length() > 0));
     }
 
     @Test
     public void shouldNotRegisterUserWithUsedUsername() {
-        userFacade.registerUser(username, password);
-        Either<String, String> token = userFacade.registerUser(username, password);
-        assertTrue(token.isLeft());
-        assertEquals("Duplicate username", token.getLeft());
+        userFacade.registerUser(new UserInfo(username, password));
+        UserError token = userFacade.registerUser(new UserInfo(username, password)).getLeft();
+        assertEquals(UserError.DUPLICATED_USERNAME, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithEmptyPassword() {
-        Either<String, String> token = userFacade.registerUser(username, "");
-        assertTrue(token.isLeft());
-        assertEquals("Empty password", token.getLeft());
+        UserError token = userFacade.registerUser(new UserInfo(username, "")).getLeft();
+        assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithEmptyUsername() {
-        Either<String, String> token = userFacade.registerUser("", password);
-        assertTrue(token.isLeft());
-        assertEquals("Empty username", token.getLeft());
+        UserError token = userFacade.registerUser(new UserInfo("", password)).getLeft();
+        assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithNullPassword() {
-        Either<String, String> token = userFacade.registerUser(username, null);
-        assertTrue(token.isLeft());
-        assertEquals("Empty password", token.getLeft());
+        UserError token = userFacade.registerUser(new UserInfo(username, null)).getLeft();
+        assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithNullUsername() {
-        Either<String, String> token = userFacade.registerUser(null, password);
-        assertTrue(token.isLeft());
-        assertEquals("Empty username", token.getLeft());
+        UserError token = userFacade.registerUser(new UserInfo(null, password)).getLeft();
+        assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotGenerateTokenToUserWithWrongPassword() {
         //given
-        userFacade.registerUser(username, password);
+        userFacade.registerUser(new UserInfo(username, password));
         //when
-        Either<String, String> token = userFacade.generateToken(username, "wrongpassword");
+        UserError token = userFacade.generateToken(new UserInfo(username, "wrongpassword")).getLeft();
         //then
-        assertTrue(token.isLeft());
-        assertEquals("Wrong password", token.getLeft());
+
+        assertEquals(UserError.WRONG_PASSWORD, token);
     }
 
     @Test
     public void shouldGenerateTokenToRegisteredUser() {
         //given
-        userFacade.registerUser(username, password);
+        userFacade.registerUser(new UserInfo(username, password));
         //when
-        Either<String, String> token = userFacade.generateToken(username, password);
+        String token = userFacade.generateToken(new UserInfo(username, password)).get();
         //then
-        assertFalse(token.isLeft());
+        assertTrue(token.length() > 0);
     }
 
     @Test
     public void shouldGetUsernameFromToken() {
         //given
-        String registrationToken = userFacade.registerUser(username, password).get();
+        String registrationToken = userFacade.registerUser(new UserInfo(username, password)).get();
         //when
         String user = userFacade.getUsername(registrationToken).get();
         //then

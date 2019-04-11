@@ -1,6 +1,8 @@
 package pl.krasnoludkolo.ebet2.user;
 
 import io.vavr.control.Either;
+import pl.krasnoludkolo.ebet2.user.api.UserError;
+import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 public class UserFacade {
 
@@ -12,16 +14,16 @@ public class UserFacade {
         this.tokenManager = tokenManager;
     }
 
-    public Either<String, String> registerUser(String username, String password) {
-        return userManager.registerUser(username, password);
+    public Either<UserError, String> registerUser(UserInfo userInfo) {
+        return userManager.registerUser(userInfo);
     }
 
-    public Either<String, String> generateToken(String username, String password) {
-        boolean correct = userManager.checkPasswordFor(username, password);
+    public Either<UserError, String> generateToken(UserInfo userInfo) {
+        boolean correct = userManager.checkPasswordFor(userInfo);
         if (correct) {
-            return Either.right(tokenManager.generateTokenFor(username));
+            return Either.right(tokenManager.generateTokenFor(userInfo.getUsername()));
         }
-        return Either.left("Wrong password");
+        return Either.left(UserError.WRONG_PASSWORD);
     }
 
     public Either<String, String> getUsername(String token) {

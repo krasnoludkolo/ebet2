@@ -4,6 +4,8 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.apache.commons.codec.binary.Base64;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.user.api.UserError;
+import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 import java.util.UUID;
 
@@ -17,42 +19,46 @@ class UserManager {
         this.tokenManager = tokenManager;
     }
 
-    synchronized Either<String, String> registerUser(String username, String password) {
-        Option<String> parametersErrors = validateParameters(username, password);
+    synchronized Either<UserError, String> registerUser(UserInfo user) {
+        Option<UserError> parametersErrors = validateParameters(user);
         if (!parametersErrors.isEmpty()) {
             return Either.left(parametersErrors.get());
         }
-        if (userWithUsernameExists(username)) {
-            return Either.left("Duplicate username");
+        if (userWithUsernameExists(user.getUsername())) {
+            return Either.left(UserError.DUPLICATED_USERNAME);
         }
-        UserEntity userEntity = createUserEntity(username, password);
+        UserEntity userEntity = createUserEntity(user);
         repository.save(userEntity.getUuid(), userEntity);
-        return Either.right(tokenManager.generateTokenFor(username));
+        return Either.right(tokenManager.generateTokenFor(user.getUsername()));
     }
 
-    private UserEntity createUserEntity(String username, String password) {
-        byte[] encryptedPassword = encryptPassword(password);
-        return new UserEntity(UUID.randomUUID(), username, encryptedPassword);
+    private UserEntity createUserEntity(UserInfo user) {
+        byte[] encryptedPassword = encryptPassword(user.getPassword());
+        return new UserEntity(UUID.randomUUID(), user.getUsername(), encryptedPassword);
     }
 
     private boolean userWithUsernameExists(String username) {
         return repository.findAll().find(userEntity -> userEntity.getUsername().equals(username)).isDefined();
     }
 
-    private Option<String> validateParameters(String username, String password) {
-        if (username == null || username.isEmpty()) {
-            return Option.of("Empty username");
-        } else if (password == null || password.isEmpty()) {
-            return Option.of("Empty password");
+    private Option<UserError> validateParameters(UserInfo user) {
+        String username = user.getUsername();
+        String password = user.getPassword();
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            return Option.of(UserError.EMPTY_USERNAME_OR_PASSWORD);
         }
         return Option.none();
     }
 
-    public boolean checkPasswordFor(String username, String password) {
+    boolean checkPasswordFor(UserInfo user) {
         return !repository
                 .findAll()
-                .filter(userEntity -> userEntity.getUsername().equals(username) && decryptPassword(userEntity.getPassword()).equals(password))
+                .filter(userEntity -> checkPassword(user, userEntity))
                 .isEmpty();
+    }
+
+    private boolean checkPassword(UserInfo user, UserEntity userEntity) {
+        return userEntity.getUsername().equals(user.getUsername()) && decryptPassword(userEntity.getPassword()).equals(user.getPassword());
     }
 
     private byte[] encryptPassword(String password) {

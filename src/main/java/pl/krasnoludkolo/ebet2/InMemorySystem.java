@@ -14,6 +14,7 @@ import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.user.UserConfiguration;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
+import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 import java.time.LocalDateTime;
 
@@ -50,9 +51,9 @@ public class InMemorySystem {
     }
 
     private void addSampleUsers() {
-        String api1 = userFacade.registerUser("user1", "pass1").get();
-        String api2 = userFacade.registerUser("user2", "pass2").get();
-        String api3 = userFacade.registerUser("user3", "pass3").get();
+        String api1 = userFacade.registerUser(new UserInfo("user1", "pass1")).get();
+        String api2 = userFacade.registerUser(new UserInfo("user2", "pass2")).get();
+        String api3 = userFacade.registerUser(new UserInfo("user3", "pass3")).get();
         sampleUsersApiToken = List.of(api1, api2, api3);
         sampleUsernameList = List.of("user1", "user2", "user3");
     }

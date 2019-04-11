@@ -21,7 +21,7 @@ class AutoUpdaterScheduler {
     AutoUpdaterScheduler(ExternalFacade externalFacade) {
         this.externalFacade = externalFacade;
         long hoursToNight = calculateHoursToNight(LocalTime.now());
-        LOGGER.log(Level.INFO, "hoursToNight: " + hoursToNight);
+//        LOGGER.log(Level.INFO, "hoursToNight: " + hoursToNight);
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
         scheduledExecutorService.scheduleAtFixedRate(this::updateAllLeagues, hoursToNight, 24, TimeUnit.HOURS);
     }
