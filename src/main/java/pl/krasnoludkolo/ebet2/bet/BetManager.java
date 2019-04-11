@@ -4,11 +4,10 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
+import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
-import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -16,67 +15,34 @@ import java.util.function.Predicate;
 class BetManager {
 
     private Repository<Bet> repository;
-    private LeagueFacade leagueFacade;
+    private NewBetValidator betValidator;
 
     BetManager(Repository<Bet> repository, LeagueFacade leagueFacade) {
         this.repository = repository;
-        this.leagueFacade = leagueFacade;
+        this.betValidator = new NewBetValidator(leagueFacade, repository);
     }
 
-    Either<String, UUID> addBetToMatch(UUID matchUUID, NewBetDTO newBetDTO, String username) {
-        return validateParameters(matchUUID, username)
-                .flatMap(this::matchExist)
-                .map(match -> {
-                    BetTyp betType = newBetDTO.getBetTyp();
-                    Bet bet = new Bet(match, username, betType);
-                    UUID uuid = bet.getUuid();
-                    repository.save(uuid, bet);
-                    return uuid;
-                });
+    Either<BetError, UUID> addBetToMatch(NewBet newBet) {
+        return betValidator.validateParameters(newBet)
+                .map(Bet::of)
+                .peek(bet -> repository.save(bet.getUuid(), bet))
+                .map(Bet::getUuid);
     }
 
-    private Either<String, UUID> matchExist(UUID uuid) {
-        return leagueFacade.getMatchByUUID(uuid).map(MatchDTO::getUuid).toEither("Match not found");
-    }
-
-    private Either<String, UUID> validateParameters(UUID matchUUID, String username) {
-
-        if (matchHasAlreadyBegun(matchUUID)) {
-            return Either.left("Match has already begun");
-        }
-        if (betWithUsernameExist(matchUUID, username)) {
-            return Either.left("Bet for username: " + username + " and match UUID " + matchUUID + " exists");
-        }
-        return Either.right(matchUUID);
-    }
-
-    private boolean matchHasAlreadyBegun(UUID matchUUID) {
-        return leagueFacade.hasMatchAlreadyBegun(matchUUID).getOrElse(false);
-    }
-
-    private boolean betWithUsernameExist(UUID matchUUID, String username) {
-        return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUsername(username)).isDefined();
-    }
 
     Option<BetDTO> findBetByUUID(UUID betUUID) {
         return repository.findOne(betUUID).map(Bet::toDto);
     }
 
-    Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType) {
+    Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType) {
         return repository
                 .findOne(betUUID)
-                .toEither("Bet not found")
-                .flatMap(this::canUpdate)
+                .toEither(BetError.BET_NOT_FOUND)
+                .flatMap(betValidator::canUpdate)
                 .peek(bet -> updateBet(betUUID, betType, bet))
                 .map(Bet::getUuid);
     }
 
-    private Either<String, Bet> canUpdate(Bet bet) {
-        return matchHasAlreadyBegun(bet.getMatchUuid()) ?
-                Either.left("Match has already begun")
-                :
-                Either.right(bet);
-    }
 
     private void updateBet(UUID betUUID, BetTyp betType, Bet bet) {
         bet.updateBetType(betType);

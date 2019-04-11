@@ -1,12 +1,12 @@
 package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.collection.List;
-import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
+import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
@@ -63,9 +63,9 @@ public class BetFacadeTest {
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, lastYear)).get();
         //when
-        String errorMessage = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth).getLeft();
+        BetError error = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth).getLeft();
         //then
-        assertEquals("Match has already begun", errorMessage);
+        assertEquals(BetError.MATCH_ALREADY_STARTED, error);
     }
 
     @Test
@@ -76,9 +76,9 @@ public class BetFacadeTest {
         UUID betUUID = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth).get();
         //when
         system.setFixedTime(nextYear.plusDays(1));
-        String errorMessage = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth).getLeft();
+        BetError error = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth).getLeft();
         //then
-        assertEquals("Match has already begun", errorMessage);
+        assertEquals(BetError.MATCH_ALREADY_STARTED, error);
     }
 
     @Test
@@ -88,8 +88,8 @@ public class BetFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         //when
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID), auth);
-        String errorMessage = betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID), auth).getLeft();
-        assertEquals("Bet for username: " + "user1" + " and match UUID " + matchUUID + " exists", errorMessage);
+        BetError error = betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID), auth).getLeft();
+        assertEquals(BetError.BET_ALREADY_SET, error);
     }
 
     @Test
@@ -110,9 +110,8 @@ public class BetFacadeTest {
     public void shouldNotUpdateNoExistingBet() {
         //when
         UUID betUUID = UUID.randomUUID();
-        Either<String, UUID> shouldBeError = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth);
-        assertTrue(shouldBeError.isLeft());
-        assertEquals("Bet with uuid:" + betUUID + " and username:" + "user1" + "not found", shouldBeError.getLeft());
+        BetError error = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth).getLeft();
+        assertEquals(BetError.BET_NOT_FOUND, error);
     }
 
     @Test

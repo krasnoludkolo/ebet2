@@ -18,7 +18,7 @@ public class BetConfiguration {
     @Bean
     public BetFacade betFacadeBean(CrudRepository<BetEntity, UUID> repo, UserFacade userFacade, LeagueFacade leagueFacade) {
         Function<Bet, BetEntity> d2e = Bet::toEntity;
-        Function<BetEntity, Bet> e2d = Bet::new;
+        Function<BetEntity, Bet> e2d = Bet::fromEntity;
         Repository<Bet> repository = new SpringDataRepositoryAdapter<>(repo, d2e, e2d);
         BetManager betManager = new BetManager(repository, leagueFacade);
         return new BetFacade(betManager, userFacade);

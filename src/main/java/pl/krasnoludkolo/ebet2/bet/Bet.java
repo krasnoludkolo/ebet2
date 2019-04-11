@@ -15,12 +15,12 @@ class Bet {
     private String username;
     private BetTyp betTyp;
 
-    Bet(BetEntity e) {
-        this(e.getUuid(), e.getMatchUuid(), e.getUsername(), e.getBetTyp());
+    static Bet of(NewBet newBet) {
+        return new Bet(UUID.randomUUID(), newBet.getMatchUUID(), newBet.getUsername(), newBet.getBetTyp());
     }
 
-    Bet(UUID matchUuid, String username, BetTyp betTyp) {
-        this(UUID.randomUUID(), matchUuid, username, betTyp);
+    static Bet fromEntity(BetEntity e) {
+        return new Bet(e.getUuid(), e.getMatchUuid(), e.getUsername(), e.getBetTyp());
     }
 
     private Bet(UUID uuid, UUID matchUuid, String username, BetTyp betTyp) {
@@ -34,11 +34,11 @@ class Bet {
         this.betTyp = betType;
     }
 
-    public boolean hasUsername(String username) {
+    boolean hasUsername(String username) {
         return this.username.equals(username);
     }
 
-    public boolean isCorrespondedToMatch(UUID uuid) {
+    boolean isCorrespondedToMatch(UUID uuid) {
         return Objects.equals(uuid, matchUuid);
     }
 

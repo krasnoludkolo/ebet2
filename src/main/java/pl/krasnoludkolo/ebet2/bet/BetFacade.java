@@ -4,6 +4,7 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
+import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
@@ -20,10 +21,12 @@ public class BetFacade {
         this.userFacade = userFacade;
     }
 
-    public Either<String, UUID> addBetToMatch(NewBetDTO newBetDTO, String auth) {
+    public Either<BetError, UUID> addBetToMatch(NewBetDTO newBetDTO, String auth) {
         return userFacade
                 .getUsername(auth)
-                .flatMap(user -> betManager.addBetToMatch(newBetDTO.getMatchUUID(), newBetDTO, user));
+                .mapLeft(x -> BetError.USER_NOT_FOUND)
+                .map(user -> new NewBet(newBetDTO.getBetTyp(), newBetDTO.getMatchUUID(), user))
+                .flatMap(betManager::addBetToMatch);
     }
 
     public Option<BetDTO> findBetByUUID(UUID betUUID) {
@@ -31,13 +34,13 @@ public class BetFacade {
     }
 
     //TODO refactor
-    public Either<String, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
+    public Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
         Either<String, String> username = userFacade.getUsername(auth);
         if (username.isLeft()) {
-            return Either.left(username.getLeft());
+            return Either.left(BetError.USER_NOT_FOUND);
         }
         if (!betManager.correspondingUsername(betUUID, username.get())) {
-            return Either.left("Bet with uuid:" + betUUID + " and username:" + username.get() + "not found");
+            return Either.left(BetError.BET_NOT_FOUND);
         }
         return betManager.updateBetToMatch(betUUID, betType);
     }
