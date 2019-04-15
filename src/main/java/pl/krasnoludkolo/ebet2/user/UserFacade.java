@@ -26,9 +26,9 @@ public class UserFacade {
         return Either.left(UserError.WRONG_PASSWORD);
     }
 
-    public Either<String, String> getUsername(String token) {
+    public Either<UserError, String> getUsername(String token) {
         return tokenManager
                 .getUsername(token)
-                .toEither("Wrong token");
+                .toEither(UserError.WRONG_PASSWORD);
     }
 }

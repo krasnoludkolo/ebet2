@@ -1,6 +1,5 @@
 package pl.krasnoludkolo.ebet2.user;
 
-import io.vavr.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
@@ -98,10 +97,9 @@ public class UserFacadeTest {
     @Test
     public void shouldNotGetUsernameFromWrongToken() {
         //when
-        Either<String, String> someWrongToken = userFacade.getUsername("SomeWrongToken");
+        UserError error = userFacade.getUsername("SomeWrongToken").getLeft();
         //then
-        assertTrue(someWrongToken.isLeft());
-        assertEquals("Wrong token", someWrongToken.getLeft());
+        assertEquals(UserError.WRONG_PASSWORD, error);
     }
 
 }

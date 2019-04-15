@@ -8,6 +8,7 @@ import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
+import pl.krasnoludkolo.ebet2.user.api.UserError;
 
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class BetFacade {
 
     //TODO refactor
     public Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
-        Either<String, String> username = userFacade.getUsername(auth);
+        Either<UserError, String> username = userFacade.getUsername(auth);
         if (username.isLeft()) {
             return Either.left(BetError.USER_NOT_FOUND);
         }
