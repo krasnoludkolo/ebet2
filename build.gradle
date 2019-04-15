@@ -50,6 +50,8 @@ dependencies {
     compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
     compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 
+    compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
+
     compileOnly 'org.projectlombok:lombok:1.16.20'
 
     runtime('org.springframework.boot:spring-boot-devtools')

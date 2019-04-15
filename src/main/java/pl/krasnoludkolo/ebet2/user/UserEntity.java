@@ -19,6 +19,6 @@ class UserEntity {
     @Id
     private UUID uuid;
     private String username;
-    private byte[] password;
+    private String password;
 
 }

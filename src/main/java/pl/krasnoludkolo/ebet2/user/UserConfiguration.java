@@ -8,18 +8,19 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
 
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 @Configuration
 public class UserConfiguration {
 
     @Bean
     public UserFacade userFacade(CrudRepository<UserEntity, UUID> repo) {
-        Function<UserEntity, UserEntity> d2e = e -> e;
-        Function<UserEntity, UserEntity> e2d = e -> e;
+        UnaryOperator<UserEntity> d2e = e -> e;
+        UnaryOperator<UserEntity> e2d = e -> e;
         Repository<UserEntity> repository = new SpringDataRepositoryAdapter<>(repo, d2e, e2d);
         JWTTokenManager tokenManager = new JWTTokenManager();
-        UserManager userManager = new UserManager(repository, tokenManager);
+        PasswordEncrypt passwordEncrypt = new BCryptPasswordEncrypt();
+        UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
         return new UserFacade(userManager, tokenManager);
     }
 
@@ -27,7 +28,8 @@ public class UserConfiguration {
     public UserFacade inMemoryUserFacade() {
         Repository<UserEntity> repository = new InMemoryRepository<>();
         JWTTokenManager tokenManager = new JWTTokenManager();
-        UserManager userManager = new UserManager(repository, tokenManager);
+        PasswordEncrypt passwordEncrypt = new PlainTextPasswordEncrypt();
+        UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
         return new UserFacade(userManager, tokenManager);
     }
 
