@@ -55,7 +55,7 @@ class UserResult implements Comparable<UserResult> {
         return Objects.hash(name, pointCounter);
     }
 
-    public UserResultEntity toEntity(RoundResultsEntity entity) {
+    UserResultEntity toEntity(RoundResultsEntity entity) {
         return new UserResultEntity(name, pointCounter.getCount(), entity);
     }
 
