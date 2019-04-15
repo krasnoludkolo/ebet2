@@ -87,8 +87,7 @@ class LeagueResults {
     private Set<String> getAllUsers() {
         return roundsResults
                 .values()
-                .map(RoundResult::getAllUsers)
-                .flatMap(l -> l)
+                .flatMap(RoundResult::getAllUsers)
                 .toSet();
     }
 
