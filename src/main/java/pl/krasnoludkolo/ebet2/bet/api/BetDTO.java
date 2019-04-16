@@ -16,7 +16,7 @@ public class BetDTO {
 
     private UUID uuid;
     private BetTyp betTyp;
-    private String username;
+    private UUID userUUID;
     private UUID matchUUID;
 
 }

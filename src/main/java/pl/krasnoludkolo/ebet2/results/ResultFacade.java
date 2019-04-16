@@ -35,11 +35,11 @@ public class ResultFacade {
         return Option.of(crudService.getResultsForLeague(leagueUUID).toDTO());
     }
 
-    public Option<UserResultDTO> getResultsFromLeagueToUser(UUID leagueUUID, String user) {
+    public Option<UserResultDTO> getResultsFromLeagueToUser(UUID leagueUUID, UUID userUUID) {
         return Option.of(crudService
-                .getResultsFromLeagueToUser(leagueUUID, user)
+                .getResultsFromLeagueToUser(leagueUUID, userUUID)
                 .map(UserResult::toDTO)
-                .reduce((a, b) -> new UserResultDTO(a.getName(), a.getPointCounter() + b.getPointCounter())));
+                .reduce((a, b) -> new UserResultDTO(a.getUserUUID(), a.getPointCounter() + b.getPointCounter())));
     }
 
     public void updateLeagueResultsForMatch(UUID matchUUID) {

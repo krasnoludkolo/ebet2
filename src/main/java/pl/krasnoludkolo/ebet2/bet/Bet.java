@@ -13,21 +13,21 @@ class Bet {
 
     private UUID uuid;
     private UUID matchUuid;
-    private String username;
+    private UUID userUUUID;
     private BetTyp betTyp;
 
     static Bet of(NewBet newBet) {
-        return new Bet(UUID.randomUUID(), newBet.getMatchUUID(), newBet.getUsername(), newBet.getBetTyp());
+        return new Bet(UUID.randomUUID(), newBet.getMatchUUID(), newBet.getUserUUID(), newBet.getBetTyp());
     }
 
     static Bet fromEntity(BetEntity e) {
-        return new Bet(e.getUuid(), e.getMatchUuid(), e.getUsername(), e.getBetTyp());
+        return new Bet(e.getUuid(), e.getMatchUuid(), e.getUserUUID(), e.getBetTyp());
     }
 
-    private Bet(UUID uuid, UUID matchUuid, String username, BetTyp betTyp) {
+    private Bet(UUID uuid, UUID matchUuid, UUID userUUUID, BetTyp betTyp) {
         this.uuid = uuid;
         this.matchUuid = matchUuid;
-        this.username = username;
+        this.userUUUID = userUUUID;
         this.betTyp = betTyp;
     }
 
@@ -35,8 +35,8 @@ class Bet {
         this.betTyp = betType;
     }
 
-    boolean hasUsername(String username) {
-        return this.username.equals(username);
+    boolean hasUserUUID(UUID userUUID) {
+        return this.userUUUID.equals(userUUID);
     }
 
     boolean isCorrespondedToMatch(UUID uuid) {
@@ -61,14 +61,14 @@ class Bet {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, matchUuid, username, betTyp);
+        return Objects.hash(uuid, matchUuid, userUUUID, betTyp);
     }
 
     BetDTO toDto() {
-        return new BetDTO(uuid, betTyp, username, matchUuid);
+        return new BetDTO(uuid, betTyp, userUUUID, matchUuid);
     }
 
     BetEntity toEntity() {
-        return new BetEntity(uuid, matchUuid, username, betTyp);
+        return new BetEntity(uuid, matchUuid, userUUUID, betTyp);
     }
 }

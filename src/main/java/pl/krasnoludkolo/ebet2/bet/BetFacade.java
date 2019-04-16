@@ -21,9 +21,9 @@ public class BetFacade {
 
     public Either<BetError, UUID> addBetToMatch(NewBetDTO newBetDTO, String auth) {
         return userFacade
-                .getUsername(auth)
+                .getUserUUIDFromToken(auth)
                 .mapLeft(x -> BetError.USER_NOT_FOUND)
-                .map(user -> new NewBet(newBetDTO.getBetTyp(), newBetDTO.getMatchUUID(), user))
+                .map(userUUID -> new NewBet(newBetDTO.getBetTyp(), newBetDTO.getMatchUUID(), userUUID))
                 .flatMap(betManager::addBetToMatch);
     }
 
@@ -33,11 +33,11 @@ public class BetFacade {
 
     //TODO refactor
     public Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
-        Either<UserError, String> username = userFacade.getUsername(auth);
-        if (username.isLeft()) {
+        Either<UserError, UUID> userUUID = userFacade.getUserUUIDFromToken(auth);
+        if (userUUID.isLeft()) {
             return Either.left(BetError.USER_NOT_FOUND);
         }
-        if (!betManager.correspondingUsername(betUUID, username.get())) {
+        if (!betManager.correspondingUsername(betUUID, userUUID.get())) {
             return Either.left(BetError.BET_NOT_FOUND);
         }
         return betManager.updateBetToMatch(betUUID, betType);

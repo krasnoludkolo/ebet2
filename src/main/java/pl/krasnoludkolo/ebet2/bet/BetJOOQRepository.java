@@ -36,7 +36,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
         create
                 .insertInto(table(BET_ENTITY))
                 .columns(field("uuid"), field("bet_typ"), field("match_uuid"), field("username"))
-                .values(entity.getUuid(), entity.getBetTyp().ordinal(), entity.getMatchUuid(), entity.getUsername())
+                .values(entity.getUuid(), entity.getBetTyp().ordinal(), entity.getMatchUuid(), entity.getUserUUID())
                 .execute();
     }
 
@@ -79,7 +79,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
                 .update(table(BET_ENTITY))
                 .set(field("bet_typ"), entity.getBetTyp().ordinal())
                 .set(field("match_uuid"), entity.getMatchUuid())
-                .set(field("username"), entity.getUsername())
+                .set(field("username"), entity.getUserUUID())
                 .where(field("uuid").eq(uuid))
                 .execute();
     }

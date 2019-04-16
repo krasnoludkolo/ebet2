@@ -18,7 +18,7 @@ class BetEntity {
     @Id
     private UUID uuid;
     private UUID matchUuid;
-    private String username;
+    private UUID userUUID;
     private BetTyp betTyp;
 
 }

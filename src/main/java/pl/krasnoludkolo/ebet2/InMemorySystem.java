@@ -14,7 +14,8 @@ import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.user.UserConfiguration;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
-import pl.krasnoludkolo.ebet2.user.api.UserInfo;
+import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
 import java.time.LocalDateTime;
 
@@ -26,9 +27,8 @@ public class InMemorySystem {
     private ResultFacade resultFacade;
     private ExternalFacade externalFacade;
     private ExternalClientMock externalClientMock;
-    private List<String> sampleUsersApiToken;
-    private List<String> sampleUsernameList;
     private TimeProvider timeProvider;
+    private List<UserDetails> usersDetails;
 
     public InMemorySystem() {
         configureEnvironment();
@@ -51,11 +51,10 @@ public class InMemorySystem {
     }
 
     private void addSampleUsers() {
-        String api1 = userFacade.registerUser(new UserInfo("user1", "pass1")).get();
-        String api2 = userFacade.registerUser(new UserInfo("user2", "pass2")).get();
-        String api3 = userFacade.registerUser(new UserInfo("user3", "pass3")).get();
-        sampleUsersApiToken = List.of(api1, api2, api3);
-        sampleUsernameList = List.of("user1", "user2", "user3");
+        UserDetails api1 = userFacade.registerUser(new LoginUserInfo("user1", "pass1")).get();
+        UserDetails api2 = userFacade.registerUser(new LoginUserInfo("user2", "pass2")).get();
+        UserDetails api3 = userFacade.registerUser(new LoginUserInfo("user3", "pass3")).get();
+        usersDetails = List.of(api1, api2, api3);
     }
 
     public UserFacade userFacade() {
@@ -86,12 +85,8 @@ public class InMemorySystem {
         return externalClientMock.getMatchList();
     }
 
-    public List<String> getSampleUsersApiToken() {
-        return sampleUsersApiToken;
-    }
-
-    public List<String> getSampleUsernameList() {
-        return sampleUsernameList;
+    public List<UserDetails> getSampleUserDetailList() {
+        return usersDetails;
     }
 
     public void setNow() {

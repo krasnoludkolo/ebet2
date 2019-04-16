@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -15,15 +16,15 @@ class UserResultEntity {
 
     @Id
     private String uuid;
-    private String name;
+    private UUID userUUID;
     private int pointCounter;
     @ManyToOne(fetch = FetchType.EAGER)
     private RoundResultsEntity roundResultsEntity;
 
-    UserResultEntity(String name, int pointCounter, RoundResultsEntity roundResultsEntity) {
-        this.name = name;
+    UserResultEntity(UUID userUUID, int pointCounter, RoundResultsEntity roundResultsEntity) {
+        this.userUUID = userUUID;
         this.pointCounter = pointCounter;
         this.roundResultsEntity = roundResultsEntity;
-        uuid = roundResultsEntity.getUuid() + "_" + name;
+        uuid = roundResultsEntity.getUuid() + "_" + userUUID;
     }
 }

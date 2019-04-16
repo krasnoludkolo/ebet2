@@ -21,7 +21,7 @@ final class NewBetValidator {
 
     Either<BetError, NewBet> validateParameters(NewBet newBet) {
         UUID matchUUID = newBet.getMatchUUID();
-        String username = newBet.getUsername();
+        UUID userUUID = newBet.getUserUUID();
 
         if (matchNotExist(matchUUID)) {
             return Either.left(BetError.MATCH_NOT_FOUND);
@@ -29,7 +29,7 @@ final class NewBetValidator {
         if (matchHasAlreadyBegun(matchUUID)) {
             return Either.left(BetError.MATCH_ALREADY_STARTED);
         }
-        if (betWithUsernameExist(matchUUID, username)) {
+        if (betWithUUIDExist(matchUUID, userUUID)) {
             return Either.left(BetError.BET_ALREADY_SET);
         }
         return Either.right(newBet);
@@ -43,8 +43,8 @@ final class NewBetValidator {
         return leagueFacade.hasMatchAlreadyBegun(matchUUID).getOrElse(false);
     }
 
-    private boolean betWithUsernameExist(UUID matchUUID, String username) {
-        return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUsername(username)).isDefined();
+    private boolean betWithUUIDExist(UUID matchUUID, UUID userUUID) {
+        return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUserUUID(userUUID)).isDefined();
     }
 
     Either<BetError, Bet> canUpdate(Bet bet) {

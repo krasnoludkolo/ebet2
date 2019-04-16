@@ -3,34 +3,35 @@ package pl.krasnoludkolo.ebet2.results;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.Objects;
+import java.util.UUID;
 
 class UserResult implements Comparable<UserResult> {
 
-    private final String name;
+    private final UUID userUUID;
     private final PointCounter pointCounter;
 
 
     static UserResult fromEntity(UserResultEntity entity) {
-        String name = entity.getName();
+        UUID userUUID = entity.getUserUUID();
         PointCounter counter = PointCounter.withCount(entity.getPointCounter());
-        return new UserResult(name, counter);
+        return new UserResult(userUUID, counter);
     }
 
-    static UserResult create(String name) {
-        return new UserResult(name, PointCounter.create());
+    static UserResult create(UUID userUUID) {
+        return new UserResult(userUUID, PointCounter.create());
     }
 
-    private UserResult(String name, PointCounter pointCounter) {
-        this.name = name;
+    private UserResult(UUID userUUID, PointCounter pointCounter) {
+        this.userUUID = userUUID;
         this.pointCounter = pointCounter;
     }
 
     UserResult addPoint() {
-        return new UserResult(name, pointCounter.addPoint());
+        return new UserResult(userUUID, pointCounter.addPoint());
     }
 
-    boolean hasName(String name) {
-        return Objects.equals(this.name, name);
+    boolean hasUUID(UUID id) {
+        return Objects.equals(this.userUUID, id);
     }
 
     int getUserPointResult() {
@@ -38,7 +39,7 @@ class UserResult implements Comparable<UserResult> {
     }
 
     UserResultDTO toDTO() {
-        return new UserResultDTO(name, pointCounter.getCount());
+        return new UserResultDTO(userUUID, pointCounter.getCount());
     }
 
     @Override
@@ -46,17 +47,17 @@ class UserResult implements Comparable<UserResult> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserResult that = (UserResult) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(userUUID, that.userUUID) &&
                 Objects.equals(pointCounter, that.pointCounter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, pointCounter);
+        return Objects.hash(userUUID, pointCounter);
     }
 
     UserResultEntity toEntity(RoundResultsEntity entity) {
-        return new UserResultEntity(name, pointCounter.getCount(), entity);
+        return new UserResultEntity(userUUID, pointCounter.getCount(), entity);
     }
 
     @Override

@@ -13,7 +13,7 @@ class LeagueResultsManager {
         this.repository = repository;
     }
 
-    public LeagueResults getResultsForLeague(UUID leagueUUID) {
+    LeagueResults getResultsForLeague(UUID leagueUUID) {
         return repository.findOne(leagueUUID).getOrElse(createResultsForLeague(leagueUUID));
     }
 
@@ -23,10 +23,10 @@ class LeagueResultsManager {
         return leagueResults;
     }
 
-    public List<UserResult> getResultsFromLeagueToUser(UUID leagueUUID, final String username) {
+    List<UserResult> getResultsFromLeagueToUser(UUID leagueUUID, UUID uuid) {
         return repository
                 .findOne(leagueUUID)
-                .map(leagueResults -> leagueResults.getGeneralUserResult(username))
+                .map(leagueResults -> leagueResults.getGeneralUserResult(uuid))
                 .getOrElse(List.empty());
     }
 

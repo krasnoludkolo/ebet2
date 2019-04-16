@@ -2,8 +2,9 @@ package pl.krasnoludkolo.ebet2.user;
 
 import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 import java.util.UUID;
 
@@ -21,28 +22,38 @@ class UserManager {
         this.passwordEncrypt = passwordEncrypt;
     }
 
-    synchronized Either<UserError, String> registerUser(UserInfo user) {
+    synchronized Either<UserError, UserDetails> registerUser(LoginUserInfo user) {
         return userValidator
                 .validate(user)
                 .map(this::createUserEntity)
-                .peek(u -> repository.save(u.getUuid(), u))
-                .map(UserEntity::getUsername)
-                .map(tokenManager::generateTokenFor);
+                .peek(this::saveToRepository)
+                .map(this::generateUserDetails);
     }
 
-    private UserEntity createUserEntity(UserInfo user) {
+    private UserDetails generateUserDetails(UserEntity userEntity) {
+        UUID uuid = userEntity.getUuid();
+        String username = userEntity.getUsername();
+        String token = tokenManager.generateTokenFor(username).getToken();
+        return new UserDetails(uuid, username, token);
+    }
+
+    private void saveToRepository(UserEntity u) {
+        repository.save(u.getUuid(), u);
+    }
+
+    private UserEntity createUserEntity(LoginUserInfo user) {
         String encryptedPassword = encryptPassword(user.getPassword());
         return new UserEntity(UUID.randomUUID(), user.getUsername(), encryptedPassword);
     }
 
-    boolean checkPasswordFor(UserInfo user) {
+    boolean checkPasswordFor(LoginUserInfo user) {
         return !repository
                 .findAll()
                 .filter(userEntity -> checkPassword(user, userEntity))
                 .isEmpty();
     }
 
-    private boolean checkPassword(UserInfo user, UserEntity userEntity) {
+    private boolean checkPassword(LoginUserInfo user, UserEntity userEntity) {
         return checkPassword(user.getPassword(), userEntity.getPassword());
     }
 
@@ -54,6 +65,17 @@ class UserManager {
         return passwordEncrypt.checkPassword(candidate, password);
     }
 
+    Either<UserError, String> getUsernameFromUUID(UUID uuid) {
+        return repository
+                .findOne(uuid)
+                .map(UserEntity::getUsername)
+                .toEither(UserError.UUID_NOT_FOUND);
+    }
 
-
+    Either<UserError, UUID> getUUIDFromToken(String token) {
+        return tokenManager.getUsername(token)
+                .flatMap(username -> repository.findAll().find(u -> u.getUsername().equals(username)))
+                .map(UserEntity::getUuid)
+                .toEither(UserError.WRONG_TOKEN);
+    }
 }

@@ -14,6 +14,7 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -29,10 +30,9 @@ public class ResultFacadeTest {
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
     private BetFacade betFacade;
-    private String auth;
-    private String auth2;
-    private String auth3;
-    private String user;
+    private UserDetails auth;
+    private UserDetails auth2;
+    private UserDetails auth3;
 
     @Before
     public void setUp() {
@@ -40,10 +40,9 @@ public class ResultFacadeTest {
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
         betFacade = system.betFacade();
-        auth = system.getSampleUsersApiToken().get(0);
-        auth2 = system.getSampleUsersApiToken().get(1);
-        auth3 = system.getSampleUsersApiToken().get(2);
-        user = system.getSampleUsernameList().get(0);
+        auth = system.getSampleUserDetailList().get(0);
+        auth2 = system.getSampleUserDetailList().get(1);
+        auth3 = system.getSampleUserDetailList().get(2);
     }
 
     @Test
@@ -60,13 +59,13 @@ public class ResultFacadeTest {
         //when
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
 
         resultFacade.updateLeagueResultsForMatch(matchUUID);
 
         //then
-        UserResultDTO userResult = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        UserResultDTO userResult = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
 
         assertEquals(1, userResult.getPointCounter());
     }
@@ -76,13 +75,13 @@ public class ResultFacadeTest {
         //when
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
 
         resultFacade.updateLeagueResultsForMatch(matchUUID);
 
         //then
-        UserResultDTO dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        UserResultDTO dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(0, dto.getPointCounter());
     }
 
@@ -93,8 +92,8 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
 
@@ -102,7 +101,7 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(matchUUID2);
 
         //then
-        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
+        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
         UserResultDTO userResult = dto.get();
         assertEquals(1, userResult.getPointCounter());
     }
@@ -114,8 +113,8 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
 
@@ -123,7 +122,7 @@ public class ResultFacadeTest {
         resultFacade.updateLeagueResultsForMatch(matchUUID2);
 
         //then
-        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(2, userResultDTO.getPointCounter());
     }
 
@@ -134,8 +133,8 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear)).get();
         //when
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
 
@@ -155,15 +154,15 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID3), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID3), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3.getToken());
         //when
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
@@ -187,15 +186,15 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID matchUUID2 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 2, leagueUUID, nextYear)).get();
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host2", "guest2", 3, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID3), auth2);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID2), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.HOST_WON, matchUUID3), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3.getToken());
         //when
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
@@ -219,12 +218,12 @@ public class ResultFacadeTest {
         UUID matchUUID3 = leagueFacade.addMatchToLeague(new NewMatchDTO("host3", "guest3", 2, leagueUUID, nextYear)).get();
         UUID matchUUID4 = leagueFacade.addMatchToLeague(new NewMatchDTO("host4", "guest4", 3, leagueUUID, nextYear)).get();
         UUID matchUUID5 = leagueFacade.addMatchToLeague(new NewMatchDTO("host5", "guest5", 3, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID1), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID4), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID5), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID1), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID3), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID4), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID5), auth.getToken());
         //when
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         leagueFacade.setMatchResult(matchUUID1, MatchResult.DRAW);
@@ -251,13 +250,13 @@ public class ResultFacadeTest {
         //given
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         //when
         resultFacade.updateLeagueResultsForMatch(matchUUID);
         resultFacade.updateLeagueResultsForMatch(matchUUID);
         //then
-        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(1, userResultDTO.getPointCounter());
     }
 
@@ -266,13 +265,13 @@ public class ResultFacadeTest {
         //given
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         //when
         resultFacade.updateLeagueResultsForMatch(matchUUID);
         leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
         resultFacade.updateLeagueResultsForMatch(matchUUID);
         //then
-        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, user).get();
+        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(1, userResultDTO.getPointCounter());
     }
 

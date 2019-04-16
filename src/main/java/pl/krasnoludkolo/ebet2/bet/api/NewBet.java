@@ -11,6 +11,6 @@ public class NewBet {
 
     private final BetTyp betTyp;
     private final UUID matchUUID;
-    private final String username;
+    private final UUID userUUID;
 
 }

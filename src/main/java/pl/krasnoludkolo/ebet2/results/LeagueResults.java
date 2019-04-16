@@ -48,10 +48,10 @@ class LeagueResults {
     }
 
 
-    List<UserResult> getGeneralUserResult(String username) {
+    List<UserResult> getGeneralUserResult(UUID uuid) {
         return roundsResults
                 .values()
-                .map(roundResult -> roundResult.getUserResult(username))
+                .map(roundResult -> roundResult.getUserResult(uuid))
                 .toList();
     }
 
@@ -69,22 +69,22 @@ class LeagueResults {
     }
 
     private List<UserResultDTO> getGeneralResult() {
-        Set<String> allUsers = getAllUsers();
+        Set<UUID> allUsers = getAllUsers();
         return allUsers.
-                map(name -> {
+                map(uuid -> {
                     int points = roundsResults
                             .values()
-                            .map(round -> round.getUserResult(name).getUserPointResult())
+                            .map(round -> round.getUserResult(uuid).getUserPointResult())
                             .sum()
                             .intValue();
-                    return new UserResultDTO(name, points);
+                    return new UserResultDTO(uuid, points);
                 })
                 .toList()
                 .sorted()
                 .reverse();
     }
 
-    private Set<String> getAllUsers() {
+    private Set<UUID> getAllUsers() {
         return roundsResults
                 .values()
                 .flatMap(RoundResult::getAllUsers)

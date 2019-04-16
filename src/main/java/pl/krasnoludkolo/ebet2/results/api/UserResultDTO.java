@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 public class UserResultDTO implements Comparable<UserResultDTO> {
 
-    private final String name;
+    private final UUID userUUID;
     private final int pointCounter;
 
     @Override
@@ -23,12 +24,11 @@ public class UserResultDTO implements Comparable<UserResultDTO> {
         if (o == null || getClass() != o.getClass()) return false;
         UserResultDTO that = (UserResultDTO) o;
         return pointCounter == that.pointCounter &&
-                Objects.equals(name, that.name);
+                Objects.equals(userUUID, that.userUUID);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(name, pointCounter);
+        return Objects.hash(userUUID, pointCounter);
     }
 }

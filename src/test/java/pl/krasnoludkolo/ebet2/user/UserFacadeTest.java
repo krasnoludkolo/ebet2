@@ -3,13 +3,14 @@ package pl.krasnoludkolo.ebet2.user;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
+import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 import java.util.Arrays;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class UserFacadeTest {
 
@@ -17,6 +18,7 @@ public class UserFacadeTest {
 
     private String username = "username";
     private String password = "password";
+    private LoginUserInfo loginUserInfo = new LoginUserInfo(username, password);
 
     @Before
     public void init() {
@@ -26,7 +28,7 @@ public class UserFacadeTest {
 
     @Test
     public void shouldRegisterUser() {
-        String token = userFacade.registerUser(new UserInfo(username, password)).get();
+        String token = userFacade.registerUser(loginUserInfo).get().getToken();
         String[] split = token.split("\\.");
         assertEquals(3, split.length);
         Arrays.asList(split).forEach(part -> assertTrue(part.length() > 0));
@@ -34,41 +36,41 @@ public class UserFacadeTest {
 
     @Test
     public void shouldNotRegisterUserWithUsedUsername() {
-        userFacade.registerUser(new UserInfo(username, password));
-        UserError token = userFacade.registerUser(new UserInfo(username, password)).getLeft();
+        userFacade.registerUser(loginUserInfo);
+        UserError token = userFacade.registerUser(loginUserInfo).getLeft();
         assertEquals(UserError.DUPLICATED_USERNAME, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithEmptyPassword() {
-        UserError token = userFacade.registerUser(new UserInfo(username, "")).getLeft();
+        UserError token = userFacade.registerUser(new LoginUserInfo(username, "")).getLeft();
         assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithEmptyUsername() {
-        UserError token = userFacade.registerUser(new UserInfo("", password)).getLeft();
+        UserError token = userFacade.registerUser(new LoginUserInfo("", password)).getLeft();
         assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithNullPassword() {
-        UserError token = userFacade.registerUser(new UserInfo(username, null)).getLeft();
+        UserError token = userFacade.registerUser(new LoginUserInfo(username, null)).getLeft();
         assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotRegisterUserWithNullUsername() {
-        UserError token = userFacade.registerUser(new UserInfo(null, password)).getLeft();
+        UserError token = userFacade.registerUser(new LoginUserInfo(null, password)).getLeft();
         assertEquals(UserError.EMPTY_USERNAME_OR_PASSWORD, token);
     }
 
     @Test
     public void shouldNotGenerateTokenToUserWithWrongPassword() {
         //given
-        userFacade.registerUser(new UserInfo(username, password));
+        userFacade.registerUser(loginUserInfo);
         //when
-        UserError token = userFacade.generateToken(new UserInfo(username, "wrongpassword")).getLeft();
+        UserError token = userFacade.generateToken(new LoginUserInfo(username, "wrongpassword")).getLeft();
         //then
 
         assertEquals(UserError.WRONG_PASSWORD, token);
@@ -77,9 +79,9 @@ public class UserFacadeTest {
     @Test
     public void shouldGenerateTokenToRegisteredUser() {
         //given
-        userFacade.registerUser(new UserInfo(username, password));
+        userFacade.registerUser(loginUserInfo);
         //when
-        String token = userFacade.generateToken(new UserInfo(username, password)).get();
+        String token = userFacade.generateToken(loginUserInfo).get().getToken();
         //then
         assertTrue(token.length() > 0);
     }
@@ -87,9 +89,9 @@ public class UserFacadeTest {
     @Test
     public void shouldGetUsernameFromToken() {
         //given
-        String registrationToken = userFacade.registerUser(new UserInfo(username, password)).get();
+        String registrationToken = userFacade.registerUser(loginUserInfo).get().getToken();
         //when
-        String user = userFacade.getUsername(registrationToken).get();
+        String user = userFacade.getUsernameFromToken(registrationToken).get();
         //then
         assertEquals(username, user);
     }
@@ -97,9 +99,67 @@ public class UserFacadeTest {
     @Test
     public void shouldNotGetUsernameFromWrongToken() {
         //when
-        UserError error = userFacade.getUsername("SomeWrongToken").getLeft();
+        UserError error = userFacade.getUsernameFromToken("SomeWrongToken").getLeft();
         //then
         assertEquals(UserError.WRONG_PASSWORD, error);
     }
+
+    @Test
+    public void shouldGetUsernameByUUID() {
+        //given
+        UUID uuid = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //when
+        String username = userFacade.getUsernameFromUUID(uuid).get();
+        //then
+        assertEquals(this.username, username);
+    }
+
+    @Test
+    public void shouldGetUUIDByToken() {
+        //given
+        UserDetails userDetails = userFacade.registerUser(loginUserInfo).get();
+        String token = userDetails.getToken();
+        UUID uuid = userDetails.getUserUUID();
+        //when
+        UUID testUUID = userFacade.getUserUUIDFromToken(token).get();
+        //then
+        assertEquals(uuid, testUUID);
+    }
+
+    @Test
+    public void shouldNotGetUUIDByNoExistingToken() {
+        //given
+        //when
+        UserError error = userFacade.getUserUUIDFromToken("No existing").getLeft();
+        //then
+        assertEquals(UserError.WRONG_TOKEN, error);
+    }
+
+    @Test
+    public void shouldNotGetUsernameByWrongUUID() {
+        //when
+        UserError error = userFacade.getUsernameFromUUID(UUID.randomUUID()).getLeft();
+        //then
+        assertEquals(UserError.UUID_NOT_FOUND, error);
+    }
+
+    @Test
+    public void shouldReturnGivenByRegisterUsername() {
+        //when
+        String username = userFacade.registerUser(loginUserInfo).get().getUsername();
+        //then
+        assertEquals(this.username, username);
+    }
+
+    @Test
+    public void shouldReturnUUIDInResponse() {
+        //when
+        UUID userUUID1 = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //then
+        assertNotNull(userUUID1);
+    }
+
+
+
 
 }

@@ -3,8 +3,8 @@ package pl.krasnoludkolo.ebet2.user;
 import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserInfo;
 
 final class NewUserValidator {
 
@@ -14,7 +14,7 @@ final class NewUserValidator {
         this.repository = repository;
     }
 
-    Either<UserError, UserInfo> validate(UserInfo user) {
+    Either<UserError, LoginUserInfo> validate(LoginUserInfo user) {
         String username = user.getUsername();
         String password = user.getPassword();
         if (isNullOrEmpty(username, password)) {

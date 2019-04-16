@@ -51,7 +51,7 @@ class RoundResult {
 
     private UserResult addPointsForCorrectBet(final List<BetDTO> correctBets, final UserResult userResult) {
         return correctBets
-                .find(betDTO -> userResult.hasName(betDTO.getUsername()))
+                .find(betDTO -> userResult.hasUUID(betDTO.getUserUUID()))
                 .map(t -> userResult.addPoint())
                 .getOrElse(userResult);
     }
@@ -63,30 +63,30 @@ class RoundResult {
 
     private List<UserResult> getUserResultsForBetsNotInQueue(List<BetDTO> betsList) {
         return betsList.filter(this::betNotInResultQueue)
-                .map(BetDTO::getUsername)
+                .map(BetDTO::getUserUUID)
                 .map(this::createNewUserResult);
     }
 
     private boolean betNotInResultQueue(BetDTO betDTO) {
         return !userResults
-                .exists(userResult -> userResult.hasName(betDTO.getUsername()));
+                .exists(userResult -> userResult.hasUUID(betDTO.getUserUUID()));
     }
 
-    private UserResult createNewUserResult(String user) {
-        LOGGER.log(Level.INFO, "Create new user with name: " + user);
-        return UserResult.create(user);
+    private UserResult createNewUserResult(UUID uuid) {
+        LOGGER.log(Level.INFO, "Create new user with uuid: " + uuid);
+        return UserResult.create(uuid);
     }
 
-    UserResult getUserResult(String username) {
+    UserResult getUserResult(UUID uuid) {
         return userResults
-                .find(userResult -> userResult.hasName(username))
-                .getOrElse(UserResult.create(username));
+                .find(userResult -> userResult.hasUUID(uuid))
+                .getOrElse(UserResult.create(uuid));
     }
 
-    Set<String> getAllUsers() {
+    Set<UUID> getAllUsers() {
         return userResults
                 .map(UserResult::toDTO)
-                .map(UserResultDTO::getName)
+                .map(UserResultDTO::getUserUUID)
                 .toSet();
     }
 

@@ -29,8 +29,8 @@ class ResultsController {
 
     //TODO paths
     @GetMapping("/results")
-    public HttpEntity<UserResultDTO> getResultsFromLeagueToUser(@RequestParam UUID leagueUUID, @RequestParam String user) {
-        Option<UserResultDTO> results = resultFacade.getResultsFromLeagueToUser(leagueUUID, user);
+    public HttpEntity<UserResultDTO> getResultsFromLeagueToUser(@RequestParam UUID leagueUUID, @RequestParam UUID userUUID) {
+        Option<UserResultDTO> results = resultFacade.getResultsFromLeagueToUser(leagueUUID, userUUID);
         return ResponseResolver.resolve(results);
     }
 

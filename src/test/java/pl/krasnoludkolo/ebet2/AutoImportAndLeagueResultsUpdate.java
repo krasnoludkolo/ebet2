@@ -16,13 +16,13 @@ import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class AutoImportAndLeagueResultsUpdate {
 
@@ -31,8 +31,8 @@ public class AutoImportAndLeagueResultsUpdate {
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
-    private String auth;
-    private String auth2;
+    private UserDetails auth;
+    private UserDetails auth2;
 
     @Before
     public void init() {
@@ -41,8 +41,8 @@ public class AutoImportAndLeagueResultsUpdate {
         betFacade = system.betFacade();
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
-        auth = system.getSampleUsersApiToken().get(0);
-        auth2 = system.getSampleUsersApiToken().get(1);
+        auth = system.getSampleUserDetailList().get(0);
+        auth2 = system.getSampleUserDetailList().get(1);
 
     }
 
@@ -53,15 +53,15 @@ public class AutoImportAndLeagueResultsUpdate {
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth);
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID), auth2);
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID), auth2.getToken());
         List<MatchInfo> list = getListWithNewResult();
         system.setExternalSourceMatchList(list);
         externalFacade.updateLeague(leagueUUID);
-        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user1").get();
-        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, "user2");
+        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID());
         assertEquals(1, user1.getPointCounter());
-        assertTrue(user2.get().getPointCounter() == 0);
+        assertEquals(0, user2.get().getPointCounter());
     }
 
 

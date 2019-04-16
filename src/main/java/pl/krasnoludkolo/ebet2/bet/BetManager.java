@@ -62,7 +62,7 @@ class BetManager {
         return bet -> bet.isCorrespondedToMatch(matchUUID);
     }
 
-    boolean correspondingUsername(UUID betUUID, String username) {
-        return repository.findOne(betUUID).map(bet -> bet.hasUsername(username)).getOrElse(false);
+    boolean correspondingUsername(UUID betUUID, UUID userUUID) {
+        return repository.findOne(betUUID).map(bet -> bet.hasUserUUID(userUUID)).getOrElse(false);
     }
 }

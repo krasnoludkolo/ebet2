@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.krasnoludkolo.ebet2.infrastructure.ResponseResolver;
+import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserInfo;
+import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 @RestController
 @RequestMapping("api/user")
@@ -23,14 +25,14 @@ class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity generateToken(@RequestBody UserInfo userInfo) {
-        Either<UserError, String> token = userFacade.generateToken(userInfo);
-        return ResponseResolver.resolve(token);
+    public ResponseEntity generateToken(@RequestBody LoginUserInfo loginUserInfo) {
+        Either<UserError, UserToken> userDetails = userFacade.generateToken(loginUserInfo);
+        return ResponseResolver.resolve(userDetails);
     }
 
     @PostMapping("register")
-    public ResponseEntity registerUser(@RequestBody UserInfo userInfo) {
-        Either<UserError, String> token = userFacade.registerUser(userInfo);
-        return ResponseResolver.resolve(token);
+    public ResponseEntity registerUser(@RequestBody LoginUserInfo loginUserInfo) {
+        Either<UserError, UserDetails> userDetails = userFacade.registerUser(loginUserInfo);
+        return ResponseResolver.resolve(userDetails);
     }
 }
