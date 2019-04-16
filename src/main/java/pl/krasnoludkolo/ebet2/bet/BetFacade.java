@@ -5,7 +5,6 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.*;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
-import pl.krasnoludkolo.ebet2.user.api.UserError;
 
 import java.util.UUID;
 
@@ -31,16 +30,15 @@ public class BetFacade {
         return betManager.findBetByUUID(betUUID);
     }
 
-    //TODO refactor
     public Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
-        Either<UserError, UUID> userUUID = userFacade.getUserUUIDFromToken(auth);
-        if (userUUID.isLeft()) {
-            return Either.left(BetError.USER_NOT_FOUND);
-        }
-        if (!betManager.correspondingUsername(betUUID, userUUID.get())) {
-            return Either.left(BetError.BET_NOT_FOUND);
-        }
-        return betManager.updateBetToMatch(betUUID, betType);
+        return userFacade.getUserUUIDFromToken(auth)
+                .mapLeft(x -> BetError.USER_NOT_FOUND)
+                .flatMap(uuid -> isCorrespondingUUID(uuid, betUUID))
+                .flatMap(x -> betManager.updateBetToMatch(betUUID, betType));
+    }
+
+    private Either<BetError, UUID> isCorrespondingUUID(UUID uuid, UUID betUUID) {
+        return betManager.correspondingUsername(betUUID, uuid) ? Either.right(uuid) : Either.left(BetError.BET_NOT_FOUND);
     }
 
     public void removeBet(UUID betUUID) {
