@@ -45,10 +45,11 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
     public Option<D> findOne(UUID uuid) {
         try (Connection connection = dbConnectionInfo.createConnection()) {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES);
-            Result<Record> result = findOneQuery(create, uuid);
-            E entity = convertRecordToEntity(result.get(0));
-            D domain = entityToDomainMapper.apply(entity);
-            return Option.of(domain);
+            return Option.of(findOneQuery(create, uuid))
+                    .filter(Result::isEmpty)
+                    .map(r -> r.get(0))
+                    .map(this::convertRecordToEntity)
+                    .map(entityToDomainMapper);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
