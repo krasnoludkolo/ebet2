@@ -26,8 +26,8 @@ class LeagueController {
     }
 
     @PostMapping("/league")
-    public HttpEntity<String> createNewLeague(@RequestBody String name) {
-        UUID leagueUUID = leagueFacade.createLeague(name).get();
+    public HttpEntity<String> createNewLeague(@RequestBody NewLeagueDTO league) {
+        UUID leagueUUID = leagueFacade.createLeague(league.getName()).get();
         return new ResponseEntity<>(leagueUUID.toString(), HttpStatus.CREATED);
     }
 
@@ -63,8 +63,8 @@ class LeagueController {
     }
 
     @PostMapping("/match/{uuid}/result")
-    public HttpStatus setMatchResult(@RequestBody MatchResult matchResult, @PathVariable UUID uuid) {
-        leagueFacade.setMatchResult(uuid, matchResult);
+    public HttpStatus setMatchResult(@RequestBody MatchResultDTO result, @PathVariable UUID uuid) {
+        leagueFacade.setMatchResult(uuid, result.getMatchResult());
         return HttpStatus.OK;
     }
 
