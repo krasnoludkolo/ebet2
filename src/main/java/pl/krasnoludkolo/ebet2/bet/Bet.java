@@ -3,6 +3,7 @@ package pl.krasnoludkolo.ebet2.bet;
 import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.NewBet;
 
 import java.util.Objects;
 import java.util.UUID;

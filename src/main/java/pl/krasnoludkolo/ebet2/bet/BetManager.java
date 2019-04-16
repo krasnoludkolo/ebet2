@@ -6,6 +6,7 @@ import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.NewBet;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 

@@ -2,6 +2,7 @@ package pl.krasnoludkolo.ebet2.bet;
 
 import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
+import pl.krasnoludkolo.ebet2.bet.api.NewBet;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
