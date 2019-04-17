@@ -17,13 +17,13 @@ class JWTTokenManager {
     private String secret = UUID.randomUUID().toString();
 
     private static final Logger LOGGER = Logger.getLogger(JWTTokenManager.class.getName());
-    private static final String USERNAME_CLAIM_NAME = "username";
+    private static final String UUID_CLAIM_NAME = "uuid";
 
 
-    UserToken generateTokenFor(String username) {
+    UserToken generateTokenFor(UUID userUUID) {
         try {
             String sign = JWT.create()
-                    .withClaim(USERNAME_CLAIM_NAME, username)
+                    .withClaim(UUID_CLAIM_NAME, userUUID.toString())
                     .sign(Algorithm.HMAC256(secret));
             return new UserToken(sign);
         } catch (UnsupportedEncodingException e) {
@@ -33,14 +33,14 @@ class JWTTokenManager {
     }
 
 
-    Option<String> getUsername(String token) {
+    Option<UUID> getUUID(String token) {
         return Option.of(token)
                 .filter(this::verify)
-                .map(this::decodeUsername);
+                .map(this::decodeUUID);
     }
 
-    private String decodeUsername(String t) {
-        return JWT.decode(t).getClaim(USERNAME_CLAIM_NAME).asString();
+    private UUID decodeUUID(String t) {
+        return UUID.fromString(JWT.decode(t).getClaim(UUID_CLAIM_NAME).asString());
     }
 
     private boolean verify(String token) {

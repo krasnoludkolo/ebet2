@@ -70,7 +70,7 @@ public class UserFacadeTest {
         //given
         userFacade.registerUser(loginUserInfo);
         //when
-        UserError token = userFacade.generateToken(new LoginUserInfo(username, "wrongpassword")).getLeft();
+        UserError token = userFacade.login(new LoginUserInfo(username, "wrongpassword")).getLeft();
         //then
 
         assertEquals(UserError.WRONG_PASSWORD, token);
@@ -81,27 +81,9 @@ public class UserFacadeTest {
         //given
         userFacade.registerUser(loginUserInfo);
         //when
-        String token = userFacade.generateToken(loginUserInfo).get().getToken();
+        String token = userFacade.login(loginUserInfo).get().getToken();
         //then
         assertTrue(token.length() > 0);
-    }
-
-    @Test
-    public void shouldGetUsernameFromToken() {
-        //given
-        String registrationToken = userFacade.registerUser(loginUserInfo).get().getToken();
-        //when
-        String user = userFacade.getUsernameFromToken(registrationToken).get();
-        //then
-        assertEquals(username, user);
-    }
-
-    @Test
-    public void shouldNotGetUsernameFromWrongToken() {
-        //when
-        UserError error = userFacade.getUsernameFromToken("SomeWrongToken").getLeft();
-        //then
-        assertEquals(UserError.WRONG_PASSWORD, error);
     }
 
     @Test

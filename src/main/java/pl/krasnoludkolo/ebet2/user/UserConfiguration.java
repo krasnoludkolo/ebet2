@@ -21,7 +21,7 @@ public class UserConfiguration {
         JWTTokenManager tokenManager = new JWTTokenManager();
         PasswordEncrypt passwordEncrypt = new BCryptPasswordEncrypt();
         UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
-        return new UserFacade(userManager, tokenManager);
+        return new UserFacade(userManager);
     }
 
 
@@ -30,7 +30,7 @@ public class UserConfiguration {
         JWTTokenManager tokenManager = new JWTTokenManager();
         PasswordEncrypt passwordEncrypt = new PlainTextPasswordEncrypt();
         UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
-        return new UserFacade(userManager, tokenManager);
+        return new UserFacade(userManager);
     }
 
 

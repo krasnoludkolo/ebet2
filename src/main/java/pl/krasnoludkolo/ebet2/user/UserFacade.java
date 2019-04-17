@@ -11,29 +11,17 @@ import java.util.UUID;
 public class UserFacade {
 
     private final UserManager userManager;
-    private final JWTTokenManager tokenManager;
 
-    public UserFacade(UserManager userManager, JWTTokenManager tokenManager) {
+    public UserFacade(UserManager userManager) {
         this.userManager = userManager;
-        this.tokenManager = tokenManager;
     }
 
     public Either<UserError, UserDetails> registerUser(LoginUserInfo loginUserInfo) {
         return userManager.registerUser(loginUserInfo);
     }
 
-    public Either<UserError, UserToken> generateToken(LoginUserInfo loginUserInfo) {
-        boolean correct = userManager.checkPasswordFor(loginUserInfo);
-        if (correct) {
-            return Either.right(tokenManager.generateTokenFor(loginUserInfo.getUsername()));
-        }
-        return Either.left(UserError.WRONG_PASSWORD);
-    }
-
-    public Either<UserError, String> getUsernameFromToken(String token) {
-        return tokenManager
-                .getUsername(token)
-                .toEither(UserError.WRONG_PASSWORD);
+    public Either<UserError, UserToken> login(LoginUserInfo loginUserInfo) {
+        return userManager.login(loginUserInfo);
     }
 
     public Either<UserError, UUID> getUserUUIDFromToken(String token) {

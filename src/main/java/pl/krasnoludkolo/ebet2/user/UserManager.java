@@ -1,10 +1,12 @@
 package pl.krasnoludkolo.ebet2.user;
 
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
+import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 import java.util.UUID;
 
@@ -33,7 +35,7 @@ class UserManager {
     private UserDetails generateUserDetails(UserEntity userEntity) {
         UUID uuid = userEntity.getUuid();
         String username = userEntity.getUsername();
-        String token = tokenManager.generateTokenFor(username).getToken();
+        String token = tokenManager.generateTokenFor(uuid).getToken();
         return new UserDetails(uuid, username, token);
     }
 
@@ -46,23 +48,31 @@ class UserManager {
         return new UserEntity(UUID.randomUUID(), user.getUsername(), encryptedPassword);
     }
 
-    boolean checkPasswordFor(LoginUserInfo user) {
-        return !repository
-                .findAll()
-                .filter(userEntity -> checkPassword(user, userEntity))
-                .isEmpty();
-    }
-
-    private boolean checkPassword(LoginUserInfo user, UserEntity userEntity) {
-        return checkPassword(user.getPassword(), userEntity.getPassword());
-    }
-
     private String encryptPassword(String password) {
         return passwordEncrypt.encryptPassword(password);
     }
 
-    private boolean checkPassword(String candidate, String password) {
-        return passwordEncrypt.checkPassword(candidate, password);
+    Either<UserError, UserToken> login(LoginUserInfo loginUserInfo) {
+        String username = loginUserInfo.getUsername();
+        String candidatePassword = loginUserInfo.getPassword();
+        return findUserByUsername(username)
+                .toEither(UserError.USERNAME_NOT_FOUND)
+                .flatMap(user -> checkPasswordFor(candidatePassword, user))
+                .map(UserEntity::getUuid)
+                .map(tokenManager::generateTokenFor);
+    }
+
+    private Option<UserEntity> findUserByUsername(String username) {
+        return repository
+                .findAll()
+                .find(userEntity -> userEntity.getUsername().equals(username));
+    }
+
+    private Either<UserError, UserEntity> checkPasswordFor(String candidate, UserEntity user) {
+        String password = user.getPassword();
+        return Option.of(user)
+                .filter(u -> passwordEncrypt.checkPassword(candidate, password))
+                .toEither(UserError.WRONG_PASSWORD);
     }
 
     Either<UserError, String> getUsernameFromUUID(UUID uuid) {
@@ -73,9 +83,6 @@ class UserManager {
     }
 
     Either<UserError, UUID> getUUIDFromToken(String token) {
-        return tokenManager.getUsername(token)
-                .flatMap(username -> repository.findAll().find(u -> u.getUsername().equals(username)))
-                .map(UserEntity::getUuid)
-                .toEither(UserError.WRONG_TOKEN);
+        return tokenManager.getUUID(token).toEither(UserError.WRONG_TOKEN);
     }
 }

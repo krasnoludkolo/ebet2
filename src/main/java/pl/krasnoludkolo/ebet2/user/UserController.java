@@ -26,7 +26,7 @@ class UserController {
 
     @PostMapping("login")
     public ResponseEntity generateToken(@RequestBody LoginUserInfo loginUserInfo) {
-        Either<UserError, UserToken> userDetails = userFacade.generateToken(loginUserInfo);
+        Either<UserError, UserToken> userDetails = userFacade.login(loginUserInfo);
         return ResponseResolver.resolve(userDetails);
     }
 
