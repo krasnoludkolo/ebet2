@@ -4,7 +4,7 @@ import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseResolver;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 

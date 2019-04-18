@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseResolver;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
 
 import java.util.List;
 import java.util.UUID;
