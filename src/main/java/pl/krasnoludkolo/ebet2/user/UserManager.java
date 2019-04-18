@@ -56,16 +56,16 @@ class UserManager {
         String username = loginUserInfo.getUsername();
         String candidatePassword = loginUserInfo.getPassword();
         return findUserByUsername(username)
-                .toEither(UserError.USERNAME_NOT_FOUND)
                 .flatMap(user -> checkPasswordFor(candidatePassword, user))
                 .map(UserEntity::getUuid)
                 .map(tokenManager::generateTokenFor);
     }
 
-    private Option<UserEntity> findUserByUsername(String username) {
+    private Either<UserError, UserEntity> findUserByUsername(String username) {
         return repository
                 .findAll()
-                .find(userEntity -> userEntity.getUsername().equals(username));
+                .find(userEntity -> userEntity.getUsername().equals(username))
+                .toEither(UserError.USERNAME_NOT_FOUND);
     }
 
     private Either<UserError, UserEntity> checkPasswordFor(String candidate, UserEntity user) {
