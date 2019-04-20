@@ -12,7 +12,6 @@ Current features:
 - API security (JWT tokens)
 
 Under development:
-- Frond-end in angular (different project)
 - Scheduler to leagues auto-update
 - Remove spring
 
