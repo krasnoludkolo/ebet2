@@ -35,7 +35,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     protected void saveQuery(DSLContext create, BetEntity entity) {
         create
                 .insertInto(table(BET_ENTITY))
-                .columns(field("uuid"), field("bet_typ"), field("match_uuid"), field("username"))
+                .columns(field("uuid"), field("bet_typ"), field("match_uuid"), field("userUUID"))
                 .values(entity.getUuid(), entity.getBetTyp().ordinal(), entity.getMatchUuid(), entity.getUserUUID())
                 .execute();
     }
@@ -79,7 +79,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
                 .update(table(BET_ENTITY))
                 .set(field("bet_typ"), entity.getBetTyp().ordinal())
                 .set(field("match_uuid"), entity.getMatchUuid())
-                .set(field("username"), entity.getUserUUID())
+                .set(field("userUUID"), entity.getUserUUID())
                 .where(field("uuid").eq(uuid))
                 .execute();
     }
