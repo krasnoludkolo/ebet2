@@ -18,17 +18,15 @@ import java.util.UUID;
 class RoundResultsEntity {
 
     @Id
-    private String uuid;
-    private UUID leagueUUID;
-    @OneToMany(mappedBy = "roundResultsEntity", cascade = CascadeType.ALL)
+    private UUID uuid;
+    @OneToMany(cascade = CascadeType.ALL)
     private List<UserResultEntity> userResultList;
     private int round;
 
-    RoundResultsEntity(UUID leagueUUID, List<UserResultEntity> userResultList, int round) {
-        this.leagueUUID = leagueUUID;
+    RoundResultsEntity(List<UserResultEntity> userResultList, int round) {
+        this.uuid = UUID.randomUUID();
         this.userResultList = userResultList;
         this.round = round;
-        this.uuid = leagueUUID.toString() + "_" + round;
     }
 
 }

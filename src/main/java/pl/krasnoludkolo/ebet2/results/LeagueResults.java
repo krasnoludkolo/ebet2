@@ -23,15 +23,13 @@ class LeagueResults {
         return new LeagueResults(leagueUUID, HashMap.empty());
     }
 
-    static LeagueResults fromEntity(List<RoundResultsEntity> roundResultsEntity) {
-        UUID leagueUUID = roundResultsEntity.headOption().getOrElseThrow(IllegalStateException::new).getLeagueUUID();
-
-        Map<Integer, RoundResult> resultsInRounds =
-                roundResultsEntity
-                        .toMap(entity -> Tuple.of(entity.getRound(), entity))
+    static LeagueResults fromEntity(LeagueResultEntity leagueResultEntity) {
+        UUID leagueUUID = leagueResultEntity.getLeagueUUID();
+        Map<Integer, RoundResult> rounds =
+                List.ofAll(leagueResultEntity.getRoundResultsEntityList())
+                        .toMap(x -> Tuple.of(x.getRound(), x))
                         .mapValues(RoundResult::fromEntity);
-
-        return new LeagueResults(leagueUUID, resultsInRounds);
+        return new LeagueResults(leagueUUID, rounds);
     }
 
     private LeagueResults(UUID leagueUUID, Map<Integer, RoundResult> roundsResults) {
@@ -91,8 +89,9 @@ class LeagueResults {
                 .toSet();
     }
 
-    List<RoundResultsEntity> toEntity() {
-        return roundsResults.toList().map(t -> t._2.toEntity(leagueUUID, t._1));
+    LeagueResultEntity toEntity() {
+        List<RoundResultsEntity> rounds = roundsResults.toList().map(t -> t._2.toEntity(t._1));
+        return new LeagueResultEntity(leagueUUID, rounds.toJavaList());
     }
 
     UUID getLeagueUUID() {

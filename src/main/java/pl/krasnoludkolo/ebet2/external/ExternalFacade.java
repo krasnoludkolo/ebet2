@@ -46,7 +46,7 @@ public class ExternalFacade {
         leagueDetailsRepository.update(details.getLeagueUUID(), details);
     }
 
-    public void addLeagueToAutoUpdater(UUID leagueUUID) {
+    void addLeagueToAutoUpdater(UUID leagueUUID) {
         checkIfLeagueDetailsExist(leagueUUID);
         autoUpdaterScheduler.addLeagueToAutoUpdate(leagueUUID);
     }
