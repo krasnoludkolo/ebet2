@@ -39,10 +39,6 @@ final class NewBetValidator {
         return leagueFacade.getMatchByUUID(uuid).map(MatchDTO::getUuid).isEmpty();
     }
 
-    private boolean matchHasAlreadyBegun(UUID matchUUID) {
-        return leagueFacade.hasMatchAlreadyBegun(matchUUID).getOrElse(false);
-    }
-
     private boolean betWithUUIDExist(UUID matchUUID, UUID userUUID) {
         return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUserUUID(userUUID)).isDefined();
     }
@@ -53,6 +49,10 @@ final class NewBetValidator {
                 Either.left(BetError.MATCH_ALREADY_STARTED)
                 :
                 Either.right(bet);
+    }
+
+    private boolean matchHasAlreadyBegun(UUID matchUUID) {
+        return leagueFacade.hasMatchAlreadyBegun(matchUUID).getOrElse(false);
     }
 
 

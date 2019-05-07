@@ -16,6 +16,7 @@ import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -76,7 +77,7 @@ public class BetFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         UUID betUUID = betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken()).get();
         //when
-        system.setFixedTime(nextYear.plusDays(1));
+        system.advanceTimeBy(2 * 365, TimeUnit.DAYS);
         BetError error = betFacade.updateBetToMatch(betUUID, BetTyp.DRAW, auth.getToken()).getLeft();
         //then
         assertEquals(BetError.MATCH_ALREADY_STARTED, error);

@@ -1,9 +1,9 @@
 package pl.krasnoludkolo.ebet2.league;
 
+import io.haste.TimeSource;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.infrastructure.TimeProvider;
 import pl.krasnoludkolo.ebet2.league.api.*;
 
 import javax.transaction.Transactional;
@@ -14,12 +14,12 @@ public class LeagueFacade {
 
     private LeagueManager leagueManager;
     private MatchManager matchManager;
-    private TimeProvider timeProvider;
+    private TimeSource timeSource;
 
-    public LeagueFacade(LeagueManager leagueManager, MatchManager matchManager, TimeProvider timeProvider) {
+    public LeagueFacade(LeagueManager leagueManager, MatchManager matchManager, TimeSource timeSource) {
         this.leagueManager = leagueManager;
         this.matchManager = matchManager;
-        this.timeProvider = timeProvider;
+        this.timeSource = timeSource;
     }
 
     public Either<LeagueError, UUID> createLeague(String name) {
@@ -73,7 +73,7 @@ public class LeagueFacade {
         return matchManager
                 .findByUUID(matchUUID)
                 .toEither(LeagueError.MATCH_NOT_FOUND)
-                .map(match -> match.hasAlreadyBegun(timeProvider.now()));
+                .map(match -> match.hasAlreadyBegun(timeSource.now()));
     }
 
     public Either<LeagueError, League> archiveLeague(UUID leagueUUID) {
