@@ -12,7 +12,6 @@ import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class ElkartoflichoClientTest {
@@ -39,28 +38,28 @@ public class ElkartoflichoClientTest {
     @Test
     public void shouldDownloadSixMatches() {
         List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
-        assertTrue(matchInfos.size() == 6);
+        assertEquals(6, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesWithResult() {
         List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
                 .filter(matchInfo -> matchInfo.getResult() != MatchResult.NOT_SET);
-        assertTrue(matchInfos.size() == 3);
+        assertEquals(3, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesWithoutResult() {
         List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
                 .filter(matchInfo -> matchInfo.getResult() == MatchResult.NOT_SET);
-        assertTrue(matchInfos.size() == 3);
+        assertEquals(3, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesIn20thRound() {
         List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
                 .filter(matchInfo -> matchInfo.getRound() == 20);
-        assertTrue(matchInfos.size() == 3);
+        assertEquals(3, matchInfos.size());
     }
 
     @Test
