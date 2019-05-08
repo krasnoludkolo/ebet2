@@ -8,6 +8,9 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
 import java.util.UUID;
+import java.util.function.Predicate;
+
+import static io.vavr.API.*;
 
 final class NewBetValidator {
 
@@ -20,27 +23,26 @@ final class NewBetValidator {
     }
 
     Either<BetError, NewBet> validateParameters(NewBet newBet) {
-        UUID matchUUID = newBet.getMatchUUID();
-        UUID userUUID = newBet.getUserUUID();
-
-        if (matchNotExist(matchUUID)) {
-            return Either.left(BetError.MATCH_NOT_FOUND);
-        }
-        if (matchHasAlreadyBegun(matchUUID)) {
-            return Either.left(BetError.MATCH_ALREADY_STARTED);
-        }
-        if (betWithUUIDExist(matchUUID, userUUID)) {
-            return Either.left(BetError.BET_ALREADY_SET);
-        }
-        return Either.right(newBet);
+        return Match(newBet).of(
+                Case($(matchNotExist()), Either.left(BetError.MATCH_NOT_FOUND)),
+                Case($(betWithUUIDExist()), Either.left(BetError.BET_ALREADY_SET)),
+                Case($(matchHasAlreadyBegun()), Either.left(BetError.MATCH_ALREADY_STARTED)),
+                Case($(), Either.right(newBet))
+        );
     }
 
-    private boolean matchNotExist(UUID uuid) {
-        return leagueFacade.getMatchByUUID(uuid).map(MatchDTO::getUuid).isEmpty();
+    private Predicate<NewBet> matchNotExist() {
+        return bet -> leagueFacade.getMatchByUUID(bet.getMatchUUID()).map(MatchDTO::getUuid).isEmpty();
     }
 
-    private boolean betWithUUIDExist(UUID matchUUID, UUID userUUID) {
-        return repository.findAll().find(bet -> bet.isCorrespondedToMatch(matchUUID) && bet.hasUserUUID(userUUID)).isDefined();
+    private Predicate<NewBet> betWithUUIDExist() {
+        return b -> repository
+                .findAll()
+                .find(bet -> bet.isCorrespondedToMatch(b.getMatchUUID()) && bet.hasUserUUID(b.getUserUUID())).isDefined();
+    }
+
+    private Predicate<NewBet> matchHasAlreadyBegun() {
+        return bet -> matchHasAlreadyBegun(bet.getMatchUUID());
     }
 
     Either<BetError, Bet> canUpdate(Bet bet) {
