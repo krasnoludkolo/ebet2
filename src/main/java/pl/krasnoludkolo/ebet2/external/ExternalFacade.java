@@ -4,9 +4,12 @@ import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
+import pl.krasnoludkolo.ebet2.external.api.UpdateError;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
+import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 
 import java.util.UUID;
@@ -34,11 +37,23 @@ public class ExternalFacade {
     }
 
     //TODO async
-    public void updateLeague(UUID leagueUUID) {
-        LeagueDetails leagueDetails = leagueDetailsRepository.findOne(leagueUUID).getOrElseThrow(IllegalArgumentException::new);
-        ExternalSourceClient client = clientsMap.get(leagueDetails.getClientShortcut()).getOrElseThrow(IllegalArgumentException::new);
-        LeagueDetails details = leagueUpdater.updateLeague(leagueDetails, client);
-        leagueDetailsRepository.update(details.getLeagueUUID(), details);
+    public Either<UpdateError, Success> updateLeague(UUID leagueUUID) {
+        return leagueDetailsRepository
+                .findOne(leagueUUID)
+                .toEither(UpdateError.NO_LEAGUE_DETAILS)
+                .flatMap(this::getExternalSourceClientForLeague)
+                .map(leagueUpdater::updateLeague)
+                .map(Success::new);
+    }
+
+    private Either<UpdateError, UpdateInfo> getExternalSourceClientForLeague(LeagueDetails details) {
+        return Option.of(details)
+                .map(LeagueDetails::getClientShortcut)
+                .flatMap(clientsMap::get)
+                .map(client -> new UpdateInfo(details, client))
+                .toEither(UpdateError.NO_EXTERNAL_CLIENT);
+
+
     }
 
 }

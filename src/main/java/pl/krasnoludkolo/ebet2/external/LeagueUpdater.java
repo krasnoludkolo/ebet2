@@ -26,7 +26,9 @@ class LeagueUpdater {
         this.resultFacade = resultFacade;
     }
 
-    LeagueDetails updateLeague(LeagueDetails leagueDetails, ExternalSourceClient client) {
+    LeagueDetails updateLeague(UpdateInfo updateInfo) {
+        LeagueDetails leagueDetails = updateInfo.getLeagueDetails();
+        ExternalSourceClient client = updateInfo.getClient();
         ExternalSourceConfiguration config = LeagueDetailsCreator.toExternalSourceConfiguration(leagueDetails);
         List<MatchInfo> matchInfoList = client.downloadAllRounds(config);
         List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
@@ -93,7 +95,7 @@ class LeagueUpdater {
 
     private List<MatchInfo> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
         return matchInfoList
-                .removeAll(matchInfo -> isInLeague(matchInfo, matchesFromLeague));
+                .reject(matchInfo -> isInLeague(matchInfo, matchesFromLeague));
     }
 
     private boolean isInLeague(MatchInfo matchInfo, List<MatchDTO> matchesFromLeague) {
