@@ -84,7 +84,7 @@ public class BetFacadeTest {
     }
 
     @Test
-    public void shouldNotAddBetTwiceToSameMatch() {
+    public void shouldNotAddBetTwiceToTheSameMatch() {
         //given
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();

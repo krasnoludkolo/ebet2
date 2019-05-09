@@ -44,12 +44,6 @@ class BetController {
         return new ResponseEntity<>(betDTOS, HttpStatus.OK);
     }
 
-    @DeleteMapping("/bet")
-    public HttpStatus removeBet(@RequestParam UUID uuid) {
-        betFacade.removeBet(uuid);
-        return HttpStatus.OK;
-    }
-
     @PutMapping("/bet")
     public HttpEntity updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
         Either<BetError, UUID> updatedResult = betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
