@@ -87,6 +87,17 @@ public class UserFacadeTest {
     }
 
     @Test
+    public void shouldReturnAllUserDetails() {
+        //given
+        UUID userUUID = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //when
+        UserDetails details = userFacade.login(loginUserInfo).get();
+        //then
+        assertEquals(this.username, details.getUsername());
+        assertEquals(userUUID, details.getUserUUID());
+    }
+
+    @Test
     public void shouldGetUsernameByUUID() {
         //given
         UUID uuid = userFacade.registerUser(loginUserInfo).get().getUserUUID();

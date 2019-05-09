@@ -21,7 +21,7 @@ apply plugin: 'org.springframework.boot'
 
 
 group = 'pl.krasnoludkolo'
-version = '0.3.4'
+version = '0.3.5'
 sourceCompatibility = 1.8
 
 repositories {

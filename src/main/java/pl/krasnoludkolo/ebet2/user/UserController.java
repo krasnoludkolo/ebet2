@@ -11,7 +11,6 @@ import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 @RestController
 @RequestMapping("api/user")
@@ -25,8 +24,8 @@ class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity generateToken(@RequestBody LoginUserInfo loginUserInfo) {
-        Either<UserError, UserToken> userDetails = userFacade.login(loginUserInfo);
+    public ResponseEntity login(@RequestBody LoginUserInfo loginUserInfo) {
+        Either<UserError, UserDetails> userDetails = userFacade.login(loginUserInfo);
         return ResponseResolver.resolve(userDetails);
     }
 

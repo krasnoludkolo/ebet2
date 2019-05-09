@@ -6,7 +6,6 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 import java.util.UUID;
 
@@ -32,13 +31,6 @@ class UserManager {
                 .map(this::generateUserDetails);
     }
 
-    private UserDetails generateUserDetails(UserEntity userEntity) {
-        UUID uuid = userEntity.getUuid();
-        String username = userEntity.getUsername();
-        String token = tokenManager.generateTokenFor(uuid).getToken();
-        return new UserDetails(uuid, username, token);
-    }
-
     private void saveToRepository(UserEntity u) {
         repository.save(u.getUuid(), u);
     }
@@ -52,13 +44,19 @@ class UserManager {
         return passwordEncrypt.encryptPassword(password);
     }
 
-    Either<UserError, UserToken> login(LoginUserInfo loginUserInfo) {
+    Either<UserError, UserDetails> login(LoginUserInfo loginUserInfo) {
         String username = loginUserInfo.getUsername();
         String candidatePassword = loginUserInfo.getPassword();
         return findUserByUsername(username)
                 .flatMap(user -> checkPasswordFor(candidatePassword, user))
-                .map(UserEntity::getUuid)
-                .map(tokenManager::generateTokenFor);
+                .map(this::generateUserDetails);
+    }
+
+    private UserDetails generateUserDetails(UserEntity userEntity) {
+        UUID uuid = userEntity.getUuid();
+        String username = userEntity.getUsername();
+        String token = tokenManager.generateTokenFor(uuid).getToken();
+        return new UserDetails(uuid, username, token);
     }
 
     private Either<UserError, UserEntity> findUserByUsername(String username) {

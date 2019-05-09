@@ -4,7 +4,6 @@ import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
-import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 import java.util.UUID;
 
@@ -20,7 +19,7 @@ public class UserFacade {
         return userManager.registerUser(loginUserInfo);
     }
 
-    public Either<UserError, UserToken> login(LoginUserInfo loginUserInfo) {
+    public Either<UserError, UserDetails> login(LoginUserInfo loginUserInfo) {
         return userManager.login(loginUserInfo);
     }
 
