@@ -28,7 +28,7 @@ class BetController {
 
     @PostMapping("/bet")
     public HttpEntity addBetToMatch(@RequestHeader("Authorization") String auth, @RequestBody NewBetDTO newBetDTO) {
-        Either<BetError, UUID> betUUID = betFacade.addBetToMatch(newBetDTO, auth);
+        Either<BetError, BetDTO> betUUID = betFacade.addBetToMatch(newBetDTO, auth);
         return ResponseResolver.resolve(betUUID);
     }
 
@@ -46,7 +46,7 @@ class BetController {
 
     @PutMapping("/bet")
     public HttpEntity updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
-        Either<BetError, UUID> updatedResult = betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
+        Either<BetError, BetDTO> updatedResult = betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
         return ResponseResolver.resolve(updatedResult);
     }
 

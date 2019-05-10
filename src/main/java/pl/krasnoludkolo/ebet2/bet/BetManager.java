@@ -23,11 +23,11 @@ class BetManager {
         this.betValidator = new NewBetValidator(leagueFacade, repository);
     }
 
-    Either<BetError, UUID> addBetToMatch(NewBet newBet) {
+    Either<BetError, BetDTO> addBetToMatch(NewBet newBet) {
         return betValidator.validateParameters(newBet)
                 .map(Bet::of)
                 .peek(bet -> repository.save(bet.getUuid(), bet))
-                .map(Bet::getUuid);
+                .map(Bet::toDto);
     }
 
 
@@ -35,13 +35,13 @@ class BetManager {
         return repository.findOne(betUUID).map(Bet::toDto);
     }
 
-    Either<BetError, UUID> updateBetToMatch(UUID betUUID, BetTyp betType) {
+    Either<BetError, BetDTO> updateBetToMatch(UUID betUUID, BetTyp betType) {
         return repository
                 .findOne(betUUID)
                 .toEither(BetError.BET_NOT_FOUND)
                 .flatMap(betValidator::canUpdate)
                 .peek(bet -> updateBet(betUUID, betType, bet))
-                .map(Bet::getUuid);
+                .map(Bet::toDto);
     }
 
 
