@@ -46,7 +46,7 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
         try (Connection connection = dbConnectionInfo.createConnection()) {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES);
             return Option.of(findOneQuery(create, uuid))
-                    .filter(Result::isEmpty)
+                    .filter(Result::isNotEmpty)
                     .map(r -> r.get(0))
                     .map(this::convertRecordToEntity)
                     .map(entityToDomainMapper);
