@@ -28,7 +28,7 @@ class MatchManager {
         return matchRepository.findOne(uuid);
     }
 
-    public Either<LeagueError, Match> setMatchResult(UUID matchUUID, MatchResult result) {
+    Either<LeagueError, Match> setMatchResult(UUID matchUUID, MatchResult result) {
         return matchRepository
                 .findOne(matchUUID)
                 .toEither(LeagueError.LEAGUE_NOT_FOUND)
@@ -40,7 +40,7 @@ class MatchManager {
                 .peek(match -> matchRepository.update(matchUUID, match));
     }
 
-    public void removeMatchByUUID(UUID matchUUID) {
+    void removeMatchByUUID(UUID matchUUID) {
         matchRepository.delete(matchUUID);
     }
 }

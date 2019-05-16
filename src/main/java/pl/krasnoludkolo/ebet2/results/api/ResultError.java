@@ -1,15 +1,16 @@
-package pl.krasnoludkolo.ebet2.external.api;
+package pl.krasnoludkolo.ebet2.results.api;
 
 import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
 
-public enum UpdateError implements ResponseError {
-    NO_LEAGUE_DETAILS("No league details", 500),
-    NO_EXTERNAL_CLIENT("No external client", 500);
+public enum ResultError implements ResponseError {
+    MATCH_NOT_FOUND("Match not found", 404),
+    LEAGUE_NOT_FOUND("League not found", 404),
+    SET_NOT_SET_RESULT("Cannot set NOT_SET result", 400);
 
     private String message;
     private int httpCode;
 
-    UpdateError(String message, int httpCode) {
+    ResultError(String message, int httpCode) {
         this.message = message;
         this.httpCode = httpCode;
     }

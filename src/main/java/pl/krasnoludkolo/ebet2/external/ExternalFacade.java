@@ -4,56 +4,52 @@ import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.control.Either;
-import io.vavr.control.Option;
+import pl.krasnoludkolo.ebet2.external.api.ExternalError;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
-import pl.krasnoludkolo.ebet2.external.api.UpdateError;
+import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.infrastructure.Success;
-import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 
 import java.util.UUID;
 
 public class ExternalFacade {
 
-    private LeagueInitializer leagueInitializer;
-    private LeagueUpdater leagueUpdater;
     private Map<String, ExternalSourceClient> clientsMap;
     private Repository<LeagueDetails> leagueDetailsRepository;
 
-    ExternalFacade(LeagueInitializer leagueInitializer, LeagueUpdater leagueUpdater, List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
-        this.leagueInitializer = leagueInitializer;
-        this.leagueUpdater = leagueUpdater;
+    ExternalFacade(List<ExternalSourceClient> clients, Repository<LeagueDetails> leagueDetailsRepository) {
         clientsMap = clients.toMap(client -> Tuple.of(client.getShortcut(), client));
         this.leagueDetailsRepository = leagueDetailsRepository;
     }
 
 
-    public Either<LeagueError, UUID> initializeLeague(ExternalSourceConfiguration config, String clientShortcut, String leagueName) {
-        ExternalSourceClient client = clientsMap.get(clientShortcut).getOrElseThrow(IllegalArgumentException::new);
-        Either<LeagueError, LeagueDetails> leagueDetails = leagueInitializer.initializeLeague(client, config, leagueName);
-        leagueDetails.peek(details -> leagueDetailsRepository.save(details.getLeagueUUID(), details));
-        return leagueDetails.map(LeagueDetails::getLeagueUUID);
+    public Either<ExternalError, UUID> initializeLeagueConfiguration(ExternalSourceConfiguration config, String clientShortcut, UUID leagueUUID) {
+        return clientsMap
+                .get(clientShortcut)
+                .toEither(ExternalError.NO_EXTERNAL_CLIENT)
+                .map(client -> LeagueInitializer.initializeLeague(client, config, leagueUUID))
+                .map(this::saveToRepository)
+                .map(LeagueDetails::getLeagueUUID);
     }
 
-    //TODO async
-    public Either<UpdateError, Success> updateLeague(UUID leagueUUID) {
+    private LeagueDetails saveToRepository(LeagueDetails details) {
+        leagueDetailsRepository.save(details.getLeagueUUID(), details);
+        return details;
+    }
+
+    public Either<ExternalError, List<MatchInfo>> downloadLeague(UUID leagueUUID) {
         return leagueDetailsRepository
                 .findOne(leagueUUID)
-                .toEither(UpdateError.NO_LEAGUE_DETAILS)
-                .flatMap(this::getExternalSourceClientForLeague)
-                .map(leagueUpdater::updateLeague)
-                .map(Success::new);
+                .toEither(ExternalError.NO_LEAGUE_DETAILS)
+                .map(this::downloadLeague);
     }
 
-    private Either<UpdateError, UpdateInfo> getExternalSourceClientForLeague(LeagueDetails details) {
-        return Option.of(details)
-                .map(LeagueDetails::getClientShortcut)
-                .flatMap(clientsMap::get)
-                .map(client -> new UpdateInfo(details, client))
-                .toEither(UpdateError.NO_EXTERNAL_CLIENT);
-
-
+    private List<MatchInfo> downloadLeague(LeagueDetails details) {
+        ExternalSourceConfiguration configuration = LeagueDetailsCreator.toExternalSourceConfiguration(details);
+        return clientsMap
+                .get(details.getClientShortcut())
+                .map(client -> client.downloadAllRounds(configuration))
+                .getOrElse(List.empty());
     }
 
 }

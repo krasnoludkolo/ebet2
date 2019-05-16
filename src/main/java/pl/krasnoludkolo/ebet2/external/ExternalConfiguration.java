@@ -10,8 +10,6 @@ import pl.krasnoludkolo.ebet2.external.clients.footballdata.FootballDataClient;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
-import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 @Configuration
 public class ExternalConfiguration {
@@ -19,20 +17,16 @@ public class ExternalConfiguration {
 
     @Bean
     @Autowired
-    public ExternalFacade autoImportBean(LeagueFacade leagueFacade, SpringLeagueDetailsRepository repo, ResultFacade resultFacade) {
-        LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade, resultFacade);
+    public ExternalFacade autoImportBean(SpringLeagueDetailsRepository repo) {
         Repository<LeagueDetails> leagueDetailsRepository = new SpringDataRepositoryAdapter<>(repo, e -> e, e -> e);
         List<ExternalSourceClient> clients = List.of(FootballDataClient.create(), new ElkartoflichoClient());
-        LeagueInitializer leagueInitializer = new LeagueInitializer(leagueFacade);
-        return new ExternalFacade(leagueInitializer, leagueUpdater, clients, leagueDetailsRepository);
+        return new ExternalFacade(clients, leagueDetailsRepository);
     }
 
-    public ExternalFacade inMemory(LeagueFacade leagueFacade, ResultFacade resultFacade, ExternalSourceClient mockClient) {
+    public ExternalFacade inMemory(ExternalSourceClient mockClient) {
         List<ExternalSourceClient> list = List.of(mockClient);
-        LeagueUpdater leagueUpdater = new LeagueUpdater(leagueFacade, resultFacade);
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
-        LeagueInitializer leagueInitializer = new LeagueInitializer(leagueFacade);
-        return new ExternalFacade(leagueInitializer, leagueUpdater, list, leagueDetailsRepository);
+        return new ExternalFacade(list, leagueDetailsRepository);
     }
 
 

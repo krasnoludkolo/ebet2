@@ -30,4 +30,9 @@ class LeagueResultsManager {
                 .getOrElse(List.empty());
     }
 
+    LeagueResults updateLeagueResult(LeagueResults leagueResults) {
+        repository.update(leagueResults.getLeagueUUID(), leagueResults);
+        return leagueResults;
+    }
+
 }

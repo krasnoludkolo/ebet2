@@ -39,16 +39,16 @@ public class InMemorySystem {
 
     private void configureEnvironment() {
         timeSource = Haste.TimeSource.withFixedClockFromNow();
+        externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
     }
 
 
     private void configureModules() {
         userFacade = new UserConfiguration().inMemoryUserFacade();
+        externalFacade = new ExternalConfiguration().inMemory(externalClientMock);
         leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(timeSource);
-        externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
         betFacade = new BetConfiguration().inMemoryBetFacade(userFacade, leagueFacade);
-        resultFacade = new ResultConfiguration().inMemoryResult(betFacade, leagueFacade);
-        externalFacade = new ExternalConfiguration().inMemory(leagueFacade, resultFacade, externalClientMock);
+        resultFacade = new ResultConfiguration().inMemoryResult(betFacade, leagueFacade, externalFacade);
     }
 
     private void addSampleUsers() {

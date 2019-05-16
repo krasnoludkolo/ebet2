@@ -1,34 +1,30 @@
 package pl.krasnoludkolo.ebet2.results;
 
-import io.vavr.collection.List;
+import io.vavr.control.Either;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.bet.BetFacade;
-import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
+import pl.krasnoludkolo.ebet2.external.ExternalFacade;
+import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchNotFound;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
+import pl.krasnoludkolo.ebet2.results.api.ResultError;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ResultFacade {
 
-    private static final Logger LOGGER = Logger.getLogger(ResultFacade.class.getName());
-
-
     private LeagueResultsManager crudService;
     private LeagueResultsUpdater leagueResultsUpdater;
-    private BetFacade betFacade;
     private LeagueFacade leagueFacade;
+    private LeagueUpdater leagueUpdater;
 
-    public ResultFacade(LeagueResultsManager service, LeagueResultsUpdater leagueResultsUpdater, BetFacade betFacade, LeagueFacade leagueFacade) {
+    ResultFacade(LeagueResultsManager service, LeagueResultsUpdater leagueResultsUpdater, LeagueFacade leagueFacade, ExternalFacade externalFacade) {
         this.crudService = service;
         this.leagueResultsUpdater = leagueResultsUpdater;
-        this.betFacade = betFacade;
         this.leagueFacade = leagueFacade;
+        this.leagueUpdater = new LeagueUpdater(leagueFacade, this, externalFacade);
     }
 
     public Option<LeagueResultsDTO> getResultsForLeague(UUID leagueUUID) {
@@ -42,14 +38,20 @@ public class ResultFacade {
                 .reduce((a, b) -> new UserResultDTO(a.getUserUUID(), a.getPointCounter() + b.getPointCounter())));
     }
 
-    public void updateLeagueResultsForMatch(UUID matchUUID) {
-        MatchDTO matchDTO = leagueFacade.getMatchByUUID(matchUUID).getOrElseThrow(MatchNotFound::new);
-        LOGGER.log(Level.INFO, "Updating results for match " + matchDTO.getHost() + " : " + matchDTO.getGuest() + " with uuid: " + matchDTO.getUuid());
-        UUID leagueUUID = matchDTO.getLeagueUUID();
-        LeagueResults resultsForLeague = crudService.getResultsForLeague(leagueUUID);
-        List<BetDTO> bets = betFacade.getAllBetsForMatch(matchDTO.getUuid());
-        LOGGER.log(Level.INFO, "Found " + bets.length() + " bets to update");
-        leagueResultsUpdater.updateResultsForMatchInLeague(resultsForLeague, matchDTO, bets);
+    public Either<ResultError, Success> registerMatchResult(UUID matchUUID, MatchResult result) {
+        return leagueFacade
+                .getMatchByUUID(matchUUID)
+                .flatMap(m -> leagueFacade.setMatchResult(m.getUuid(), result))
+                .mapLeft(this::mapLeagueFacadeError)
+                .map(m -> leagueResultsUpdater.updateResultsForMatchInLeague(m, result));
+    }
+
+    public Either<ResultError, Success> manuallyUpdateLeague(UUID leagueUUID) {
+        return leagueUpdater.updateLeague(leagueUUID);
+    }
+
+    private ResultError mapLeagueFacadeError(LeagueError error) {
+        return error == LeagueError.SET_NOT_SET_RESULT ? ResultError.SET_NOT_SET_RESULT : ResultError.MATCH_NOT_FOUND;
     }
 
 }

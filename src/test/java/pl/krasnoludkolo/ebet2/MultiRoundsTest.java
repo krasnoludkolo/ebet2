@@ -58,17 +58,12 @@ public class MultiRoundsTest {
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth.getToken());
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID4), auth.getToken());
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID5), auth.getToken());
-        leagueFacade.setMatchResult(matchUUID, MatchResult.HOST_WON);
-        leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
-        leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
-        leagueFacade.setMatchResult(matchUUID4, MatchResult.HOST_WON);
-        leagueFacade.setMatchResult(matchUUID5, MatchResult.DRAW);
+        resultFacade.registerMatchResult(matchUUID, MatchResult.HOST_WON);
+        resultFacade.registerMatchResult(matchUUID2, MatchResult.DRAW);
+        resultFacade.registerMatchResult(matchUUID3, MatchResult.DRAW);
+        resultFacade.registerMatchResult(matchUUID4, MatchResult.HOST_WON);
+        resultFacade.registerMatchResult(matchUUID5, MatchResult.DRAW);
 
-        resultFacade.updateLeagueResultsForMatch(matchUUID);
-        resultFacade.updateLeagueResultsForMatch(matchUUID2);
-        resultFacade.updateLeagueResultsForMatch(matchUUID3);
-        resultFacade.updateLeagueResultsForMatch(matchUUID4);
-        resultFacade.updateLeagueResultsForMatch(matchUUID5);
         //then
         Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
         UserResultDTO userResult = dto.get();
@@ -91,13 +86,9 @@ public class MultiRoundsTest {
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth3.getToken());
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID2), auth3.getToken());
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID3), auth3.getToken());
-        leagueFacade.setMatchResult(matchUUID, MatchResult.DRAW);
-        leagueFacade.setMatchResult(matchUUID2, MatchResult.DRAW);
-        leagueFacade.setMatchResult(matchUUID3, MatchResult.DRAW);
-
-        resultFacade.updateLeagueResultsForMatch(matchUUID);
-        resultFacade.updateLeagueResultsForMatch(matchUUID2);
-        resultFacade.updateLeagueResultsForMatch(matchUUID3);
+        resultFacade.registerMatchResult(matchUUID, MatchResult.DRAW);
+        resultFacade.registerMatchResult(matchUUID2, MatchResult.DRAW);
+        resultFacade.registerMatchResult(matchUUID3, MatchResult.DRAW);
 
         //then
         Option<UserResultDTO> dto1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());

@@ -1,17 +1,18 @@
-package pl.krasnoludkolo.ebet2.external;
+package pl.krasnoludkolo.ebet2.results;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
-import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
+import io.vavr.control.Either;
+import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
+import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.results.ResultFacade;
+import pl.krasnoludkolo.ebet2.results.api.ResultError;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,23 +21,25 @@ class LeagueUpdater {
 
     private LeagueFacade leagueFacade;
     private ResultFacade resultFacade;
+    private ExternalFacade externalFacade;
 
-    LeagueUpdater(LeagueFacade leagueFacade, ResultFacade resultFacade) {
+    LeagueUpdater(LeagueFacade leagueFacade, ResultFacade resultFacade, ExternalFacade externalFacade) {
         this.leagueFacade = leagueFacade;
         this.resultFacade = resultFacade;
+        this.externalFacade = externalFacade;
     }
 
-    LeagueDetails updateLeague(UpdateInfo updateInfo) {
-        LeagueDetails leagueDetails = updateInfo.getLeagueDetails();
-        ExternalSourceClient client = updateInfo.getClient();
-        ExternalSourceConfiguration config = LeagueDetailsCreator.toExternalSourceConfiguration(leagueDetails);
-        List<MatchInfo> matchInfoList = client.downloadAllRounds(config);
-        List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueDetails);
-        List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
-        List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague).map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueDetails.getLeagueUUID()));
-        newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
-        newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
-        return leagueDetails;
+    Either<ResultError, Success> updateLeague(UUID leagueUUID) {
+        return externalFacade.downloadLeague(leagueUUID)
+                .map(matchInfoList -> {
+                    List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueUUID);
+                    List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
+                    List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague).map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueUUID));
+                    newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
+                    newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
+                    return new Success();
+                })
+                .mapLeft(x -> ResultError.LEAGUE_NOT_FOUND);
     }
 
     private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
@@ -44,12 +47,10 @@ class LeagueUpdater {
     }
 
     private void setMatchResultsAndUpdateResults(Tuple2<UUID, MatchResult> t) {
-        leagueFacade.setMatchResult(t._1, t._2);
-        resultFacade.updateLeagueResultsForMatch(t._1);
+        resultFacade.registerMatchResult(t._1, t._2);
     }
 
-    private List<MatchDTO> getAllMatchesFromLeague(LeagueDetails leagueDetails) {
-        UUID leagueUUID = leagueDetails.getLeagueUUID();
+    private List<MatchDTO> getAllMatchesFromLeague(UUID leagueUUID) {
         return leagueFacade
                 .getLeagueByUUID(leagueUUID)
                 .map(LeagueDTO::getMatchDTOS)

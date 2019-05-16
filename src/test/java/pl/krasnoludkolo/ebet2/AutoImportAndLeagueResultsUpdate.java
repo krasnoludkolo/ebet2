@@ -1,7 +1,6 @@
 package pl.krasnoludkolo.ebet2;
 
 import io.vavr.collection.List;
-import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
@@ -26,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AutoImportAndLeagueResultsUpdate {
 
+    private LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
     private ExternalFacade externalFacade;
     private BetFacade betFacade;
     private ResultFacade resultFacade;
@@ -48,20 +48,27 @@ public class AutoImportAndLeagueResultsUpdate {
 
     @Test
     public void shouldImportLeagueMakeBetAndUpdateResult() {
-        ExternalSourceConfiguration config = new ExternalSourceConfiguration();
-        UUID leagueUUID = externalFacade.initializeLeague(config, "Mock", "testName").get();
+        system.setExternalSourceMatchList(first());
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
+        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID);
+        resultFacade.manuallyUpdateLeague(leagueUUID);
+
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
+
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID), auth2.getToken());
-        List<MatchInfo> list = getListWithNewResult();
-        system.setExternalSourceMatchList(list);
-        externalFacade.updateLeague(leagueUUID);
+
+        system.setExternalSourceMatchList(withResult());
+        resultFacade.manuallyUpdateLeague(leagueUUID);
+
         UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
-        Option<UserResultDTO> user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID());
+        UserResultDTO user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID()).get();
+
         assertEquals(1, user1.getPointCounter());
-        assertEquals(0, user2.get().getPointCounter());
+        assertEquals(0, user2.getPointCounter());
     }
 
 
@@ -73,4 +80,14 @@ public class AutoImportAndLeagueResultsUpdate {
         externalSourceMatchList = externalSourceMatchList.replace(m, nm);
         return externalSourceMatchList;
     }
+
+    private List<MatchInfo> first() {
+        return List.of(new MatchInfo("a", "b", 1, false, MatchResult.NOT_SET, nextYear));
+    }
+
+    private List<MatchInfo> withResult() {
+        return List.of(new MatchInfo("a", "b", 1, true, MatchResult.DRAW, nextYear));
+    }
+
 }
+

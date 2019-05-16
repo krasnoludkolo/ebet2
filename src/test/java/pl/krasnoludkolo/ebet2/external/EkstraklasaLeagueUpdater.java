@@ -10,6 +10,8 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
+import pl.krasnoludkolo.ebet2.results.api.ResultError;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -44,26 +46,29 @@ public class EkstraklasaLeagueUpdater {
     private ExternalFacade externalFacade;
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
+    private ResultFacade resultFacade;
 
     @Before
     public void setUp() {
         system = new InMemorySystem();
         leagueFacade = system.leagueFacade();
         externalFacade = system.externalFacade();
-
+        resultFacade = system.resultFacade();
     }
 
     @Test
     public void shouldUpdateLeague() {
         //given
-        ExternalSourceConfiguration config = new ExternalSourceConfiguration();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
         system.setExternalSourceMatchList(firstMatchList);
-        UUID uuid = externalFacade.initializeLeague(config, "Mock", "ekstraklasa").get();
+        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID).get();
+        resultFacade.manuallyUpdateLeague(leagueUUID);
         system.setExternalSourceMatchList(updatedMatchList);
         //when
-        externalFacade.updateLeague(uuid);
+        resultFacade.manuallyUpdateLeague(leagueUUID);
         //then
-        LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
+        LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(leagueUUID).get();
         int drawSum = leagueDTO.getMatchDTOS().stream().mapToInt(match -> match.getResult() == MatchResult.DRAW ? 1 : 0).sum();
         assertEquals("Draw sum", 2, drawSum);
         int notSetSum = leagueDTO.getMatchDTOS().stream().mapToInt(match -> match.getResult() == MatchResult.NOT_SET ? 1 : 0).sum();
@@ -74,15 +79,24 @@ public class EkstraklasaLeagueUpdater {
     public void shouldAddMatchesWhenAddedToLeagueInExternal() {
         //given
         system.setExternalSourceMatchList(firstMatchList);
-        UUID uuid = externalFacade.initializeLeague(new ExternalSourceConfiguration(), "Mock", "ekstraklasa").get();
+        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        UUID uuid = externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty(), "Mock", leagueUUID).get();
+        resultFacade.manuallyUpdateLeague(leagueUUID);
+
+        //when
         List<MatchInfo> matchInfosWithAdded = List.ofAll(firstMatchList);
         matchInfosWithAdded = matchInfosWithAdded.append(new MatchInfo("x", "x", 12, false, MatchResult.NOT_SET, nextYear));
         system.setExternalSourceMatchList(matchInfosWithAdded);
-        //when
-        externalFacade.updateLeague(uuid);
+        resultFacade.manuallyUpdateLeague(leagueUUID);
         //then
         java.util.List<MatchDTO> matchDTOS = leagueFacade.getLeagueByUUID(uuid).get().getMatchDTOS();
         assertEquals("Number of matches after add one", 7, matchDTOS.size());
     }
 
+    @Test
+    public void shouldNotUpdateNonExistingLeague() {
+        ResultError error = resultFacade.manuallyUpdateLeague(UUID.randomUUID()).getLeft();
+
+        assertEquals(ResultError.LEAGUE_NOT_FOUND, error);
+    }
 }

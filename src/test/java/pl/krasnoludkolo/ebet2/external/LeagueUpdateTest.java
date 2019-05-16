@@ -8,6 +8,7 @@ import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -40,25 +41,29 @@ public class LeagueUpdateTest {
     private ExternalFacade externalFacade;
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
+    private ResultFacade resultFacade;
 
     @Before
     public void setUp() {
         system = new InMemorySystem();
         leagueFacade = system.leagueFacade();
         externalFacade = system.externalFacade();
-
+        resultFacade = system.resultFacade();
     }
 
 
     @Test
     public void shouldUpdateLeague() {
         //given
-        ExternalSourceConfiguration config = new ExternalSourceConfiguration();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
         system.setExternalSourceMatchList(firstMatchList);
-        UUID uuid = externalFacade.initializeLeague(config, "Mock", "testName").get();
-        system.setExternalSourceMatchList(updated);
+        UUID leagueUUID = leagueFacade.createLeague("tesst").get();
+        UUID uuid = externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID).get();
+        resultFacade.manuallyUpdateLeague(leagueUUID);
+
         //when
-        externalFacade.updateLeague(uuid);
+        system.setExternalSourceMatchList(updated);
+        resultFacade.manuallyUpdateLeague(leagueUUID);
         //then
         LeagueDTO leagueDTO = leagueFacade.getLeagueByUUID(uuid).get();
         int drawSum = leagueDTO.getMatchDTOS().stream().mapToInt(match -> match.getResult() == MatchResult.DRAW ? 1 : 0).sum();

@@ -128,12 +128,8 @@ public class LeagueFacadeTest {
         UUID uuid = facade.addMatchToLeague(newMatchDTO).get();
         facade.addMatchToLeague(other);
         //then
-        Option<MatchDTO> dto = facade.getMatchByUUID(uuid);
-        if (dto.isEmpty()) {
-            fail("No league");
-        } else {
-            assertEquals("host", dto.get().getHost());
-        }
+        MatchDTO matchDTO = facade.getMatchByUUID(uuid).get();
+        assertEquals("host", matchDTO.getHost());
     }
 
     @Test
@@ -162,8 +158,8 @@ public class LeagueFacadeTest {
         //when
         facade.setMatchResult(matchUUID, MatchResult.DRAW);
         //then
-        Option<MatchDTO> matchByUUID = facade.getMatchByUUID(matchUUID);
-        assertEquals(MatchResult.DRAW, matchByUUID.get().getResult());
+        MatchDTO matchDTO = facade.getMatchByUUID(matchUUID).get();
+        assertEquals(MatchResult.DRAW, matchDTO.getResult());
     }
 
 
@@ -187,8 +183,8 @@ public class LeagueFacadeTest {
         //when
         facade.removeMatch(matchUUID);
         //then
-        Option<MatchDTO> match = facade.getMatchByUUID(matchUUID);
-        assertTrue(match.isEmpty());
+        LeagueError error = facade.getMatchByUUID(matchUUID).getLeft();
+        assertEquals(LeagueError.MATCH_NOT_FOUND, error);
     }
 
     @Test

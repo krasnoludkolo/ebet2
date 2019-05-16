@@ -34,4 +34,5 @@ class UserController {
         Either<UserError, UserDetails> userDetails = userFacade.registerUser(loginUserInfo);
         return ResponseResolver.resolve(userDetails);
     }
+
 }

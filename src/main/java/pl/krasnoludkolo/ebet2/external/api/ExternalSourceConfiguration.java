@@ -1,36 +1,35 @@
 package pl.krasnoludkolo.ebet2.external.api;
 
-import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import io.vavr.control.Option;
+import io.vavr.collection.Map;
+import io.vavr.collection.TreeMap;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ExternalSourceConfiguration {
 
-    private Map<String, String> config = new HashMap<>();
+    private final Map<String, String> config;
 
-    public ExternalSourceConfiguration() {
+    public static ExternalSourceConfiguration fromSettingsList(List<Tuple2<String, String>> settings) {
+        Map<String, String> config = settings.toMap(x -> x);
+        return new ExternalSourceConfiguration(config);
+    }
+
+    public static ExternalSourceConfiguration empty() {
+        return new ExternalSourceConfiguration(TreeMap.empty());
     }
 
     public ExternalSourceConfiguration(Map<String, String> config) {
         this.config = config;
     }
 
-    public void putParameter(String parameter, String value) {
-        config.put(parameter, value);
-    }
-
     public String getParameter(String parameter) {
-        return Option.of(config.get(parameter)).getOrElseThrow(() -> {
+        return config.get(parameter).getOrElseThrow(() -> {
             throw new MissingConfigurationException("Missing parameter: " + parameter);
         });
     }
 
     public List<Tuple2<String, String>> getAllSettings() {
-        return List.ofAll(config.entrySet().stream().map(entry -> Tuple.of(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
+        return config.toList();
     }
 }

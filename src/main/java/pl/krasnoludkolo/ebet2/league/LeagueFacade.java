@@ -45,16 +45,16 @@ public class LeagueFacade {
         return leagueManager.getMatchesFromRound(leagueUUID, round);
     }
 
-    public Option<MatchDTO> getMatchByUUID(UUID uuid) {
-        return matchManager.findByUUID(uuid).map(Match::toDTO);
+    public Either<LeagueError, MatchDTO> getMatchByUUID(UUID uuid) {
+        return matchManager.findByUUID(uuid).map(Match::toDTO).toEither(LeagueError.MATCH_NOT_FOUND);
     }
 
     public Option<LeagueDTO> getLeagueByUUID(UUID uuid) {
         return leagueManager.findLeagueByUUID(uuid).map(League::toDTO);
     }
 
-    public Either<LeagueError, Match> setMatchResult(UUID matchUUID, MatchResult result) {
-        return matchManager.setMatchResult(matchUUID, result);
+    public Either<LeagueError, MatchDTO> setMatchResult(UUID matchUUID, MatchResult result) {
+        return matchManager.setMatchResult(matchUUID, result).map(Match::toDTO);
     }
 
     public void removeMatch(UUID matchUUID) {
