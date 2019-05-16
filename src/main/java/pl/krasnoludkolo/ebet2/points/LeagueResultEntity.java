@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results;
+package pl.krasnoludkolo.ebet2.points;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

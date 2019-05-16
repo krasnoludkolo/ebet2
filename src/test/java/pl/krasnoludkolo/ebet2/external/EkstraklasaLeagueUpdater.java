@@ -10,8 +10,8 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.points.api.PointsError;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
-import pl.krasnoludkolo.ebet2.results.api.ResultError;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -95,8 +95,8 @@ public class EkstraklasaLeagueUpdater {
 
     @Test
     public void shouldNotUpdateNonExistingLeague() {
-        ResultError error = resultFacade.manuallyUpdateLeague(UUID.randomUUID()).getLeft();
+        PointsError error = resultFacade.manuallyUpdateLeague(UUID.randomUUID()).getLeft();
 
-        assertEquals(ResultError.LEAGUE_NOT_FOUND, error);
+        assertEquals(PointsError.LEAGUE_NOT_FOUND, error);
     }
 }

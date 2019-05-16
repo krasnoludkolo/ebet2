@@ -1,7 +1,7 @@
 package pl.krasnoludkolo.ebet2;
 
+import io.haste.BlockingScheduledExecutionService;
 import io.haste.Haste;
-import io.haste.MovableTimeSource;
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
@@ -11,13 +11,18 @@ import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.external.clients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
+import pl.krasnoludkolo.ebet2.points.PointsConfiguration;
+import pl.krasnoludkolo.ebet2.points.PointsFacade;
 import pl.krasnoludkolo.ebet2.results.ResultConfiguration;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
+import pl.krasnoludkolo.ebet2.update.UpdaterConfiguration;
+import pl.krasnoludkolo.ebet2.update.UpdaterFacade;
 import pl.krasnoludkolo.ebet2.user.UserConfiguration;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 public class InMemorySystem {
@@ -27,8 +32,12 @@ public class InMemorySystem {
     private BetFacade betFacade;
     private ResultFacade resultFacade;
     private ExternalFacade externalFacade;
+    private PointsFacade pointsFacade;
+
+    private UpdaterFacade updaterFacade;
+
     private ExternalClientMock externalClientMock;
-    private MovableTimeSource timeSource;
+    private BlockingScheduledExecutionService timeSource;
     private List<UserDetails> usersDetails;
 
     public InMemorySystem() {
@@ -38,7 +47,7 @@ public class InMemorySystem {
     }
 
     private void configureEnvironment() {
-        timeSource = Haste.TimeSource.withFixedClockFromNow();
+        timeSource = Haste.ScheduledExecutionService.withFixedClockFromNow();
         externalClientMock = new ExternalClientMock(ExternalClientMock.SOME_MATCHES);
     }
 
@@ -46,9 +55,11 @@ public class InMemorySystem {
     private void configureModules() {
         userFacade = new UserConfiguration().inMemoryUserFacade();
         externalFacade = new ExternalConfiguration().inMemory(externalClientMock);
-        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(timeSource);
+        leagueFacade = new LeagueConfiguration().inMemoryLeagueFacade(timeSource, updaterFacade);
         betFacade = new BetConfiguration().inMemoryBetFacade(userFacade, leagueFacade);
-        resultFacade = new ResultConfiguration().inMemoryResult(betFacade, leagueFacade, externalFacade);
+        pointsFacade = new PointsConfiguration().inMemoryPointsFacade(betFacade, leagueFacade);
+        resultFacade = new ResultConfiguration().inMemoryResult(leagueFacade, externalFacade, pointsFacade);
+        updaterFacade = new UpdaterConfiguration().inMemory(timeSource, externalFacade, timeSource);
     }
 
     private void addSampleUsers() {
@@ -78,6 +89,14 @@ public class InMemorySystem {
         return externalFacade;
     }
 
+    public PointsFacade pointsFacade() {
+        return pointsFacade;
+    }
+
+    public UpdaterFacade getUpdaterFacade() {
+        return updaterFacade;
+    }
+
     public void setExternalSourceMatchList(List<MatchInfo> list) {
         externalClientMock.setMatchList(list);
     }
@@ -92,5 +111,9 @@ public class InMemorySystem {
 
     public void advanceTimeBy(long daleyTime, TimeUnit timeUnit) {
         timeSource.advanceTimeBy(daleyTime, timeUnit);
+    }
+
+    public LocalDateTime now() {
+        return timeSource.now();
     }
 }

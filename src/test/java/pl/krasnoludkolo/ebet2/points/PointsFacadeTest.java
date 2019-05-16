@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results;
+package pl.krasnoludkolo.ebet2.points;
 
 import io.vavr.control.Option;
 import org.junit.Before;
@@ -11,8 +11,9 @@ import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.points.api.PointsError;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
-import pl.krasnoludkolo.ebet2.results.api.ResultError;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
@@ -23,10 +24,11 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class ResultFacadeTest {
+public class PointsFacadeTest {
 
     private LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
 
+    private PointsFacade pointsFacade;
     private ResultFacade resultFacade;
     private LeagueFacade leagueFacade;
     private BetFacade betFacade;
@@ -37,6 +39,7 @@ public class ResultFacadeTest {
     @Before
     public void setUp() {
         InMemorySystem system = new InMemorySystem();
+        pointsFacade = system.pointsFacade();
         resultFacade = system.resultFacade();
         leagueFacade = system.leagueFacade();
         betFacade = system.betFacade();
@@ -50,7 +53,7 @@ public class ResultFacadeTest {
         //when
         UUID leagueUUID = leagueFacade.createLeague("new").get();
         //then
-        Option<LeagueResultsDTO> dto = resultFacade.getResultsForLeague(leagueUUID);
+        Option<LeagueResultsDTO> dto = pointsFacade.getResultsForLeague(leagueUUID);
         assertFalse(dto.isEmpty());
     }
 
@@ -64,7 +67,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID, MatchResult.DRAW);
 
         //then
-        UserResultDTO userResult = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        UserResultDTO userResult = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
 
         assertEquals(1, userResult.getPointCounter());
     }
@@ -79,7 +82,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID, MatchResult.HOST_WON);
 
         //then
-        UserResultDTO dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        UserResultDTO dto = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(0, dto.getPointCounter());
     }
 
@@ -97,7 +100,7 @@ public class ResultFacadeTest {
 
 
         //then
-        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
+        Option<UserResultDTO> dto = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
         UserResultDTO userResult = dto.get();
         assertEquals(1, userResult.getPointCounter());
     }
@@ -116,7 +119,7 @@ public class ResultFacadeTest {
 
 
         //then
-        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        UserResultDTO userResultDTO = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(2, userResultDTO.getPointCounter());
     }
 
@@ -135,7 +138,7 @@ public class ResultFacadeTest {
 
 
         //then
-        int numberOfUserResults = resultFacade.getResultsForLeague(leagueUUID).get().getGeneralResult().size();
+        int numberOfUserResults = pointsFacade.getResultsForLeague(leagueUUID).get().getGeneralResult().size();
         assertEquals(1, numberOfUserResults);
     }
 
@@ -160,7 +163,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID2, MatchResult.DRAW);
         resultFacade.registerMatchResult(matchUUID3, MatchResult.DRAW);
         //then
-        List<UserResultDTO> userResultDTOS = resultFacade.getResultsForLeague(leagueUUID).get().getGeneralResult();
+        List<UserResultDTO> userResultDTOS = pointsFacade.getResultsForLeague(leagueUUID).get().getGeneralResult();
         for (int i = 0; i < userResultDTOS.size() - 1; i++) {
             int current = userResultDTOS.get(i).getPointCounter();
             int next = userResultDTOS.get(i + 1).getPointCounter();
@@ -189,7 +192,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID2, MatchResult.DRAW);
         resultFacade.registerMatchResult(matchUUID3, MatchResult.DRAW);
         //then
-        List<List<UserResultDTO>> roundResults = resultFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
+        List<List<UserResultDTO>> roundResults = pointsFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
         roundResults
                 .forEach(list -> assertEquals(3, list.size()));
     }
@@ -218,7 +221,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID4, MatchResult.DRAW);
         resultFacade.registerMatchResult(matchUUID5, MatchResult.DRAW);
         //then
-        List<List<UserResultDTO>> roundResults = resultFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
+        List<List<UserResultDTO>> roundResults = pointsFacade.getResultsForLeague(leagueUUID).get().getRoundResults();
         assertEquals(2, roundResults.get(0).get(0).getPointCounter());
         assertEquals(1, roundResults.get(1).get(0).getPointCounter());
         assertEquals(0, roundResults.get(2).get(0).getPointCounter());
@@ -235,7 +238,7 @@ public class ResultFacadeTest {
         resultFacade.registerMatchResult(matchUUID, MatchResult.DRAW);
         resultFacade.registerMatchResult(matchUUID, MatchResult.DRAW);
         //then
-        UserResultDTO userResultDTO = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        UserResultDTO userResultDTO = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
         assertEquals(1, userResultDTO.getPointCounter());
     }
 
@@ -246,21 +249,21 @@ public class ResultFacadeTest {
         UUID matchUUID = leagueFacade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
         betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
         //then
-        ResultError error = resultFacade.registerMatchResult(matchUUID, MatchResult.NOT_SET).getLeft();
-        assertEquals(ResultError.SET_NOT_SET_RESULT, error);
+        PointsError error = resultFacade.registerMatchResult(matchUUID, MatchResult.NOT_SET).getLeft();
+        assertEquals(PointsError.SET_NOT_SET_RESULT, error);
     }
 
     @Test
     public void shouldNotUpdateNoExistingMatch() {
-        ResultError error = resultFacade.registerMatchResult(UUID.randomUUID(), MatchResult.DRAW).getLeft();
-        assertEquals(ResultError.MATCH_NOT_FOUND, error);
+        PointsError error = resultFacade.registerMatchResult(UUID.randomUUID(), MatchResult.DRAW).getLeft();
+        assertEquals(PointsError.MATCH_NOT_FOUND, error);
     }
 
     @Test
     public void shouldCreateResultsForEmptyLeague() {
         UUID uuid = leagueFacade.createLeague("new").get();
 
-        Option<LeagueResultsDTO> results = resultFacade.getResultsForLeague(uuid);
+        Option<LeagueResultsDTO> results = pointsFacade.getResultsForLeague(uuid);
 
         assertTrue(results.isDefined());
     }

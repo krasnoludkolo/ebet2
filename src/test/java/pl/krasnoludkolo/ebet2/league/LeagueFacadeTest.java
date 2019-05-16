@@ -235,17 +235,6 @@ public class LeagueFacadeTest {
     }
 
     @Test
-    public void shouldReturnFalseForMatchWithoutDate() {
-        //given
-        UUID leagueUUID = facade.createLeague("test").get();
-        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, null)).get();
-        //when
-        boolean ifMatchBegun = facade.hasMatchAlreadyBegun(matchUUID).get();
-        assertTrue(ifMatchBegun);
-
-    }
-
-    @Test
     public void shouldReturnMatchNotFoundForNoExistingMatch() {
         //when
         LeagueError errorMessage = facade.hasMatchAlreadyBegun(UUID.randomUUID()).getLeft();
@@ -278,6 +267,13 @@ public class LeagueFacadeTest {
         UUID leagueUUID = facade.createLeague("test").get();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, nextYear)).getLeft();
         assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
+    }
+
+    @Test
+    public void shouldNotAddMatchWithoutDate() {
+        UUID leagueUUID = facade.createLeague("test").get();
+        LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, null)).getLeft();
+        assertEquals(LeagueError.MISSING_DATE, error);
     }
 
     @Test

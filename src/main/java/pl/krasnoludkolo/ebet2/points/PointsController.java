@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results;
+package pl.krasnoludkolo.ebet2.points;
 
 import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,25 +12,25 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api")
-class ResultsController {
+class PointsController {
 
-    private ResultFacade resultFacade;
+    private PointsFacade pointsFacade;
 
     @Autowired
-    ResultsController(ResultFacade resultFacade) {
-        this.resultFacade = resultFacade;
+    PointsController(PointsFacade pointsFacade) {
+        this.pointsFacade = pointsFacade;
     }
 
     @GetMapping("/league/{uuid}/results")
     public HttpEntity<LeagueResultsDTO> getResultsForLeague(@PathVariable UUID uuid) {
-        Option<LeagueResultsDTO> leagueResultsDTOS = resultFacade.getResultsForLeague(uuid);
+        Option<LeagueResultsDTO> leagueResultsDTOS = pointsFacade.getResultsForLeague(uuid);
         return ResponseResolver.resolve(leagueResultsDTOS);
     }
 
     //TODO paths
     @GetMapping("/results")
     public HttpEntity<UserResultDTO> getResultsFromLeagueToUser(@RequestParam UUID leagueUUID, @RequestParam UUID userUUID) {
-        Option<UserResultDTO> results = resultFacade.getResultsFromLeagueToUser(leagueUUID, userUUID);
+        Option<UserResultDTO> results = pointsFacade.getResultsFromLeagueToUser(leagueUUID, userUUID);
         return ResponseResolver.resolve(results);
     }
 

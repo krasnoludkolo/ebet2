@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results;
+package pl.krasnoludkolo.ebet2.points;
 
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 

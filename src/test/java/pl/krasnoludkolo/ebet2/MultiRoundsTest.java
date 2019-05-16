@@ -9,6 +9,7 @@ import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.points.PointsFacade;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
@@ -25,6 +26,7 @@ public class MultiRoundsTest {
 
 
     private ResultFacade resultFacade;
+    private PointsFacade pointsFacade;
     private LeagueFacade leagueFacade;
     private BetFacade betFacade;
     private UserDetails auth;
@@ -36,6 +38,7 @@ public class MultiRoundsTest {
     public void setUp() {
         InMemorySystem system = new InMemorySystem();
         resultFacade = system.resultFacade();
+        pointsFacade = system.pointsFacade();
         leagueFacade = system.leagueFacade();
         betFacade = system.betFacade();
         auth = system.getSampleUserDetailList().get(0);
@@ -65,7 +68,7 @@ public class MultiRoundsTest {
         resultFacade.registerMatchResult(matchUUID5, MatchResult.DRAW);
 
         //then
-        Option<UserResultDTO> dto = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
+        Option<UserResultDTO> dto = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
         UserResultDTO userResult = dto.get();
         assertEquals(3, userResult.getPointCounter());
     }
@@ -91,9 +94,9 @@ public class MultiRoundsTest {
         resultFacade.registerMatchResult(matchUUID3, MatchResult.DRAW);
 
         //then
-        Option<UserResultDTO> dto1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
-        Option<UserResultDTO> dto2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID());
-        Option<UserResultDTO> dto3 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth3.getUserUUID());
+        Option<UserResultDTO> dto1 = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID());
+        Option<UserResultDTO> dto2 = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID());
+        Option<UserResultDTO> dto3 = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth3.getUserUUID());
         UserResultDTO userResult1 = dto1.get();
         UserResultDTO userResult2 = dto2.get();
         UserResultDTO userResult3 = dto3.get();

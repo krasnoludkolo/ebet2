@@ -6,6 +6,7 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.*;
+import pl.krasnoludkolo.ebet2.update.UpdaterFacade;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,10 +19,12 @@ class LeagueManager {
 
     private Repository<League> leagueRepository;
     private MatchManager matchManager;
+    private UpdaterFacade updaterFacade;
 
-    LeagueManager(Repository<League> leagueRepository, MatchManager matchManager) {
+    LeagueManager(Repository<League> leagueRepository, MatchManager matchManager, UpdaterFacade updaterFacade) {
         this.leagueRepository = leagueRepository;
         this.matchManager = matchManager;
+        this.updaterFacade = updaterFacade;
     }
 
     Either<LeagueError, League> createLeague(String name) {
@@ -69,12 +72,15 @@ class LeagueManager {
 
     Either<LeagueError, UUID> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
         return validateParameters(newMatchDTO)
-                .map(newMatch -> addMatch(leagueUUID, newMatch));
+                .map(newMatch -> addMatch(leagueUUID, newMatch))
+                .map(Match::toDTO)
+                .map(MatchDTO::getUuid);
     }
 
     private Either<LeagueError, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
         return API.Match(newMatchDTO)
                 .option(
+                        Case($(o -> Objects.isNull(o.getMatchStartDate())), LeagueError.MISSING_DATE),
                         Case($(o -> Objects.isNull(o.getHost())), LeagueError.EMPTY_OR_NULL_NAME),
                         Case($(o -> Objects.isNull(o.getGuest())), LeagueError.EMPTY_OR_NULL_NAME),
                         Case($(o -> o.getHost().isEmpty()), LeagueError.EMPTY_OR_NULL_NAME),
@@ -83,12 +89,12 @@ class LeagueManager {
                 .swap();
     }
 
-    private UUID addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
+    private Match addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
         League league = findLeagueByUUID(leagueUUID).getOrElseThrow(LeagueNotFound::new);
         Match match = matchManager.createNewMatch(newMatch, league);
         league.addMatch(match);
         leagueRepository.update(leagueUUID, league);
-        return match.getUuid();
+        return match;
     }
 
     Either<LeagueError, List<MatchDTO>> getMatchesFromRound(UUID leagueUUID, int round) {

@@ -12,7 +12,7 @@ import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
-import pl.krasnoludkolo.ebet2.results.api.ResultError;
+import pl.krasnoludkolo.ebet2.points.api.PointsError;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -29,7 +29,7 @@ class LeagueUpdater {
         this.externalFacade = externalFacade;
     }
 
-    Either<ResultError, Success> updateLeague(UUID leagueUUID) {
+    Either<PointsError, Success> updateLeague(UUID leagueUUID) {
         return externalFacade.downloadLeague(leagueUUID)
                 .map(matchInfoList -> {
                     List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueUUID);
@@ -39,7 +39,7 @@ class LeagueUpdater {
                     newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
                     return new Success();
                 })
-                .mapLeft(x -> ResultError.LEAGUE_NOT_FOUND);
+                .mapLeft(x -> PointsError.LEAGUE_NOT_FOUND);
     }
 
     private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {

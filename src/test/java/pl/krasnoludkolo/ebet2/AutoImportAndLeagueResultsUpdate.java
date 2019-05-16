@@ -13,6 +13,7 @@ import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.points.PointsFacade;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
@@ -29,6 +30,7 @@ public class AutoImportAndLeagueResultsUpdate {
     private ExternalFacade externalFacade;
     private BetFacade betFacade;
     private ResultFacade resultFacade;
+    private PointsFacade pointsFacade;
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
     private UserDetails auth;
@@ -40,6 +42,7 @@ public class AutoImportAndLeagueResultsUpdate {
         externalFacade = system.externalFacade();
         betFacade = system.betFacade();
         resultFacade = system.resultFacade();
+        pointsFacade = system.pointsFacade();
         leagueFacade = system.leagueFacade();
         auth = system.getSampleUserDetailList().get(0);
         auth2 = system.getSampleUserDetailList().get(1);
@@ -64,8 +67,8 @@ public class AutoImportAndLeagueResultsUpdate {
         system.setExternalSourceMatchList(withResult());
         resultFacade.manuallyUpdateLeague(leagueUUID);
 
-        UserResultDTO user1 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
-        UserResultDTO user2 = resultFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID()).get();
+        UserResultDTO user1 = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth.getUserUUID()).get();
+        UserResultDTO user2 = pointsFacade.getResultsFromLeagueToUser(leagueUUID, auth2.getUserUUID()).get();
 
         assertEquals(1, user1.getPointCounter());
         assertEquals(0, user2.getPointCounter());
