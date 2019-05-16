@@ -53,7 +53,7 @@ public class AutoImportAndLeagueResultsUpdate {
     public void shouldImportLeagueMakeBetAndUpdateResult() {
         system.setExternalSourceMatchList(first());
         ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
-        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID);
         resultFacade.manuallyUpdateLeague(leagueUUID);
 

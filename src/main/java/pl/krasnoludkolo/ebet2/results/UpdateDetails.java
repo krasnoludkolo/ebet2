@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.update;
+package pl.krasnoludkolo.ebet2.results;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

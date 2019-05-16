@@ -6,7 +6,6 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.*;
-import pl.krasnoludkolo.ebet2.update.UpdaterFacade;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -19,12 +18,10 @@ class LeagueManager {
 
     private Repository<League> leagueRepository;
     private MatchManager matchManager;
-    private UpdaterFacade updaterFacade;
 
-    LeagueManager(Repository<League> leagueRepository, MatchManager matchManager, UpdaterFacade updaterFacade) {
+    LeagueManager(Repository<League> leagueRepository, MatchManager matchManager) {
         this.leagueRepository = leagueRepository;
         this.matchManager = matchManager;
-        this.updaterFacade = updaterFacade;
     }
 
     Either<LeagueError, League> createLeague(String name) {
@@ -70,11 +67,10 @@ class LeagueManager {
         return leagueRepository.findAll().map(League::toDTO);
     }
 
-    Either<LeagueError, UUID> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
+    Either<LeagueError, MatchDTO> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
         return validateParameters(newMatchDTO)
                 .map(newMatch -> addMatch(leagueUUID, newMatch))
-                .map(Match::toDTO)
-                .map(MatchDTO::getUuid);
+                .map(Match::toDTO);
     }
 
     private Either<LeagueError, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {

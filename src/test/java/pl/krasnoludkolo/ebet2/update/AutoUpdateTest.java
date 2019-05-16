@@ -8,6 +8,7 @@ import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -19,22 +20,25 @@ public class AutoUpdateTest {
 
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
+    private ResultFacade resultFacade;
 
     @Before
     public void setUp() {
         system = new InMemorySystem();
         leagueFacade = system.leagueFacade();
+        this.resultFacade = system.resultFacade();
+        system.setExternalSourceMatchList(List.empty());
     }
 
     @Test
     public void shouldFetchMatchResultAfterMatchIsFinished() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("test").get();
-        UUID matchUUID = leagueFacade.addMatchToLeague(createNewMatchDTO(leagueUUID)).get();
+        UUID leagueUUID = system.sampleLeagueUUID();
+        UUID matchUUID = resultFacade.registerMatch(createNewMatchDTO(leagueUUID)).get().getUuid();
 
         //when
-        system.setExternalSourceMatchList(List.of(createMatchInfo()));
-        system.advanceTimeBy(2, TimeUnit.HOURS);
+        system.setExternalSourceMatchList(List.of(createMatchInfo(false)));
+        system.advanceTimeBy(3, TimeUnit.HOURS);
 
         //then
         MatchResult result = leagueFacade.getMatchByUUID(matchUUID).get().getResult();
@@ -44,12 +48,13 @@ public class AutoUpdateTest {
     @Test
     public void shouldRetryFetchMatchResultAfterMatchIsFinished() {
         //given
-        UUID leagueUUID = leagueFacade.createLeague("test").get();
-        UUID matchUUID = leagueFacade.addMatchToLeague(createNewMatchDTO(leagueUUID)).get();
+        UUID leagueUUID = system.sampleLeagueUUID();
+        UUID matchUUID = resultFacade.registerMatch(createNewMatchDTO(leagueUUID)).get().getUuid();
+        system.setExternalSourceMatchList(List.of(createMatchInfo(false)));
 
         //when
-        system.advanceTimeBy(2, TimeUnit.HOURS);
-        system.setExternalSourceMatchList(List.of(createMatchInfo()));
+        system.advanceTimeBy(3, TimeUnit.HOURS);
+        system.setExternalSourceMatchList(List.of(createMatchInfo(true)));
         system.advanceTimeBy(10, TimeUnit.MINUTES);
 
         //then
@@ -61,8 +66,8 @@ public class AutoUpdateTest {
         return new NewMatchDTO("host", "guest", 1, leagueUUID, system.now());
     }
 
-    private MatchInfo createMatchInfo() {
-        return new MatchInfo("host", "guest", 1, true, MatchResult.DRAW, system.now());
+    private MatchInfo createMatchInfo(boolean finished) {
+        return new MatchInfo("host", "guest", 1, finished, MatchResult.DRAW, system.now());
     }
 
 }

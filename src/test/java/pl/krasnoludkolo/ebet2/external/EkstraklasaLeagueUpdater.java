@@ -61,7 +61,7 @@ public class EkstraklasaLeagueUpdater {
         //given
         ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
         system.setExternalSourceMatchList(firstMatchList);
-        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID).get();
         resultFacade.manuallyUpdateLeague(leagueUUID);
         system.setExternalSourceMatchList(updatedMatchList);
@@ -79,7 +79,7 @@ public class EkstraklasaLeagueUpdater {
     public void shouldAddMatchesWhenAddedToLeagueInExternal() {
         //given
         system.setExternalSourceMatchList(firstMatchList);
-        UUID leagueUUID = leagueFacade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         UUID uuid = externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty(), "Mock", leagueUUID).get();
         resultFacade.manuallyUpdateLeague(leagueUUID);
 

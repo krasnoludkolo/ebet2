@@ -39,7 +39,7 @@ class LeagueController {
 
     @PostMapping("/match")
     public ResponseEntity addMatchToLeague(@RequestBody NewMatchDTO newMatchDTO) {
-        Either<LeagueError, UUID> uuid = leagueFacade.addMatchToLeague(newMatchDTO);
+        Either<LeagueError, MatchDTO> uuid = leagueFacade.addMatchToLeague(newMatchDTO);
         return ResponseResolver.resolve(uuid);
     }
 

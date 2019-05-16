@@ -19,10 +19,12 @@ public class LeagueFacadeTest {
     private LocalDateTime lastYear = LocalDateTime.now().minus(1, ChronoUnit.YEARS);
 
     private LeagueFacade facade;
+    private InMemorySystem system;
 
     @Before
     public void init() {
-        facade = new InMemorySystem().leagueFacade();
+        system = new InMemorySystem();
+        facade = system.leagueFacade();
     }
 
     @Test
@@ -72,13 +74,6 @@ public class LeagueFacadeTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfNoLeague() {
-        //then
-        List<LeagueDetailsDTO> allLeagues = facade.getAllLeaguesDetails();
-        assertTrue(allLeagues.isEmpty());
-    }
-
-    @Test
     public void shouldAddDwoEmptyLeaguesAndGetThem() {
         //when
         facade.createLeague("new").get();
@@ -125,7 +120,7 @@ public class LeagueFacadeTest {
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear);
         NewMatchDTO other = new NewMatchDTO("host2", "guest2", 1, leagueUUID, nextYear);
         //when
-        UUID uuid = facade.addMatchToLeague(newMatchDTO).get();
+        UUID uuid = facade.addMatchToLeague(newMatchDTO).get().getUuid();
         facade.addMatchToLeague(other);
         //then
         MatchDTO matchDTO = facade.getMatchByUUID(uuid).get();
@@ -154,7 +149,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new").get();
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear);
-        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get();
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get().getUuid();
         //when
         facade.setMatchResult(matchUUID, MatchResult.DRAW);
         //then
@@ -168,7 +163,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new").get();
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear);
-        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get();
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get().getUuid();
         //when
         LeagueError leagueError = facade.setMatchResult(matchUUID, MatchResult.NOT_SET).left().get();
         assertEquals(LeagueError.SET_NOT_SET_RESULT, leagueError);
@@ -179,7 +174,7 @@ public class LeagueFacadeTest {
         //given
         UUID leagueUUID = facade.createLeague("new").get();
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear);
-        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get();
+        UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get().getUuid();
         //when
         facade.removeMatch(matchUUID);
         //then
@@ -201,7 +196,7 @@ public class LeagueFacadeTest {
     @Test
     public void shouldGetAllMatchesFromLeague() {
         //given
-        UUID tested = facade.createLeague("test").get();
+        UUID tested = system.sampleLeagueUUID();
         UUID other = facade.createLeague("test2").get();
         //when
         facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, tested, nextYear));
@@ -217,8 +212,8 @@ public class LeagueFacadeTest {
     @Test
     public void shouldReturnTrueForStartedMatch() {
         //given
-        UUID leagueUUID = facade.createLeague("test").get();
-        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, lastYear)).get();
+        UUID leagueUUID = system.sampleLeagueUUID();
+        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, lastYear)).get().getUuid();
         //when
         boolean ifMatchBegun = facade.hasMatchAlreadyBegun(matchUUID).get();
         assertTrue(ifMatchBegun);
@@ -227,8 +222,8 @@ public class LeagueFacadeTest {
     @Test
     public void shouldReturnFalseForNotStartedMatch() {
         //given
-        UUID leagueUUID = facade.createLeague("test").get();
-        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get();
+        UUID leagueUUID = system.sampleLeagueUUID();
+        UUID matchUUID = facade.addMatchToLeague(new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear)).get().getUuid();
         //when
         boolean ifMatchBegun = facade.hasMatchAlreadyBegun(matchUUID).get();
         assertFalse(ifMatchBegun);
@@ -243,42 +238,42 @@ public class LeagueFacadeTest {
 
     @Test
     public void shouldNotAddMatchWithNullHostName() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO(null, "guest", 1, leagueUUID, nextYear)).getLeft();
         assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithNullGuestName() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", null, 1, leagueUUID, nextYear)).getLeft();
         assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithEmptyHostName() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO("", "guest", 1, leagueUUID, nextYear)).getLeft();
         assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithEmptyGuestName() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, nextYear)).getLeft();
         assertEquals(LeagueError.EMPTY_OR_NULL_NAME, error);
     }
 
     @Test
     public void shouldNotAddMatchWithoutDate() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         LeagueError error = facade.addMatchToLeague(new NewMatchDTO("host", "", 1, leagueUUID, null)).getLeft();
         assertEquals(LeagueError.MISSING_DATE, error);
     }
 
     @Test
     public void shouldArchiveLeague() {
-        UUID leagueUUID = facade.createLeague("test").get();
+        UUID leagueUUID = system.sampleLeagueUUID();
         facade.archiveLeague(leagueUUID);
         boolean archived = facade.getLeagueByUUID(leagueUUID).get().isArchived();
         assertTrue(archived);

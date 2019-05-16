@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.update;
+package pl.krasnoludkolo.ebet2.results;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
