@@ -5,7 +5,10 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.api.*;
+import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -69,8 +72,7 @@ class LeagueManager {
 
     Either<LeagueError, MatchDTO> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
         return validateParameters(newMatchDTO)
-                .map(newMatch -> addMatch(leagueUUID, newMatch))
-                .map(Match::toDTO);
+                .flatMap(newMatch -> addMatch(leagueUUID, newMatch));
     }
 
     private Either<LeagueError, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
@@ -85,12 +87,20 @@ class LeagueManager {
                 .swap();
     }
 
-    private Match addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
-        League league = findLeagueByUUID(leagueUUID).getOrElseThrow(LeagueNotFound::new);
-        Match match = matchManager.createNewMatch(newMatch, league);
-        league.addMatch(match);
-        leagueRepository.update(leagueUUID, league);
-        return match;
+    private Either<LeagueError, MatchDTO> addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
+        return findLeagueByUUID(leagueUUID)
+                .toEither(LeagueError.LEAGUE_NOT_FOUND)
+                .map(league -> {
+                    Match match = matchManager.createNewMatch(newMatch, league);
+                    league.addMatch(match);
+                    updateLeague(league);
+                    return match.toDTO();
+                });
+    }
+
+    private League updateLeague(League league) {
+        leagueRepository.update(league.getUuid(), league);
+        return league;
     }
 
     Either<LeagueError, List<MatchDTO>> getMatchesFromRound(UUID leagueUUID, int round) {

@@ -10,6 +10,7 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.results.ResultFacade;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,13 +22,15 @@ public class AutoUpdateTest {
     private LeagueFacade leagueFacade;
     private InMemorySystem system;
     private ResultFacade resultFacade;
+    private LocalDateTime matchStartDate;
 
     @Before
     public void setUp() {
         system = new InMemorySystem();
         leagueFacade = system.leagueFacade();
         this.resultFacade = system.resultFacade();
-        system.setExternalSourceMatchList(List.empty());
+        system.setExternalSourceMatchList(List.of(planned()));
+        matchStartDate = system.now();
     }
 
     @Test
@@ -37,7 +40,7 @@ public class AutoUpdateTest {
         UUID matchUUID = resultFacade.registerMatch(createNewMatchDTO(leagueUUID)).get().getUuid();
 
         //when
-        system.setExternalSourceMatchList(List.of(createMatchInfo(false)));
+        system.setExternalSourceMatchList(List.of(finished()));
         system.advanceTimeBy(3, TimeUnit.HOURS);
 
         //then
@@ -50,11 +53,10 @@ public class AutoUpdateTest {
         //given
         UUID leagueUUID = system.sampleLeagueUUID();
         UUID matchUUID = resultFacade.registerMatch(createNewMatchDTO(leagueUUID)).get().getUuid();
-        system.setExternalSourceMatchList(List.of(createMatchInfo(false)));
 
         //when
         system.advanceTimeBy(3, TimeUnit.HOURS);
-        system.setExternalSourceMatchList(List.of(createMatchInfo(true)));
+        system.setExternalSourceMatchList(List.of(finished()));
         system.advanceTimeBy(10, TimeUnit.MINUTES);
 
         //then
@@ -66,8 +68,13 @@ public class AutoUpdateTest {
         return new NewMatchDTO("host", "guest", 1, leagueUUID, system.now());
     }
 
-    private MatchInfo createMatchInfo(boolean finished) {
-        return new MatchInfo("host", "guest", 1, finished, MatchResult.DRAW, system.now());
+    private MatchInfo planned() {
+        matchStartDate = system.now();
+        return new MatchInfo("host", "guest", 1, false, MatchResult.NOT_SET, matchStartDate);
+    }
+
+    private MatchInfo finished() {
+        return new MatchInfo("host", "guest", 1, true, MatchResult.DRAW, matchStartDate);
     }
 
 }
