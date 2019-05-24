@@ -36,4 +36,8 @@ public class ResultConfiguration {
         return new ResultFacade(leagueFacade, externalFacade, pointsFacade, executorService, repository, executorService);
     }
 
+    public ResultFacade inMemoryResultWithData(LeagueFacade leagueFacade, ExternalFacade externalFacade, PointsFacade pointsFacade, BlockingScheduledExecutionService executorService, InMemoryRepository<UpdateDetails> repository) {
+        return new ResultFacade(leagueFacade, externalFacade, pointsFacade, executorService, repository, executorService);
+    }
+
 }

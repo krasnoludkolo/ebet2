@@ -2,6 +2,7 @@ package pl.krasnoludkolo.ebet2.results;
 
 import io.haste.TimeSource;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.Success;
@@ -44,5 +45,8 @@ public class ResultFacade {
         return leagueUpdater.updateLeague(leagueUUID);
     }
 
+    Option<MatchDTO> getMatchByUUID(UUID matchUUID) {
+        return leagueFacade.getMatchByUUID(matchUUID).toOption();
+    }
 
 }

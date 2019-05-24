@@ -10,6 +10,7 @@ import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.external.clients.mockclient.ExternalClientMock;
+import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.points.PointsConfiguration;
@@ -95,6 +96,11 @@ public class InMemorySystem {
 
     public PointsFacade pointsFacade() {
         return pointsFacade;
+    }
+
+    public void recreateResultsModule(InMemoryRepository repository) {
+        externalClientMock = new ExternalClientMock(getExternalSourceMatchList());
+        resultFacade = new ResultConfiguration().inMemoryResultWithData(leagueFacade, externalFacade, pointsFacade, timeSource, repository);
     }
 
     public UUID sampleLeagueUUID() {

@@ -8,7 +8,9 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -20,36 +22,70 @@ final class ResultsUpdater {
     private final TimeSource timeSource;
     private final ResultFacade resultFacade;
 
+    private final Duration RESCHEDULE_DURATION = Duration.ofMinutes(1);
+
     ResultsUpdater(ScheduledExecutorService executorService, Repository<UpdateDetails> repository, ExternalFacade externalFacade, TimeSource timeSource, ResultFacade resultFacade) {
         this.executorService = executorService;
         this.repository = repository;
         this.externalFacade = externalFacade;
         this.timeSource = timeSource;
         this.resultFacade = resultFacade;
+        scheduleStoredUpdates();
+    }
+
+    private void scheduleStoredUpdates() {
+        repository
+                .findAll()
+                .map(this::reschedule);
     }
 
     MatchDTO schedule(MatchDTO match) {
+        saveUpdateResult(match);
         Duration offset = Duration.between(match.getMatchStartDate(), timeSource.now()).plusHours(2);
-        executorService.schedule(() -> tryUpdate(match), offset.getSeconds(), TimeUnit.SECONDS);
+        executorService.schedule(() -> tryUpdate(match.getUuid()), offset.getSeconds(), TimeUnit.SECONDS);
         return match;
     }
 
-    private void reschedule(MatchDTO match) {
-        Duration offset = Duration.between(timeSource.now(), timeSource.now().plusMinutes(1));
-        executorService.schedule(() -> tryUpdate(match), offset.getSeconds(), TimeUnit.SECONDS);
+    private UpdateDetails reschedule(UpdateDetails updateDetails) {
+        long attempt = updateDetails.attempt;
+        LocalDateTime scheduledTime = updateDetails.scheduledTime;
+        UUID matchUUID = updateDetails.matchUUID;
+        Duration offset = Duration.between(scheduledTime, timeSource.now()).plusHours(2).plus(RESCHEDULE_DURATION.multipliedBy(attempt));
+        executorService.schedule(() -> tryUpdate(matchUUID), offset.getSeconds(), TimeUnit.SECONDS);
+        return updateDetails;
     }
 
-    private void tryUpdate(MatchDTO match) {
-        externalFacade.downloadLeague(match.getLeagueUUID())
-                .map(list -> {
-                    MatchInfo info = findCorrespondingMatch(match, list);
-                    if (info.isFinished()) {
-                        resultFacade.registerMatchResult(match.getUuid(), info.getResult());
-                    } else {
-                        reschedule(match);
+    private void saveUpdateResult(MatchDTO match) {
+        UpdateDetails details = UpdateDetails.firstAttempt(match);
+        repository.save(details.matchUUID, details);
+    }
 
-                    }
-                    return list;
+    private void reschedule(MatchDTO match) {
+        updateUpdateResult(match);
+        executorService.schedule(() -> tryUpdate(match.getUuid()), RESCHEDULE_DURATION.getSeconds(), TimeUnit.SECONDS);
+    }
+
+    private void updateUpdateResult(MatchDTO match) {
+        UpdateDetails details = repository.findOne(match.getUuid()).getOrElseThrow(IllegalStateException::new);
+        repository.update(details.matchUUID, details.nextAttempt());
+    }
+
+    private void tryUpdate(UUID matchUUID) {
+        resultFacade.getMatchByUUID(matchUUID)
+                .map(match -> {
+                    externalFacade.downloadLeague(match.getLeagueUUID())
+                            .map(list -> {
+                                MatchInfo info = findCorrespondingMatch(match, list);
+                                if (info.isFinished()) {
+                                    resultFacade.registerMatchResult(match.getUuid(), info.getResult());
+                                    repository.delete(matchUUID);
+                                } else {
+                                    reschedule(match);
+
+                                }
+                                return list;
+                            });
+                    return match;
                 });
     }
 
