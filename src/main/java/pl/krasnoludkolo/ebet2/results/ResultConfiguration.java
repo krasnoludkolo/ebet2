@@ -13,7 +13,6 @@ import pl.krasnoludkolo.ebet2.points.PointsFacade;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.UnaryOperator;
 
 @Configuration
 public class ResultConfiguration {
@@ -21,9 +20,10 @@ public class ResultConfiguration {
     @Bean
     public ResultFacade resultFacadeBean(LeagueFacade leagueFacade, ExternalFacade externalFacade, PointsFacade pointsFacade) {
 
-        UnaryOperator<UpdateDetails> d2e = x -> x;
-        UnaryOperator<UpdateDetails> e2d = x -> x;
-        Repository<UpdateDetails> repository = new JOOQUpdateDetailsRepository(d2e, e2d);
+//        UnaryOperator<UpdateDetails> d2e = x -> x;
+//        UnaryOperator<UpdateDetails> e2d = x -> x;
+//        Repository<UpdateDetails> repository = new JOOQUpdateDetailsRepository(d2e, e2d);
+        Repository<UpdateDetails> repository = new InMemoryRepository<>();
 
 
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
