@@ -46,7 +46,9 @@ dependencies {
     compile 'io.springfox:springfox-swagger-ui:2.8.0'
 
     compile group: 'io.vavr', name: 'vavr-jackson', version: '0.9.2'
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
+    compile('com.fasterxml.jackson.module:jackson-module-parameter-names')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 
     compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
 
