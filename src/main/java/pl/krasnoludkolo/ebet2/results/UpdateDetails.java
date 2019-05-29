@@ -2,18 +2,18 @@ package pl.krasnoludkolo.ebet2.results;
 
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 final class UpdateDetails {
 
-    @Id
     final UUID matchUUID;
     final LocalDateTime scheduledTime;
     final int attempt;
+
+    static UpdateDetails fromEntity(UpdateDetailsEntity entity) {
+        return new UpdateDetails(entity.getMatchUUID(), entity.getScheduledTime(), entity.getAttempt());
+    }
 
     static UpdateDetails firstAttempt(MatchDTO matchDTO) {
         return new UpdateDetails(matchDTO.getUuid(), matchDTO.getMatchStartDate(), 0);
@@ -27,6 +27,10 @@ final class UpdateDetails {
 
     UpdateDetails nextAttempt() {
         return new UpdateDetails(matchUUID, scheduledTime, attempt + 1);
+    }
+
+    UpdateDetailsEntity toEntity() {
+        return new UpdateDetailsEntity(matchUUID, scheduledTime, attempt);
     }
 
 }
