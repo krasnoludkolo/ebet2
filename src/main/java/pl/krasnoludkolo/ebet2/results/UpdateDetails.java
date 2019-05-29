@@ -2,11 +2,15 @@ package pl.krasnoludkolo.ebet2.results;
 
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 final class UpdateDetails {
 
+    @Id
     final UUID matchUUID;
     final LocalDateTime scheduledTime;
     final int attempt;
