@@ -31,19 +31,25 @@ class LeagueUpdater {
 
     Either<PointsError, Success> updateLeague(UUID leagueUUID) {
         return externalFacade.downloadLeague(leagueUUID)
-                .map(matchInfoList -> {
-                    List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueUUID);
-                    List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
-                    List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague).map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueUUID));
-                    newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
-                    newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
-                    return new Success();
-                })
+                .map(matchInfoList -> updateLeague(leagueUUID, matchInfoList))
                 .mapLeft(x -> PointsError.LEAGUE_NOT_FOUND);
     }
 
-    private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
-        return new NewMatchDTO(matchInfo.getHostName(), matchInfo.getGuestName(), matchInfo.getRound(), leagueUUID, matchInfo.getMatchStartDate());
+    private Success updateLeague(UUID leagueUUID, List<MatchInfo> matchInfoList) {
+        List<MatchDTO> matchesFromLeague = getAllMatchesFromLeague(leagueUUID);
+        setResult(matchInfoList, matchesFromLeague);
+        addNewMatches(leagueUUID, matchInfoList, matchesFromLeague);
+        return new Success();
+    }
+
+    private void addNewMatches(UUID leagueUUID, List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
+        List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague, leagueUUID);
+        newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
+    }
+
+    private void setResult(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
+        List<Tuple2<UUID, MatchResult>> newToOldMatchesMap = getNewToOldMatchesMap(matchInfoList, matchesFromLeague);
+        newToOldMatchesMap.forEach(this::setMatchResultsAndUpdateResults);
     }
 
     private void setMatchResultsAndUpdateResults(Tuple2<UUID, MatchResult> t) {
@@ -94,13 +100,18 @@ class LeagueUpdater {
         return t._2 != MatchResult.NOT_SET;
     }
 
-    private List<MatchInfo> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
+    private List<NewMatchDTO> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague, UUID leagueUUID) {
         return matchInfoList
-                .reject(matchInfo -> isInLeague(matchInfo, matchesFromLeague));
+                .reject(matchInfo -> isInLeague(matchInfo, matchesFromLeague))
+                .map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueUUID));
     }
 
     private boolean isInLeague(MatchInfo matchInfo, List<MatchDTO> matchesFromLeague) {
         return matchesFromLeague.exists(matchDTO -> isSameMatch(matchDTO, matchInfo));
+    }
+
+    private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
+        return new NewMatchDTO(matchInfo.getHostName(), matchInfo.getGuestName(), matchInfo.getRound(), leagueUUID, matchInfo.getMatchStartDate());
     }
 
 }
