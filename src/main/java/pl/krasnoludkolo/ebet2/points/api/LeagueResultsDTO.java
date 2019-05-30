@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.results.api;
+package pl.krasnoludkolo.ebet2.points.api;
 
 import io.vavr.collection.List;
 import lombok.Getter;

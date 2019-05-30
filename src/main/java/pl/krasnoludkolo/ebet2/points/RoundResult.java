@@ -5,7 +5,7 @@ import io.vavr.collection.PriorityQueue;
 import io.vavr.collection.Set;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.points.api.UserResultDTO;
 
 import java.util.ArrayList;
 import java.util.UUID;

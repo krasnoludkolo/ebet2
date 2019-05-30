@@ -6,9 +6,9 @@ import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.points.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.points.api.PointsError;
-import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
-import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.points.api.UserResultDTO;
 
 import java.util.UUID;
 

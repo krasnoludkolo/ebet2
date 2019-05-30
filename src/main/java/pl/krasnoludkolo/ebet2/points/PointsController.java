@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
-import pl.krasnoludkolo.ebet2.results.api.LeagueResultsDTO;
-import pl.krasnoludkolo.ebet2.results.api.UserResultDTO;
+import pl.krasnoludkolo.ebet2.points.api.LeagueResultsDTO;
+import pl.krasnoludkolo.ebet2.points.api.UserResultDTO;
 
 import java.util.UUID;
 
