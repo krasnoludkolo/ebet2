@@ -29,13 +29,13 @@ public class LeagueFacadeTest {
 
     @Test
     public void shouldNotCreateLeagueWithNoName() {
-        LeagueError leagueError = facade.createLeague("").left().get();
+        LeagueError leagueError = facade.createLeague("").getLeft();
         assertEquals(LeagueError.WRONG_NAME_EXCEPTION, leagueError);
     }
 
     @Test
     public void shouldNotCreateLeagueWithNullName() {
-        LeagueError leagueError = facade.createLeague(null).left().get();
+        LeagueError leagueError = facade.createLeague(null).getLeft();
         assertEquals(LeagueError.WRONG_NAME_EXCEPTION, leagueError);
     }
 
@@ -62,7 +62,7 @@ public class LeagueFacadeTest {
     public void shouldNotAddLeagueWithExistingName() {
         //when
         facade.createLeague("new");
-        LeagueError leagueError = facade.createLeague("new").left().get();
+        LeagueError leagueError = facade.createLeague("new").getLeft();
         assertEquals(LeagueError.LEAGUE_NAME_DUPLICATION, leagueError);
     }
 
@@ -165,7 +165,7 @@ public class LeagueFacadeTest {
         NewMatchDTO newMatchDTO = new NewMatchDTO("host", "guest", 1, leagueUUID, nextYear);
         UUID matchUUID = facade.addMatchToLeague(newMatchDTO).get().getUuid();
         //when
-        LeagueError leagueError = facade.setMatchResult(matchUUID, MatchResult.NOT_SET).left().get();
+        LeagueError leagueError = facade.setMatchResult(matchUUID, MatchResult.NOT_SET).getLeft();
         assertEquals(LeagueError.SET_NOT_SET_RESULT, leagueError);
     }
 
@@ -281,7 +281,7 @@ public class LeagueFacadeTest {
 
     @Test
     public void shouldNotArchiveNoExistingLeague() {
-        LeagueError leagueError = facade.archiveLeague(UUID.randomUUID()).left().get();
+        LeagueError leagueError = facade.archiveLeague(UUID.randomUUID()).getLeft();
         assertEquals(LeagueError.LEAGUE_NOT_FOUND, leagueError);
     }
 
