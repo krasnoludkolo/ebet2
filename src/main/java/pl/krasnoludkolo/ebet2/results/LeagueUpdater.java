@@ -79,6 +79,10 @@ class LeagueUpdater {
         return Tuple.of(matchDTO.getUuid(), findCorrespondingMatch(matchDTO, matchInfoList).getResult());
     }
 
+    private boolean tupleWithNoNotSetResult(Tuple2<UUID, MatchResult> t) {
+        return t._2 != MatchResult.NOT_SET;
+    }
+
 
     private MatchInfo findCorrespondingMatch(MatchDTO matchDTO, List<MatchInfo> matchInfoList) {
         return matchInfoList
@@ -94,10 +98,6 @@ class LeagueUpdater {
         return Objects.equals(matchDTO.getHost(), matchInfo.getHostName())
                 && Objects.equals(matchDTO.getGuest(), matchInfo.getGuestName())
                 && matchDTO.getRound() == matchInfo.getRound();
-    }
-
-    private boolean tupleWithNoNotSetResult(Tuple2<UUID, MatchResult> t) {
-        return t._2 != MatchResult.NOT_SET;
     }
 
     private List<NewMatchDTO> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague, UUID leagueUUID) {
