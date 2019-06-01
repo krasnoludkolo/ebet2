@@ -74,16 +74,6 @@ public class AutoImportAndLeagueResultsUpdate {
         assertEquals(0, user2.getPointCounter());
     }
 
-
-    private List<MatchInfo> getListWithNewResult() {
-        List<MatchInfo> externalSourceMatchList = system.getExternalSourceMatchList();
-        MatchInfo m = externalSourceMatchList.get(2);
-        LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
-        MatchInfo nm = new MatchInfo(m.getHostName(), m.getGuestName(), m.getRound(), true, MatchResult.DRAW, nextYear);
-        externalSourceMatchList = externalSourceMatchList.replace(m, nm);
-        return externalSourceMatchList;
-    }
-
     private List<MatchInfo> first() {
         return List.of(new MatchInfo("a", "b", 1, false, MatchResult.NOT_SET, nextYear));
     }
