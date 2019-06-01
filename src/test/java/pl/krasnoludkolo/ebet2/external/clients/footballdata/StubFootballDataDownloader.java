@@ -6,9 +6,15 @@ import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
 final class StubFootballDataDownloader extends FootballDataDownloader {
 
+    private final JSONArray matches;
+
+    StubFootballDataDownloader() {
+        matches = new JSONObject(json).getJSONArray("matches");
+    }
+
     @Override
     JSONArray downloadAllRounds(ExternalSourceConfiguration config) {
-        return new JSONObject(json).getJSONArray("matches");
+        return matches;
     }
 
     private String json = "{\n" +
