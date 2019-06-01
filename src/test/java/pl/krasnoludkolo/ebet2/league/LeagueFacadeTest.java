@@ -98,6 +98,18 @@ public class LeagueFacadeTest {
     }
 
     @Test
+    public void shouldAddFinishedMatchToLeagueToRoundOne() {
+        //given
+        UUID leagueUUID = facade.createLeague("new").get();
+        MatchDTO matchDTO = new MatchDTO(UUID.randomUUID(), nextYear, 1, "host", "guest", MatchResult.DRAW, leagueUUID);
+        //when
+        facade.addFinishedMatchToLeague(matchDTO);
+        //then
+        List<MatchDTO> matchesList = facade.getMatchesFromRound(leagueUUID, 1).get();
+        assertTrue(matchesList.map(MatchDTO::getHost).contains("host"));
+    }
+
+    @Test
     public void shouldAddMatchToLeagueToRoundOneAndDwo() {
         //given
         UUID leagueUUID = facade.createLeague("new").get();

@@ -14,12 +14,12 @@ import pl.krasnoludkolo.ebet2.points.api.PointsError;
 
 @RestController
 @RequestMapping("api/register")
-class MatchEndpoint {
+class MatchRegistrationController {
 
     private final ResultFacade resultFacade;
 
     @Autowired
-    MatchEndpoint(ResultFacade resultFacade) {
+    MatchRegistrationController(ResultFacade resultFacade) {
         this.resultFacade = resultFacade;
     }
 

@@ -8,7 +8,6 @@ import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -70,24 +69,24 @@ class LeagueManager {
         return leagueRepository.findAll().map(League::toDTO);
     }
 
-    Either<LeagueError, MatchDTO> addMatchToLeague(UUID leagueUUID, NewMatchDTO newMatchDTO) {
-        return validateParameters(newMatchDTO)
+    Either<LeagueError, MatchDTO> addMatchToLeague(UUID leagueUUID, MatchDTO matchDTO) {
+        return validateParameters(matchDTO)
                 .flatMap(newMatch -> addMatch(leagueUUID, newMatch));
     }
 
-    private Either<LeagueError, NewMatchDTO> validateParameters(NewMatchDTO newMatchDTO) {
-        return API.Match(newMatchDTO)
+    private Either<LeagueError, MatchDTO> validateParameters(MatchDTO matchDTO) {
+        return API.Match(matchDTO)
                 .option(
                         Case($(o -> Objects.isNull(o.getMatchStartDate())), LeagueError.MISSING_DATE),
                         Case($(o -> Objects.isNull(o.getHost())), LeagueError.EMPTY_OR_NULL_NAME),
                         Case($(o -> Objects.isNull(o.getGuest())), LeagueError.EMPTY_OR_NULL_NAME),
                         Case($(o -> o.getHost().isEmpty()), LeagueError.EMPTY_OR_NULL_NAME),
                         Case($(o -> o.getGuest().isEmpty()), LeagueError.EMPTY_OR_NULL_NAME)
-                ).toEither(newMatchDTO)
+                ).toEither(matchDTO)
                 .swap();
     }
 
-    private Either<LeagueError, MatchDTO> addMatch(UUID leagueUUID, NewMatchDTO newMatch) {
+    private Either<LeagueError, MatchDTO> addMatch(UUID leagueUUID, MatchDTO newMatch) {
         return findLeagueByUUID(leagueUUID)
                 .toEither(LeagueError.LEAGUE_NOT_FOUND)
                 .map(league -> {

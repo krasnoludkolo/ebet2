@@ -23,6 +23,18 @@ public class MatchDTO {
     private MatchResult result;
     private UUID leagueUUID;
 
+    public static MatchDTO fromNewMatchDTO(NewMatchDTO newMatchDTO) {
+        return new MatchDTO(
+                UUID.randomUUID(),
+                newMatchDTO.getMatchStartDate(),
+                newMatchDTO.getRound(),
+                newMatchDTO.getHost(),
+                newMatchDTO.getGuest(),
+                MatchResult.NOT_SET,
+                newMatchDTO.getLeagueUUID()
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

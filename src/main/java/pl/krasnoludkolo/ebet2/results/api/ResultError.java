@@ -1,16 +1,16 @@
-package pl.krasnoludkolo.ebet2.external.api;
+package pl.krasnoludkolo.ebet2.results.api;
 
 import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
 
-public enum ExternalError implements ResponseError {
-    NO_LEAGUE_DETAILS("No league details", 500),
+public enum ResultError implements ResponseError {
     LEAGUE_NAME_DUPLICATION("League name duplication", 400),
-    NO_EXTERNAL_CLIENT("No external client", 500);
+    DOWNLOAD_ERROR("Error during data import", 500),
+    NO_EXTERNAL_CLIENT("No external client", 400);
 
     private String message;
     private int httpCode;
 
-    ExternalError(String message, int httpCode) {
+    ResultError(String message, int httpCode) {
         this.message = message;
         this.httpCode = httpCode;
     }

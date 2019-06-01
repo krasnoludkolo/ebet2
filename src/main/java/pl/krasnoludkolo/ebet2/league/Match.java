@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
 import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,13 +27,8 @@ class Match {
     private League league;
     private LocalDateTime matchStartDate;
 
-
-    static Match fromDTO(NewMatchDTO dto, League league) {
-        return new Match(dto.getRound(), dto.getHost(), dto.getGuest(), league, dto.getMatchStartDate());
-    }
-
-    private Match(int round, String host, String guest, League league, LocalDateTime startDate) {
-        this(UUID.randomUUID(), round, host, guest, MatchResult.NOT_SET, league, startDate);
+    static Match createFromDTO(MatchDTO dto, League league) {
+        return new Match(UUID.randomUUID(), dto.getRound(), dto.getHost(), dto.getGuest(), dto.getResult(), league, dto.getMatchStartDate());
     }
 
     private Match(UUID uuid, int round, String host, String guest, MatchResult result, League league, LocalDateTime startDate) {

@@ -4,8 +4,8 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
 import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
 
 import java.util.UUID;
 
@@ -18,8 +18,8 @@ class MatchManager {
         this.matchRepository = matchRepository;
     }
 
-    Match createNewMatch(NewMatchDTO newMatchDTO, League league) {
-        Match match = Match.fromDTO(newMatchDTO, league);
+    Match createNewMatch(MatchDTO matchDTO, League league) {
+        Match match = Match.createFromDTO(matchDTO, league);
         matchRepository.save(match.getUuid(), match);
         return match;
     }

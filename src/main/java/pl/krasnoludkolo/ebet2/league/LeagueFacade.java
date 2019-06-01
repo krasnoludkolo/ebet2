@@ -38,7 +38,13 @@ public class LeagueFacade {
 
     public Either<LeagueError, MatchDTO> addMatchToLeague(NewMatchDTO newMatchDTO) {
         UUID leagueUUID = newMatchDTO.getLeagueUUID();
-        return leagueManager.addMatchToLeague(leagueUUID, newMatchDTO);
+        MatchDTO matchDTO = MatchDTO.fromNewMatchDTO(newMatchDTO);
+        return leagueManager.addMatchToLeague(leagueUUID, matchDTO);
+    }
+
+    public Either<LeagueError, MatchDTO> addFinishedMatchToLeague(MatchDTO matchDTO) {
+        UUID leagueUUID = matchDTO.getLeagueUUID();
+        return leagueManager.addMatchToLeague(leagueUUID, matchDTO);
     }
 
     public Either<LeagueError, List<MatchDTO>> getMatchesFromRound(UUID leagueUUID, int round) {

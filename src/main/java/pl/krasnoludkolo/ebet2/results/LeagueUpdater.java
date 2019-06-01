@@ -30,7 +30,8 @@ class LeagueUpdater {
     }
 
     Either<PointsError, Success> updateLeague(UUID leagueUUID) {
-        return externalFacade.downloadLeague(leagueUUID)
+        return externalFacade
+                .downloadLeague(leagueUUID)
                 .map(matchInfoList -> updateLeague(leagueUUID, matchInfoList))
                 .mapLeft(x -> PointsError.LEAGUE_NOT_FOUND);
     }
@@ -43,8 +44,12 @@ class LeagueUpdater {
     }
 
     private void addNewMatches(UUID leagueUUID, List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
-        List<NewMatchDTO> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague, leagueUUID);
-        newMatchesInLeague.forEach(leagueFacade::addMatchToLeague);
+        List<MatchInfo> newMatchesInLeague = getNewMatchesInLeague(matchInfoList, matchesFromLeague);
+        List<MatchInfo> withoutResult = newMatchesInLeague.filter(matchInfo -> !matchInfo.isFinished());
+        List<MatchInfo> withResult = newMatchesInLeague.filter(MatchInfo::isFinished);
+
+        withoutResult.map(m -> mapToNewMatchDTO(m, leagueUUID)).forEach(resultFacade::registerMatch);
+        withResult.map(m -> mapToMatchDTO(m, leagueUUID)).forEach(leagueFacade::addFinishedMatchToLeague);
     }
 
     private void setResult(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
@@ -100,10 +105,9 @@ class LeagueUpdater {
                 && matchDTO.getRound() == matchInfo.getRound();
     }
 
-    private List<NewMatchDTO> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague, UUID leagueUUID) {
+    private List<MatchInfo> getNewMatchesInLeague(List<MatchInfo> matchInfoList, List<MatchDTO> matchesFromLeague) {
         return matchInfoList
-                .reject(matchInfo -> isInLeague(matchInfo, matchesFromLeague))
-                .map(matchInfo -> mapToNewMatchDTO(matchInfo, leagueUUID));
+                .reject(matchInfo -> isInLeague(matchInfo, matchesFromLeague));
     }
 
     private boolean isInLeague(MatchInfo matchInfo, List<MatchDTO> matchesFromLeague) {
@@ -112,6 +116,12 @@ class LeagueUpdater {
 
     private NewMatchDTO mapToNewMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
         return new NewMatchDTO(matchInfo.getHostName(), matchInfo.getGuestName(), matchInfo.getRound(), leagueUUID, matchInfo.getMatchStartDate());
+    }
+
+    private MatchDTO mapToMatchDTO(MatchInfo matchInfo, UUID leagueUUID) {
+        MatchDTO matchDTO = MatchDTO.fromNewMatchDTO(mapToNewMatchDTO(matchInfo, leagueUUID));
+        matchDTO.setResult(matchInfo.getResult());
+        return matchDTO;
     }
 
 }

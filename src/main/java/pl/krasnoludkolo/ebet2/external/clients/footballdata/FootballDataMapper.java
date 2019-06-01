@@ -27,7 +27,10 @@ class FootballDataMapper {
     private Option<MatchInfo> createMatchInfo(JSONObject fixture) {
         String homeTeamName = fixture.getJSONObject("homeTeam").getString("name");
         String awayTeamName = fixture.getJSONObject("awayTeam").getString("name");
-        int round = fixture.getInt("matchday");
+        int round = -1;
+        if (!fixture.isNull("matchday")) {
+            round = fixture.getInt("matchday");
+        }
         String status = fixture.getString("status");
         boolean finished = status.equals("FINISHED");
         LocalDateTime startDate = getDateFromFixtureJSONObject(fixture);
