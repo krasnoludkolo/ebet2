@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 final class ResultsUpdater {
 
@@ -22,7 +24,10 @@ final class ResultsUpdater {
     private final TimeSource timeSource;
     private final ResultFacade resultFacade;
 
-    private final Duration RESCHEDULE_DURATION = Duration.ofMinutes(1);
+    private static final Duration RESCHEDULE_DURATION = Duration.ofMinutes(1);
+
+    private static final Logger LOGGER = Logger.getLogger(ResultsUpdater.class.getName());
+
 
     ResultsUpdater(ScheduledExecutorService executorService, Repository<UpdateDetails> repository, ExternalFacade externalFacade, TimeSource timeSource, ResultFacade resultFacade) {
         this.executorService = executorService;
@@ -50,7 +55,7 @@ final class ResultsUpdater {
         long attempt = updateDetails.attempt;
         LocalDateTime scheduledTime = updateDetails.scheduledTime;
         UUID matchUUID = updateDetails.matchUUID;
-        Duration offset = Duration.between(scheduledTime, timeSource.now()).plusHours(2).plus(RESCHEDULE_DURATION.multipliedBy(attempt));
+        Duration offset = Duration.between(timeSource.now(), scheduledTime).plusHours(2).plus(RESCHEDULE_DURATION.multipliedBy(attempt));
         executorService.schedule(() -> tryUpdate(matchUUID), offset.getSeconds(), TimeUnit.SECONDS);
         return updateDetails;
     }
@@ -71,6 +76,7 @@ final class ResultsUpdater {
     }
 
     private void tryUpdate(UUID matchUUID) {
+        LOGGER.log(Level.INFO, () -> "Trying to update match with uuid:" + matchUUID.toString());
         resultFacade.getMatchByUUID(matchUUID)
                 .map(match -> {
                     externalFacade.downloadLeague(match.getLeagueUUID())
