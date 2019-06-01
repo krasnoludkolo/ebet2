@@ -9,18 +9,20 @@ import io.vavr.collection.TreeMap;
 public class ExternalSourceConfiguration {
 
     private final Map<String, String> config;
+    private final String clientShortcut;
 
-    public static ExternalSourceConfiguration fromSettingsList(List<Tuple2<String, String>> settings) {
+    public static ExternalSourceConfiguration fromSettingsList(List<Tuple2<String, String>> settings, String clientShortcut) {
         Map<String, String> config = settings.toMap(x -> x);
-        return new ExternalSourceConfiguration(config);
+        return new ExternalSourceConfiguration(config, clientShortcut);
     }
 
-    public static ExternalSourceConfiguration empty() {
-        return new ExternalSourceConfiguration(TreeMap.empty());
+    public static ExternalSourceConfiguration empty(String clientShortcut) {
+        return new ExternalSourceConfiguration(TreeMap.empty(), clientShortcut);
     }
 
-    public ExternalSourceConfiguration(Map<String, String> config) {
+    public ExternalSourceConfiguration(Map<String, String> config, String clientShortcut) {
         this.config = config;
+        this.clientShortcut = clientShortcut;
     }
 
     public String getParameter(String parameter) {
@@ -31,5 +33,9 @@ public class ExternalSourceConfiguration {
 
     public List<Tuple2<String, String>> getAllSettings() {
         return config.toList();
+    }
+
+    public String getClientShortcut() {
+        return clientShortcut;
     }
 }

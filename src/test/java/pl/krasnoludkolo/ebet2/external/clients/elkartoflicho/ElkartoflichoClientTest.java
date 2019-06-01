@@ -20,7 +20,7 @@ public class ElkartoflichoClientTest {
     private ElkartoflichoDownloader downloader;
 
     private ElkartoflichoClient elkartoflichoClient;
-    private ExternalSourceConfiguration config = new ExternalSourceConfiguration(null);
+    private ExternalSourceConfiguration config = new ExternalSourceConfiguration(null, "Mock");
 
     @Before
     public void init() {

@@ -64,7 +64,7 @@ public class InMemorySystem {
 
     private void addSampleLeague() {
         leagueUUID = leagueFacade.createLeague("test").get();
-        externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty(), "Mock", leagueUUID);
+        externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty("Mock"), leagueUUID);
     }
 
     private void addSampleUsers() {

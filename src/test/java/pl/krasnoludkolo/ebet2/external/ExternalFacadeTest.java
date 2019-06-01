@@ -27,9 +27,9 @@ public class ExternalFacadeTest {
     @Test
     public void shouldDownloadLeague() {
         //given
-        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty("Mock");
         //when
-        UUID uuid = externalFacade.initializeLeagueConfiguration(config, "Mock", UUID.randomUUID()).get();
+        UUID uuid = externalFacade.initializeLeagueConfiguration(config, UUID.randomUUID()).get();
         //then
         List<MatchInfo> matchDTOS = externalFacade.downloadLeague(uuid).get();
         assertEquals(6, matchDTOS.size());
@@ -43,7 +43,7 @@ public class ExternalFacadeTest {
 
     @Test(expected = MissingConfigurationException.class)
     public void shouldNotImportLeagueBecauseOfMissingLeagueName() {
-        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty("Mock");
         config.getParameter("asd");
     }
 

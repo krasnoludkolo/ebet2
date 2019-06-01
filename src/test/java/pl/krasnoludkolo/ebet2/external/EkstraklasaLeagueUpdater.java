@@ -59,10 +59,10 @@ public class EkstraklasaLeagueUpdater {
     @Test
     public void shouldUpdateLeague() {
         //given
-        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty("Mock");
         system.setExternalSourceMatchList(firstMatchList);
         UUID leagueUUID = system.sampleLeagueUUID();
-        externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID).get();
+        externalFacade.initializeLeagueConfiguration(config, leagueUUID).get();
         resultFacade.manuallyUpdateLeague(leagueUUID);
         system.setExternalSourceMatchList(updatedMatchList);
         //when
@@ -80,7 +80,7 @@ public class EkstraklasaLeagueUpdater {
         //given
         system.setExternalSourceMatchList(firstMatchList);
         UUID leagueUUID = system.sampleLeagueUUID();
-        UUID uuid = externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty(), "Mock", leagueUUID).get();
+        UUID uuid = externalFacade.initializeLeagueConfiguration(ExternalSourceConfiguration.empty("Mock"), leagueUUID).get();
         resultFacade.manuallyUpdateLeague(leagueUUID);
 
         //when

@@ -23,9 +23,9 @@ public class ExternalFacade {
     }
 
 
-    public Either<ExternalError, UUID> initializeLeagueConfiguration(ExternalSourceConfiguration config, String clientShortcut, UUID leagueUUID) {
+    public Either<ExternalError, UUID> initializeLeagueConfiguration(ExternalSourceConfiguration config, UUID leagueUUID) {
         return clientsMap
-                .get(clientShortcut)
+                .get(config.getClientShortcut())
                 .toEither(ExternalError.NO_EXTERNAL_CLIENT)
                 .map(client -> LeagueInitializer.initializeLeague(client, config, leagueUUID))
                 .map(this::saveToRepository)

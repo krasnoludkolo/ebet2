@@ -19,7 +19,8 @@ class LeagueDetailsCreator {
         List<Tuple2<String, String>> config = List
                 .ofAll(leagueDetails.getConfig())
                 .map(details -> Tuple.of(details.getName(), details.getValue()));
-        return ExternalSourceConfiguration.fromSettingsList(config);
+        String clientShortcut = leagueDetails.getClientShortcut();
+        return ExternalSourceConfiguration.fromSettingsList(config, clientShortcut);
     }
 
 }
