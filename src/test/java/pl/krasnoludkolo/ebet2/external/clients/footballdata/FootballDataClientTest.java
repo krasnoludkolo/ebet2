@@ -18,7 +18,7 @@ public class FootballDataClientTest {
     public void init() {
         FootballDataDownloader downloader = new StubFootballDataDownloader();
         client = FootballDataClient.create(downloader);
-        config = ExternalSourceConfiguration.empty();
+        config = ExternalSourceConfiguration.empty("Mock");
     }
 
     @Test

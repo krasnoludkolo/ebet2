@@ -55,10 +55,10 @@ public class LeagueUpdateTest {
     @Test
     public void shouldUpdateLeague() {
         //given
-        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty();
+        ExternalSourceConfiguration config = ExternalSourceConfiguration.empty("Mock");
         system.setExternalSourceMatchList(firstMatchList);
-        UUID leagueUUID = leagueFacade.createLeague("tesst").get();
-        UUID uuid = externalFacade.initializeLeagueConfiguration(config, "Mock", leagueUUID).get();
+        UUID leagueUUID = leagueFacade.createLeague("test2").get();
+        UUID uuid = externalFacade.initializeLeagueConfiguration(config, leagueUUID).get();
         resultFacade.manuallyUpdateLeague(leagueUUID);
 
         //when
