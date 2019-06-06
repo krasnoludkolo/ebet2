@@ -7,6 +7,7 @@ import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
@@ -14,10 +15,10 @@ import java.util.function.UnaryOperator;
 public class UserConfiguration {
 
     @Bean
-    public UserFacade userFacade(CrudRepository<UserEntity, UUID> repo) {
+    public UserFacade userFacade(CrudRepository<UserEntity, UUID> repo, EntityManagerFactory entityManager) {
         UnaryOperator<UserEntity> d2e = e -> e;
         UnaryOperator<UserEntity> e2d = e -> e;
-        Repository<UserEntity> repository = new SpringDataRepositoryAdapter<>(repo, d2e, e2d);
+        Repository<UserEntity> repository = new SpringDataRepositoryAdapter<>(repo, d2e, e2d, entityManager);
         JWTTokenManager tokenManager = new JWTTokenManager();
         PasswordEncrypt passwordEncrypt = new BCryptPasswordEncrypt();
         UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);

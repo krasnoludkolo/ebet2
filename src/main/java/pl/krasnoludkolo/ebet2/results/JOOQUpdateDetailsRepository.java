@@ -73,8 +73,8 @@ final class JOOQUpdateDetailsRepository extends JOOQDatabaseConnector<UpdateDeta
     @Override
     protected void deleteQuery(DSLContext create, UUID uuid) {
         create
-                .deleteFrom(table(ID))
-                .where(field("uuid").eq(uuid))
+                .deleteFrom(table(TABLE_NAME))
+                .where(field(ID).eq(uuid))
                 .execute();
     }
 

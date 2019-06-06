@@ -6,10 +6,8 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.league.api.*;
 
-import javax.transaction.Transactional;
 import java.util.UUID;
 
-@Transactional
 public class LeagueFacade {
 
     private LeagueManager leagueManager;

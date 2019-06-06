@@ -11,14 +11,16 @@ import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.infrastructure.SpringDataRepositoryAdapter;
 
+import javax.persistence.EntityManagerFactory;
+
 @Configuration
 public class ExternalConfiguration {
 
 
     @Bean
     @Autowired
-    public ExternalFacade autoImportBean(SpringLeagueDetailsRepository repo) {
-        Repository<LeagueDetails> leagueDetailsRepository = new SpringDataRepositoryAdapter<>(repo, e -> e, e -> e);
+    public ExternalFacade autoImportBean(SpringLeagueDetailsRepository repo, EntityManagerFactory entityManager) {
+        Repository<LeagueDetails> leagueDetailsRepository = new SpringDataRepositoryAdapter<>(repo, e -> e, e -> e, entityManager);
         List<ExternalSourceClient> clients = List.of(FootballDataClient.create(), new ElkartoflichoClient());
         return new ExternalFacade(clients, leagueDetailsRepository);
     }

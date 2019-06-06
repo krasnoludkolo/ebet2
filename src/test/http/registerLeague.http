@@ -9,7 +9,20 @@ POST http://localhost:8080/api/register/league
 Content-Type: application/json
 
 {
-  "leagueName": "czampionsLeague2",
+  "leagueName": "czampionsLeague",
+  "clientShortcut": "FootBallData",
+  "config": {
+    "leagueId": 2001
+  }
+}
+
+###
+
+POST https://ebet2-api.herokuapp.com/api/register/league
+Content-Type: application/json
+
+{
+  "leagueName": "czampionsLeague",
   "clientShortcut": "FootBallData",
   "config": {
     "leagueId": 2001
@@ -29,5 +42,30 @@ X-Auth-Token: 192c1479cf52415cbbbbca218532ccfe
 ###
 
 GET http://localhost:8080/api/leagues
+
+###
+
+POST https://ebet2-api.herokuapp.com/api/user/register
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test"
+}
+
+###
+
+POST https://ebet2-api.herokuapp.com/api/bet
+Content-Type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjoiNWRkNWYxMGUtMjRmYi00N2RhLWJlMTItMTViMzkzNThmYmVkIn0.48Uuq1CUAMBTXP5mhOtecsr9QtyiCw5EWx-vZmPyidU
+
+{
+  "betTyp": "DRAW",
+  "matchUUID": "5c75cae3-6551-47be-b336-9d410660bb4e"
+}
+
+###
+
+GET https://ebet2-api.herokuapp.com/api/league/20c86b5a-7032-4290-911f-8e761c04b54f/matches
 
 ###
