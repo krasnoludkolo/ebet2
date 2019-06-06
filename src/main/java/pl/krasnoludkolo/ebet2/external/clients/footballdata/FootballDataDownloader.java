@@ -8,12 +8,18 @@ import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static java.util.logging.Logger.getLogger;
 
 class FootballDataDownloader {
 
     private static final String URL_BEGINNING = "http://api.football-data.org/v2/";
     private static final String TOKEN = System.getenv("FOOTBALLDATA_TOKEN");
     private static final Map<String, String> headers = new HashMap<>();
+
+    private static final Logger LOGGER = getLogger(FootballDataDownloader.class.getName());
 
     static {
         headers.put("accept", "application/json");
@@ -28,6 +34,7 @@ class FootballDataDownloader {
 
     private JSONArray getMatches(String url) {
         return Try.of(() -> getFixturesAsJsonArray(url))
+                .onFailure(throwable -> LOGGER.log(Level.SEVERE, throwable.getMessage()))
                 .recover(UnirestException.class, new JSONArray())
                 .get();
     }
