@@ -3,9 +3,6 @@ package pl.krasnoludkolo.ebet2.bet;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.NameTokenizers;
-import org.modelmapper.jooq.RecordValueReader;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.infrastructure.JOOQDatabaseConnector;
 
@@ -18,17 +15,9 @@ import static org.jooq.impl.DSL.table;
 class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
 
     private static final String BET_ENTITY = "bet_entity";
-    private ModelMapper modelMapper;
 
     BetJOOQRepository(Function<Bet, BetEntity> d2e, Function<BetEntity, Bet> e2d) {
         super(d2e, e2d);
-        createModelMapper();
-    }
-
-    private void createModelMapper() {
-        modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
-        modelMapper.getConfiguration().addValueReader(new RecordValueReader());
     }
 
     @Override

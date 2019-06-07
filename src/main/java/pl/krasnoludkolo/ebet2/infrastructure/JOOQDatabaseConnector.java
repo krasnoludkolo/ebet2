@@ -7,6 +7,9 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.NameTokenizers;
+import org.modelmapper.jooq.RecordValueReader;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,10 +25,18 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
     private DatabaseConnectionInfo dbConnectionInfo = new DatabaseConnectionInfo();
     private Function<D, E> domainToEntityMapper;
     private Function<E, D> entityToDomainMapper;
+    protected ModelMapper modelMapper;
 
     public JOOQDatabaseConnector(Function<D, E> domainToEntityMapper, Function<E, D> entityToDomainMapper) {
         this.domainToEntityMapper = domainToEntityMapper;
         this.entityToDomainMapper = entityToDomainMapper;
+        createModelMapper();
+    }
+
+    private void createModelMapper() {
+        modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
+        modelMapper.getConfiguration().addValueReader(new RecordValueReader());
     }
 
     @Override

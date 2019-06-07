@@ -3,9 +3,6 @@ package pl.krasnoludkolo.ebet2.results;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.NameTokenizers;
-import org.modelmapper.jooq.RecordValueReader;
 import pl.krasnoludkolo.ebet2.infrastructure.JOOQDatabaseConnector;
 
 import java.sql.Timestamp;
@@ -21,18 +18,9 @@ final class JOOQUpdateDetailsRepository extends JOOQDatabaseConnector<UpdateDeta
 
     private static final String TABLE_NAME = "update_details_entity";
     private static final String ID = "matchuuid";
-    private ModelMapper modelMapper;
 
     JOOQUpdateDetailsRepository(Function<UpdateDetails, UpdateDetailsEntity> domainToEntityMapper, Function<UpdateDetailsEntity, UpdateDetails> entityToDomainMapper) {
         super(domainToEntityMapper, entityToDomainMapper);
-        createModelMapper();
-    }
-
-
-    private void createModelMapper() {
-        modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
-        modelMapper.getConfiguration().addValueReader(new RecordValueReader());
     }
 
     @Override
