@@ -1,6 +1,8 @@
 package pl.krasnoludkolo.ebet2.external.clients.mockclient;
 
 import io.vavr.collection.List;
+import io.vavr.control.Either;
+import pl.krasnoludkolo.ebet2.external.api.ExternalError;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
@@ -30,8 +32,8 @@ public class ExternalClientMock implements ExternalSourceClient {
     }
 
     @Override
-    public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
-        return matchList;
+    public Either<ExternalError, List<MatchInfo>> downloadAllRounds(ExternalSourceConfiguration config) {
+        return Either.right(matchList);
     }
 
     @Override

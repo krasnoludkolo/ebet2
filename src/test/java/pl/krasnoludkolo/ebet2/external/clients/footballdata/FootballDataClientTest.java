@@ -1,5 +1,7 @@
 package pl.krasnoludkolo.ebet2.external.clients.footballdata;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +20,14 @@ public class FootballDataClientTest {
     public void init() {
         FootballDataDownloader downloader = new StubFootballDataDownloader();
         client = FootballDataClient.create(downloader);
-        config = ExternalSourceConfiguration.empty("Mock");
+        List<Tuple2<String, String>> settings = List.of(Tuple.of("leagueId", "1"));
+        config = ExternalSourceConfiguration.fromSettingsList(settings, "Mock");
     }
 
     @Test
     public void shouldMapDownloadedData() {
         //when
-        List<MatchInfo> matchInfos = client.downloadAllRounds(config);
+        List<MatchInfo> matchInfos = client.downloadAllRounds(config).get();
         //then
         assertEquals(5, matchInfos.size());
         for (MatchInfo info : matchInfos) {

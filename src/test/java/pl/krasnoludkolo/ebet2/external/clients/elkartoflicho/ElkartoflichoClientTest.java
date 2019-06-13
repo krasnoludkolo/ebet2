@@ -24,40 +24,40 @@ public class ElkartoflichoClientTest {
 
     @Test
     public void shouldDownloadSixMatches() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get();
         assertEquals(6, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesWithResult() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get()
                 .filter(matchInfo -> matchInfo.getResult() != MatchResult.NOT_SET);
         assertEquals(3, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesWithoutResult() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get()
                 .filter(matchInfo -> matchInfo.getResult() == MatchResult.NOT_SET);
         assertEquals(3, matchInfos.size());
     }
 
     @Test
     public void shouldBeThreeMatchesIn20thRound() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config)
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get()
                 .filter(matchInfo -> matchInfo.getRound() == 20);
         assertEquals(3, matchInfos.size());
     }
 
     @Test
     public void shouldNotBeAnyNulls() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get();
         matchInfos.forEach(Assert::assertNotNull);
     }
 
     @Test
     public void shouldSkipMatchesWithoutDate() {
-        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config);
+        List<MatchInfo> matchInfos = elkartoflichoClient.downloadAllRounds(config).get();
         assertEquals(6, matchInfos.size());
     }
 

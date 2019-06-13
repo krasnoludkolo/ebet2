@@ -1,6 +1,8 @@
 package pl.krasnoludkolo.ebet2.external.clients.elkartoflicho;
 
+import io.vavr.control.Either;
 import org.json.JSONArray;
+import pl.krasnoludkolo.ebet2.external.api.ExternalError;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
 final class InMemoryElkartoflichoDownloader extends ElkartoflichoDownloader {
@@ -16,8 +18,8 @@ final class InMemoryElkartoflichoDownloader extends ElkartoflichoDownloader {
     }
 
     @Override
-    public JSONArray downloadAllRounds(ExternalSourceConfiguration config) {
-        return jsonArray;
+    public Either<ExternalError, JSONArray> downloadAllRounds(ExternalSourceConfiguration config) {
+        return Either.right(jsonArray);
     }
 
     private String json = "[\n" +

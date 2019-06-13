@@ -69,3 +69,13 @@ Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjoiNWRkNWYxMGUtMjRm
 GET https://ebet2-api.herokuapp.com/api/league/20c86b5a-7032-4290-911f-8e761c04b54f/matches
 
 ###
+
+POST http://localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "username": "asd",
+  "password": "asd"
+}
+
+###

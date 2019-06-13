@@ -1,7 +1,8 @@
 package pl.krasnoludkolo.ebet2.external.clients.footballdata;
 
 import io.vavr.collection.List;
-import org.json.JSONArray;
+import io.vavr.control.Either;
+import pl.krasnoludkolo.ebet2.external.api.ExternalError;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
@@ -28,9 +29,9 @@ public class FootballDataClient implements ExternalSourceClient {
     }
 
     @Override
-    public List<MatchInfo> downloadAllRounds(ExternalSourceConfiguration config) {
-        JSONArray fixtures = downloader.downloadAllRounds(config);
-        return mapper.getMatchInfosFromJsonArray(fixtures);
+    public Either<ExternalError, List<MatchInfo>> downloadAllRounds(ExternalSourceConfiguration config) {
+        return downloader.downloadAllRounds(config)
+                .map(mapper::getMatchInfosFromJsonArray);
     }
 
     @Override

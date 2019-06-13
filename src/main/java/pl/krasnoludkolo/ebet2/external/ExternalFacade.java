@@ -41,15 +41,15 @@ public class ExternalFacade {
         return leagueDetailsRepository
                 .findOne(leagueUUID)
                 .toEither(ExternalError.NO_LEAGUE_DETAILS)
-                .map(this::downloadLeague);
+                .flatMap(this::downloadLeague);
     }
 
-    private List<MatchInfo> downloadLeague(LeagueDetails details) {
+    private Either<ExternalError, List<MatchInfo>> downloadLeague(LeagueDetails details) {
         ExternalSourceConfiguration configuration = LeagueDetailsCreator.toExternalSourceConfiguration(details);
         return clientsMap
                 .get(details.getClientShortcut())
-                .map(client -> client.downloadAllRounds(configuration))
-                .getOrElse(List.empty());
+                .toEither(ExternalError.NO_EXTERNAL_CLIENT)
+                .flatMap(client -> client.downloadAllRounds(configuration));
     }
 
 }

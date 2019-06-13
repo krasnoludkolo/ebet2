@@ -1,7 +1,9 @@
 package pl.krasnoludkolo.ebet2.external.clients.footballdata;
 
+import io.vavr.control.Either;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import pl.krasnoludkolo.ebet2.external.api.ExternalError;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 
 final class StubFootballDataDownloader extends FootballDataDownloader {
@@ -13,8 +15,8 @@ final class StubFootballDataDownloader extends FootballDataDownloader {
     }
 
     @Override
-    JSONArray downloadAllRounds(ExternalSourceConfiguration config) {
-        return matches;
+    Either<ExternalError, JSONArray> downloadAllRounds(ExternalSourceConfiguration config) {
+        return Either.right(matches);
     }
 
     private String json = "{\n" +
