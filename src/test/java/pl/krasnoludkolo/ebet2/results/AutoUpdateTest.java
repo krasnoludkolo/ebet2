@@ -86,6 +86,35 @@ public class AutoUpdateTest {
         assertEquals(MatchResult.DRAW, result);
     }
 
+    @Test
+    public void shouldRescheduleAndTryFetchAgainIfErrorDuringDownloading() {
+        //given
+        UUID leagueUUID = system.sampleLeagueUUID();
+        MatchDTO matchDTO = resultFacade.registerMatch(createNewMatchDTO(leagueUUID)).get();
+        UUID matchUUID = matchDTO.getUuid();
+
+        UpdateDetails updateDetails = UpdateDetails.firstAttempt(matchDTO);
+        InMemoryRepository<UpdateDetails> repository = new InMemoryRepository<>();
+        repository.save(matchUUID, updateDetails);
+
+        //when
+        system.setErrorDuringDownloading(true);
+        system.setExternalSourceMatchList(List.of(finished()));
+        system.recreateResultsModule(repository);
+        system.advanceTimeBy(2, TimeUnit.HOURS);
+
+        //then
+        MatchResult result = leagueFacade.getMatchByUUID(matchUUID).get().getResult();
+        assertEquals(MatchResult.NOT_SET, result);
+
+
+        system.setErrorDuringDownloading(false);
+        system.advanceTimeBy(1, TimeUnit.MINUTES);
+
+        result = leagueFacade.getMatchByUUID(matchUUID).get().getResult();
+        assertEquals(MatchResult.NOT_SET, result);
+    }
+
 
     private NewMatchDTO createNewMatchDTO(UUID leagueUUID) {
         return new NewMatchDTO("host", "guest", 1, leagueUUID, system.now());

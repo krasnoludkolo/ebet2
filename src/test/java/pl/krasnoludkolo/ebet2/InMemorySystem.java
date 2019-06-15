@@ -5,11 +5,11 @@ import io.haste.Haste;
 import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.bet.BetConfiguration;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
+import pl.krasnoludkolo.ebet2.external.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.external.ExternalConfiguration;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.external.clients.mockclient.ExternalClientMock;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.league.LeagueConfiguration;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
@@ -113,6 +113,10 @@ public class InMemorySystem {
 
     public List<MatchInfo> getExternalSourceMatchList() {
         return externalClientMock.getMatchList();
+    }
+
+    public void setErrorDuringDownloading(boolean error) {
+        externalClientMock.setError(error);
     }
 
     public List<UserDetails> getSampleUserDetailList() {

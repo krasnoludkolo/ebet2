@@ -77,22 +77,30 @@ final class ResultsUpdater {
 
     private void tryUpdate(UUID matchUUID) {
         LOGGER.log(Level.INFO, () -> "Trying to update match with uuid:" + matchUUID.toString());
-        resultFacade.getMatchByUUID(matchUUID)
-                .map(match -> {
-                    externalFacade.downloadLeague(match.getLeagueUUID())
-                            .map(list -> {
-                                MatchInfo info = findCorrespondingMatch(match, list);
-                                if (info.isFinished()) {
-                                    resultFacade.registerMatchResult(match.getUuid(), info.getResult());
-                                    repository.delete(matchUUID);
-                                } else {
-                                    reschedule(match);
+        resultFacade
+                .getMatchByUUID(matchUUID)
+                .map(match -> downloadAndUpdate(matchUUID, match));
+    }
 
-                                }
-                                return list;
-                            });
-                    return match;
-                });
+    private MatchDTO downloadAndUpdate(UUID matchUUID, MatchDTO match) {
+        externalFacade
+                .downloadLeague(match.getLeagueUUID())
+                .map(list -> {
+                    MatchInfo info = findCorrespondingMatch(match, list);
+                    updateMatch(matchUUID, match, info);
+                    return list;
+                })
+                .orElseRun(error -> reschedule(match));
+        return match;
+    }
+
+    private void updateMatch(UUID matchUUID, MatchDTO match, MatchInfo info) {
+        if (info.isFinished()) {
+            resultFacade.registerMatchResult(match.getUuid(), info.getResult());
+            repository.delete(matchUUID);
+        } else {
+            reschedule(match);
+        }
     }
 
     private MatchInfo findCorrespondingMatch(MatchDTO matchDTO, List<MatchInfo> matchInfoList) {

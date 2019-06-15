@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.external.clients.mockclient;
+package pl.krasnoludkolo.ebet2.external;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
@@ -14,6 +14,8 @@ import java.time.temporal.ChronoUnit;
 public class ExternalClientMock implements ExternalSourceClient {
 
     private static LocalDateTime nextYear = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
+
+    private boolean error = false;
 
     public static final List<MatchInfo> SOME_MATCHES = List.of(
 
@@ -33,7 +35,7 @@ public class ExternalClientMock implements ExternalSourceClient {
 
     @Override
     public Either<ExternalError, List<MatchInfo>> downloadAllRounds(ExternalSourceConfiguration config) {
-        return Either.right(matchList);
+        return error ? Either.left(ExternalError.ERROR_DURING_DOWNLOADING) : Either.right(matchList);
     }
 
     @Override
@@ -49,4 +51,7 @@ public class ExternalClientMock implements ExternalSourceClient {
         this.matchList = matchList;
     }
 
+    public void setError(boolean error) {
+        this.error = error;
+    }
 }
