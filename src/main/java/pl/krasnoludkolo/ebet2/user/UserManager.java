@@ -37,7 +37,7 @@ class UserManager {
 
     private UserEntity createUserEntity(LoginUserInfo user) {
         String encryptedPassword = encryptPassword(user.getPassword());
-        return new UserEntity(UUID.randomUUID(), user.getUsername(), encryptedPassword);
+        return new UserEntity(UUID.randomUUID(), user.getUsername(), encryptedPassword, Role.USER);
     }
 
     private String encryptPassword(String password) {

@@ -16,7 +16,7 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     private static final Field<Object> USERNAME = field("username");
     private static final Field<Object> PASSWORD = field("password");
 
-    public UserEntityJOOQRepository(Function<UserEntity, UserEntity> domainToEntityMapper, Function<UserEntity, UserEntity> entityToDomainMapper) {
+    UserEntityJOOQRepository(Function<UserEntity, UserEntity> domainToEntityMapper, Function<UserEntity, UserEntity> entityToDomainMapper) {
         super(domainToEntityMapper, entityToDomainMapper);
     }
 
@@ -41,7 +41,10 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
 
     @Override
     protected UserEntity convertRecordToEntity(Record record) {
-        return modelMapper.map(record, UserEntity.class);
+        UserEntity entity = modelMapper.map(record, UserEntity.class);
+        Integer role = (Integer) record.getValue(3);
+        entity.setGlobalRole(Role.values()[role]);
+        return entity;
     }
 
     @Override
