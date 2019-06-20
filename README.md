@@ -10,9 +10,9 @@ Current features:
 - Download matches info from external source.
 - Create user module to register users.
 - API security (JWT tokens)
+- Scheduler to leagues auto-update
 
 Under development:
-- Scheduler to leagues auto-update
 - Remove spring
 
 Planned features:
@@ -55,9 +55,13 @@ Provides operation to create, delete etc. operations on leagues and matches.
 
 Provides possibilities to make, update etc. bets on matches.
 
-* Results
+* Points
 
 Handle calculating users score in each league.
+
+* Results
+
+Register future matches into result fetching scheduler.
 
 * External
 
