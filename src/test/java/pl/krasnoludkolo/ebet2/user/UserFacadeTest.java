@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
+import pl.krasnoludkolo.ebet2.user.api.PromoteToSuperAdminRequest;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 import pl.krasnoludkolo.ebet2.user.api.UserError;
 
@@ -147,12 +148,51 @@ public class UserFacadeTest {
     @Test
     public void shouldReturnUUIDInResponse() {
         //when
-        UUID userUUID1 = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        UUID userUUID = userFacade.registerUser(loginUserInfo).get().getUserUUID();
         //then
-        assertNotNull(userUUID1);
+        assertNotNull(userUUID);
     }
 
+    @Test
+    public void shouldCreateNewUserWithOutSuperUserRole() {
+        //given
+        UUID userUUID = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //when
+        Boolean isAdmin = userFacade.isSuperAdmin(userUUID).get();
+        //then
+        assertFalse(isAdmin);
+    }
 
+    @Test
+    public void shouldCreateNewSuperAdminWithSuperUserRole() {
+        //given
+        UUID userUUID = userFacade.registerSuperAdmin(loginUserInfo).get().getUserUUID();
+        //when
+        Boolean isAdmin = userFacade.isSuperAdmin(userUUID).get();
+        //then
+        assertTrue(isAdmin);
+    }
 
+    @Test
+    public void shouldSuperAdminPromoteNormalUserToSuperAdmin() {
+        //given
+        UUID admin = userFacade.registerSuperAdmin(loginUserInfo).get().getUserUUID();
+        UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //when
+        userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin));
+        //then
+        assertTrue(userFacade.isSuperAdmin(user).get());
+    }
+
+    @Test
+    public void shouldNotNormalUserPromoteNormalUserToSuperAdmin() {
+        //given
+        UUID admin = userFacade.registerSuperAdmin(loginUserInfo).get().getUserUUID();
+        UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
+        //when
+        UserError error = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin)).getLeft();
+        //then
+        assertEquals(UserError.NOT_REQUIRED_ROLE, error);
+    }
 
 }

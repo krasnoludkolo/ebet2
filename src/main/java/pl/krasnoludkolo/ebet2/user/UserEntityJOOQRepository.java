@@ -43,7 +43,7 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     protected UserEntity convertRecordToEntity(Record record) {
         UserEntity entity = modelMapper.map(record, UserEntity.class);
         Integer role = (Integer) record.getValue(3);
-        entity.setGlobalRole(Role.values()[role]);
+        entity.setGlobalRole(GlobalRole.values()[role]);
         return entity;
     }
 

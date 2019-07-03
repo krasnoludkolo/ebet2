@@ -17,8 +17,9 @@ public class UserConfiguration {
         Repository<UserEntity> repository = new UserEntityJOOQRepository(d2e, e2d);
         JWTTokenManager tokenManager = new JWTTokenManager();
         PasswordEncrypt passwordEncrypt = new BCryptPasswordEncrypt();
-        UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
-        return new UserFacade(userManager);
+        UserAuthentication userAuthentication = new UserAuthentication(repository, passwordEncrypt);
+        UserRegistration userRegistration = new UserRegistration(repository, passwordEncrypt);
+        return new UserFacade(userAuthentication, tokenManager, userRegistration);
     }
 
 
@@ -26,8 +27,9 @@ public class UserConfiguration {
         Repository<UserEntity> repository = new InMemoryRepository<>();
         JWTTokenManager tokenManager = new JWTTokenManager();
         PasswordEncrypt passwordEncrypt = new PlainTextPasswordEncrypt();
-        UserManager userManager = new UserManager(repository, tokenManager, passwordEncrypt);
-        return new UserFacade(userManager);
+        UserAuthentication userAuthentication = new UserAuthentication(repository, passwordEncrypt);
+        UserRegistration userRegistration = new UserRegistration(repository, passwordEncrypt);
+        return new UserFacade(userAuthentication, tokenManager, userRegistration);
     }
 
 

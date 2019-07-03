@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class RoleTest {
+public class GlobalRoleTest {
 
     @Test
     public void shouldAdminContainsUser() {
-        Role r = Role.ADMIN;
-        assertTrue(r.containsRole(Role.USER));
+        GlobalRole r = GlobalRole.SUPER_ADMIN;
+        assertTrue(r.containsRole(GlobalRole.USER));
     }
 }

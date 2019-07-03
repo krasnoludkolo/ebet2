@@ -3,8 +3,11 @@ package pl.krasnoludkolo.ebet2.user;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import io.vavr.control.Either;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import pl.krasnoludkolo.ebet2.user.api.UserDetails;
+import pl.krasnoludkolo.ebet2.user.api.UserError;
 import pl.krasnoludkolo.ebet2.user.api.UserToken;
 
 import java.io.UnsupportedEncodingException;
@@ -19,8 +22,19 @@ class JWTTokenManager {
     private static final Logger LOGGER = Logger.getLogger(JWTTokenManager.class.getName());
     private static final String UUID_CLAIM_NAME = "uuid";
 
+    UserDetails generateUserDetails(UserEntity userEntity) {
+        UUID uuid = userEntity.getUuid();
+        String username = userEntity.getUsername();
+        String token = generateTokenFor(uuid).getToken();
+        return new UserDetails(uuid, username, token);
+    }
 
-    UserToken generateTokenFor(UUID userUUID) {
+    Either<UserError, UUID> getUUIDFromToken(String token) {
+        return getUUID(token)
+                .toEither(UserError.WRONG_TOKEN);
+    }
+
+    private UserToken generateTokenFor(UUID userUUID) {
         try {
             String sign = JWT.create()
                     .withClaim(UUID_CLAIM_NAME, userUUID.toString())
@@ -33,7 +47,7 @@ class JWTTokenManager {
     }
 
 
-    Option<UUID> getUUID(String token) {
+    private Option<UUID> getUUID(String token) {
         return Option.of(token)
                 .filter(this::verify)
                 .map(this::decodeUUID);
@@ -51,4 +65,6 @@ class JWTTokenManager {
             return true;
         }).getOrElse(false);
     }
+
+
 }
