@@ -12,11 +12,13 @@ import java.util.UUID;
 public class UserFacade {
 
     private final UserAuthentication userAuthentication;
+    private final UserAuthorization userAuthorization;
     private final JWTTokenManager tokenManager;
     private final UserRegistration userRegistration;
 
-    public UserFacade(UserAuthentication userAuthentication, JWTTokenManager tokenManager, UserRegistration userRegistration) {
+    public UserFacade(UserAuthentication userAuthentication, UserAuthorization userAuthorization, JWTTokenManager tokenManager, UserRegistration userRegistration) {
         this.userAuthentication = userAuthentication;
+        this.userAuthorization = userAuthorization;
         this.tokenManager = tokenManager;
         this.userRegistration = userRegistration;
     }
@@ -31,7 +33,6 @@ public class UserFacade {
         return userRegistration
                 .registerSuperAdmin(loginUserInfo)
                 .map(tokenManager::generateUserDetails);
-
     }
 
     public Either<UserError, UserDetails> login(LoginUserInfo loginUserInfo) {
@@ -49,11 +50,11 @@ public class UserFacade {
     }
 
     public Either<UserError, Success> promoteToSuperAdmin(PromoteToSuperAdminRequest request) {
-        return Either.left(UserError.NOT_REQUIRED_ROLE);
+        return userAuthorization.promoteToSuperAdmin(request);
     }
 
     public Either<UserError, Boolean> isSuperAdmin(UUID userUUID) {
-        return Either.right(false);
+        return userAuthorization.isSuperAdmin(userUUID);
     }
 
 }

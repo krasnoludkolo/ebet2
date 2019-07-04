@@ -1,8 +1,10 @@
 package pl.krasnoludkolo.ebet2.user;
 
+import io.vavr.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
+import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.PromoteToSuperAdminRequest;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
@@ -18,8 +20,10 @@ public class UserFacadeTest {
     private UserFacade userFacade;
 
     private String username = "username";
+    private String admin = "admin";
     private String password = "password";
     private LoginUserInfo loginUserInfo = new LoginUserInfo(username, password);
+    private LoginUserInfo adminUserInfo = new LoginUserInfo(admin, password);
 
     @Before
     public void init() {
@@ -176,10 +180,10 @@ public class UserFacadeTest {
     @Test
     public void shouldSuperAdminPromoteNormalUserToSuperAdmin() {
         //given
-        UUID admin = userFacade.registerSuperAdmin(loginUserInfo).get().getUserUUID();
+        UUID admin = userFacade.registerSuperAdmin(adminUserInfo).get().getUserUUID();
         UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
         //when
-        userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin));
+        Either<UserError, Success> successes = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin));
         //then
         assertTrue(userFacade.isSuperAdmin(user).get());
     }
@@ -187,7 +191,7 @@ public class UserFacadeTest {
     @Test
     public void shouldNotNormalUserPromoteNormalUserToSuperAdmin() {
         //given
-        UUID admin = userFacade.registerSuperAdmin(loginUserInfo).get().getUserUUID();
+        UUID admin = userFacade.registerSuperAdmin(adminUserInfo).get().getUserUUID();
         UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
         //when
         UserError error = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin)).getLeft();

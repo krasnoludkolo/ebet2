@@ -19,7 +19,8 @@ public class UserConfiguration {
         PasswordEncrypt passwordEncrypt = new BCryptPasswordEncrypt();
         UserAuthentication userAuthentication = new UserAuthentication(repository, passwordEncrypt);
         UserRegistration userRegistration = new UserRegistration(repository, passwordEncrypt);
-        return new UserFacade(userAuthentication, tokenManager, userRegistration);
+        UserAuthorization userAuthorization = new UserAuthorization(repository);
+        return new UserFacade(userAuthentication, userAuthorization, tokenManager, userRegistration);
     }
 
 
@@ -29,7 +30,8 @@ public class UserConfiguration {
         PasswordEncrypt passwordEncrypt = new PlainTextPasswordEncrypt();
         UserAuthentication userAuthentication = new UserAuthentication(repository, passwordEncrypt);
         UserRegistration userRegistration = new UserRegistration(repository, passwordEncrypt);
-        return new UserFacade(userAuthentication, tokenManager, userRegistration);
+        UserAuthorization userAuthorization = new UserAuthorization(repository);
+        return new UserFacade(userAuthentication, userAuthorization, tokenManager, userRegistration);
     }
 
 
