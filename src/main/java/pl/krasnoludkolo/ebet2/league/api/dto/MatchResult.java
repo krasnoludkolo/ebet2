@@ -4,10 +4,10 @@ public enum MatchResult {
 
     NOT_SET, HOST_WON, GUEST_WON, DRAW;
 
-    public static MatchResult fromResult(int hostGloas, int guestGoals) {
-        if (hostGloas > guestGoals) {
+    public static MatchResult fromResult(int hostGoals, int guestGoals) {
+        if (hostGoals > guestGoals) {
             return MatchResult.HOST_WON;
-        } else if (hostGloas < guestGoals) {
+        } else if (hostGoals < guestGoals) {
             return MatchResult.GUEST_WON;
         } else {
             return MatchResult.DRAW;
