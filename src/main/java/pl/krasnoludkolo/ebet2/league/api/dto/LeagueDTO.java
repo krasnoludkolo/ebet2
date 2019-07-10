@@ -1,4 +1,4 @@
-package pl.krasnoludkolo.ebet2.league.api;
+package pl.krasnoludkolo.ebet2.league.api.dto;
 
 import io.vavr.collection.List;
 import lombok.Getter;

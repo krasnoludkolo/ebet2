@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.results;
 
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

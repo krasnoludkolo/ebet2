@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 import static org.junit.Assert.assertEquals;
 

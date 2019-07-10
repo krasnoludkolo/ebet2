@@ -4,7 +4,8 @@ import io.haste.TimeSource;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
-import pl.krasnoludkolo.ebet2.league.api.*;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.dto.*;
 
 import java.util.UUID;
 

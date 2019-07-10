@@ -3,8 +3,8 @@ package pl.krasnoludkolo.ebet2.league;
 import io.vavr.control.Either;
 import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.league.api.LeagueError;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -5,7 +5,7 @@ import io.vavr.control.Option;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
