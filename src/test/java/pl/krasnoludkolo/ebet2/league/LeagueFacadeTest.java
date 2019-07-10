@@ -111,6 +111,16 @@ public class LeagueFacadeTest {
     }
 
     @Test
+    public void shouldNotAddFinishedMatchToNotExistingLeague() {
+        //given
+        MatchDTO matchDTO = new MatchDTO(UUID.randomUUID(), nextYear, 1, "host", "guest", MatchResult.DRAW, UUID.randomUUID());
+        //when
+        LeagueError error = facade.addFinishedMatchToLeague(matchDTO).getLeft();
+        //then
+        assertEquals(LeagueError.LEAGUE_NOT_FOUND, error);
+    }
+
+    @Test
     public void shouldAddMatchToLeagueToRoundOneAndDwo() {
         //given
         UUID leagueUUID = facade.createLeague("new").get();
