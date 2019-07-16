@@ -10,7 +10,8 @@ import pl.krasnoludkolo.ebet2.league.api.MatchResult;
 import java.time.LocalDateTime;
 
 class ElkartoflichoMapper {
-    public List<MatchInfo> mapToMatchInfoList(JSONArray allRounds) {
+
+    List<MatchInfo> mapToMatchInfoList(JSONArray allRounds) {
         List<MatchInfo> result = List.empty();
         for (int i = 0; i < allRounds.length(); i++) {
             JSONObject match = allRounds.getJSONObject(i);
