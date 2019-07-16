@@ -10,7 +10,7 @@ import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
 
 import java.time.LocalDateTime;

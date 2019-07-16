@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.points.api.PointsError;
 
 @RestController

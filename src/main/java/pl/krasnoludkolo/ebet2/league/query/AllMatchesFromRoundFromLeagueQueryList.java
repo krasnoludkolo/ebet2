@@ -9,8 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.jooq.RecordValueReader;
 import pl.krasnoludkolo.ebet2.infrastructure.ListResultJOOQQuery;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 import java.util.UUID;
 

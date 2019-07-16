@@ -6,7 +6,7 @@ import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 import pl.krasnoludkolo.ebet2.points.api.LeagueResultsDTO;
 import pl.krasnoludkolo.ebet2.points.api.UserResultDTO;
 

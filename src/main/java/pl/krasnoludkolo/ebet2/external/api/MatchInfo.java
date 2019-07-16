@@ -2,7 +2,7 @@ package pl.krasnoludkolo.ebet2.external.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

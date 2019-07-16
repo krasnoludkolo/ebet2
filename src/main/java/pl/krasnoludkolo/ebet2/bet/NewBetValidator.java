@@ -4,7 +4,7 @@ import io.vavr.control.Either;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
 
 import java.util.UUID;
 import java.util.function.Predicate;

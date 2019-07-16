@@ -5,7 +5,8 @@ import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.league.api.*;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.dto.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

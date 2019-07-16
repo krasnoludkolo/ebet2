@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseResolver;
-import pl.krasnoludkolo.ebet2.league.api.*;
+import pl.krasnoludkolo.ebet2.league.api.LeagueError;
+import pl.krasnoludkolo.ebet2.league.api.dto.*;
 import pl.krasnoludkolo.ebet2.league.query.AllMatchesFromRoundFromLeagueQueryList;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

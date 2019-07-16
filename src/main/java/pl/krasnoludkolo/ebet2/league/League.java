@@ -2,8 +2,8 @@ package pl.krasnoludkolo.ebet2.league;
 
 import io.vavr.collection.List;
 import lombok.NoArgsConstructor;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -7,9 +7,9 @@ import pl.krasnoludkolo.ebet2.InMemorySystem;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.infrastructure.InMemoryRepository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.NewMatchDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

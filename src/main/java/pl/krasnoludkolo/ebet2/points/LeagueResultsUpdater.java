@@ -4,8 +4,8 @@ import io.vavr.collection.List;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.infrastructure.Success;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 class LeagueResultsUpdater {
 

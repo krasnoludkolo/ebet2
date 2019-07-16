@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.bet.api;
 
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
 public enum BetTyp {
 

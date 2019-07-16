@@ -8,10 +8,10 @@ import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.MatchInfo;
 import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
-import pl.krasnoludkolo.ebet2.league.api.LeagueDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchDTO;
-import pl.krasnoludkolo.ebet2.league.api.MatchResult;
-import pl.krasnoludkolo.ebet2.league.api.NewMatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.LeagueDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchDTO;
+import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
+import pl.krasnoludkolo.ebet2.league.api.dto.NewMatchDTO;
 import pl.krasnoludkolo.ebet2.points.api.PointsError;
 
 import java.util.Objects;
