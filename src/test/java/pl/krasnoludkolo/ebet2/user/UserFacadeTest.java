@@ -1,10 +1,8 @@
 package pl.krasnoludkolo.ebet2.user;
 
-import io.vavr.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.InMemorySystem;
-import pl.krasnoludkolo.ebet2.infrastructure.Success;
 import pl.krasnoludkolo.ebet2.user.api.LoginUserInfo;
 import pl.krasnoludkolo.ebet2.user.api.PromoteToSuperAdminRequest;
 import pl.krasnoludkolo.ebet2.user.api.UserDetails;
@@ -183,7 +181,7 @@ public class UserFacadeTest {
         UUID admin = userFacade.registerSuperAdmin(adminUserInfo).get().getUserUUID();
         UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
         //when
-        Either<UserError, Success> successes = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin));
+        userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin));
         //then
         assertTrue(userFacade.isSuperAdmin(user).get());
     }
@@ -191,10 +189,10 @@ public class UserFacadeTest {
     @Test
     public void shouldNotNormalUserPromoteNormalUserToSuperAdmin() {
         //given
-        UUID admin = userFacade.registerSuperAdmin(adminUserInfo).get().getUserUUID();
+        UUID notAdmin = userFacade.registerUser(adminUserInfo).get().getUserUUID();
         UUID user = userFacade.registerUser(loginUserInfo).get().getUserUUID();
         //when
-        UserError error = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, admin)).getLeft();
+        UserError error = userFacade.promoteToSuperAdmin(new PromoteToSuperAdminRequest(user, notAdmin)).getLeft();
         //then
         assertEquals(UserError.NOT_REQUIRED_ROLE, error);
     }
