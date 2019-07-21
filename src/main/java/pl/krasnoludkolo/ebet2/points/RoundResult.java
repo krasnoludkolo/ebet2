@@ -37,7 +37,7 @@ class RoundResult {
     }
 
     RoundResult updateResults(MatchResult matchResult, List<BetDTO> betList) {
-        List<BetDTO> correctBets = betList.filter(betDTO -> betDTO.getBetTyp().match(matchResult));
+        List<BetDTO> correctBets = betList.filter(betDTO -> betDTO.getBetType().match(matchResult));
         List<UserResult> userResultsWithIncorrectBetNotInQueue = getUserResultsWithIncorrectBetNotInQueue(betList, correctBets);
         List<UserResult> userResultsWithCorrectBetsNotInQueue = getUserResultsForBetsNotInQueue(correctBets);
 

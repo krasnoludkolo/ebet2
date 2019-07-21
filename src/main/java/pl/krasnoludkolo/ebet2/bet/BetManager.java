@@ -5,7 +5,7 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 import pl.krasnoludkolo.ebet2.infrastructure.Repository;
 import pl.krasnoludkolo.ebet2.league.LeagueFacade;
 
@@ -34,7 +34,7 @@ class BetManager {
         return repository.findOne(betUUID).map(Bet::toDto);
     }
 
-    Either<BetError, BetDTO> updateBetToMatch(UUID betUUID, BetTyp betType) {
+    Either<BetError, BetDTO> updateBetToMatch(UUID betUUID, BetType betType) {
         return repository
                 .findOne(betUUID)
                 .toEither(BetError.BET_NOT_FOUND)
@@ -44,7 +44,7 @@ class BetManager {
     }
 
 
-    private void updateBet(UUID betUUID, BetTyp betType, Bet bet) {
+    private void updateBet(UUID betUUID, BetType betType, Bet bet) {
         bet.updateBetType(betType);
         repository.update(betUUID, bet);
     }

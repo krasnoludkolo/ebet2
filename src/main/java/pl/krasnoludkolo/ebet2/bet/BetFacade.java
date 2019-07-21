@@ -5,7 +5,7 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
 import pl.krasnoludkolo.ebet2.bet.api.BetError;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.user.UserFacade;
 
@@ -25,7 +25,7 @@ public class BetFacade {
         return userFacade
                 .getUserUUIDFromToken(auth)
                 .mapLeft(x -> BetError.USER_NOT_FOUND)
-                .map(userUUID -> new NewBet(newBetDTO.getBetTyp(), newBetDTO.getMatchUUID(), userUUID))
+                .map(userUUID -> new NewBet(newBetDTO.getBetType(), newBetDTO.getMatchUUID(), userUUID))
                 .flatMap(betManager::addBetToMatch);
     }
 
@@ -33,7 +33,7 @@ public class BetFacade {
         return betManager.findBetByUUID(betUUID);
     }
 
-    public Either<BetError, BetDTO> updateBetToMatch(UUID betUUID, BetTyp betType, String auth) {
+    public Either<BetError, BetDTO> updateBetToMatch(UUID betUUID, BetType betType, String auth) {
         return userFacade.getUserUUIDFromToken(auth)
                 .mapLeft(x -> BetError.USER_NOT_FOUND)
                 .flatMap(uuid -> isCorrespondingUUID(uuid, betUUID))

@@ -3,7 +3,7 @@ package pl.krasnoludkolo.ebet2.bet;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 import pl.krasnoludkolo.ebet2.infrastructure.JOOQDatabaseConnector;
 
 import java.util.UUID;
@@ -24,8 +24,8 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     protected void saveQuery(DSLContext create, BetEntity entity) {
         create
                 .insertInto(table(BET_ENTITY))
-                .columns(field("uuid"), field("bet_typ"), field("match_uuid"), field("userUUID"))
-                .values(entity.getUuid(), entity.getBetTyp().ordinal(), entity.getMatchUuid(), entity.getUserUUID())
+                .columns(field("uuid"), field("bet_type"), field("match_uuid"), field("userUUID"))
+                .values(entity.getUuid(), entity.getBetType().ordinal(), entity.getMatchUuid(), entity.getUserUUID())
                 .execute();
     }
 
@@ -43,7 +43,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     protected BetEntity convertRecordToEntity(Record record) {
         BetEntity entity = modelMapper.map(record, BetEntity.class);
         Integer betTyp = (Integer) record.getValue(1);
-        entity.setBetTyp(BetTyp.values()[betTyp]);
+        entity.setBetType(BetType.values()[betTyp]);
         return entity;
     }
 
@@ -66,7 +66,7 @@ class BetJOOQRepository extends JOOQDatabaseConnector<BetEntity, Bet> {
     protected void updateQuery(DSLContext create, BetEntity entity, UUID uuid) {
         create
                 .update(table(BET_ENTITY))
-                .set(field("bet_typ"), entity.getBetTyp().ordinal())
+                .set(field("bet_type"), entity.getBetType().ordinal())
                 .set(field("match_uuid"), entity.getMatchUuid())
                 .set(field("userUUID"), entity.getUserUUID())
                 .where(field("uuid").eq(uuid))

@@ -60,7 +60,7 @@ Content-Type: application/json
 Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjoiNWRkNWYxMGUtMjRmYi00N2RhLWJlMTItMTViMzkzNThmYmVkIn0.48Uuq1CUAMBTXP5mhOtecsr9QtyiCw5EWx-vZmPyidU
 
 {
-  "betTyp": "DRAW",
+  "betType": "DRAW",
   "matchUUID": "5c75cae3-6551-47be-b336-9d410660bb4e"
 }
 

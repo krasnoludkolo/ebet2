@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class NewBetDTO {
 
-    private BetTyp betTyp;
+    private BetType betType;
     private UUID matchUUID;
 
 }

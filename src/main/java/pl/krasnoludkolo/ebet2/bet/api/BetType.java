@@ -2,13 +2,13 @@ package pl.krasnoludkolo.ebet2.bet.api;
 
 import pl.krasnoludkolo.ebet2.league.api.dto.MatchResult;
 
-public enum BetTyp {
+public enum BetType {
 
     HOST_WON(MatchResult.HOST_WON), GUEST_WON(MatchResult.GUEST_WON), DRAW(MatchResult.DRAW);
 
     private MatchResult matchMatchResult;
 
-    BetTyp(MatchResult matchMatchResult) {
+    BetType(MatchResult matchMatchResult) {
         this.matchMatchResult = matchMatchResult;
     }
 

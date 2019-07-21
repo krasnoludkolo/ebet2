@@ -46,7 +46,7 @@ class BetController {
 
     @PutMapping("/bet")
     public HttpEntity updateBet(@RequestHeader("Authorization") String auth, @RequestBody BetDTO betDTO) {
-        Either<BetError, BetDTO> updatedResult = betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetTyp(), auth);
+        Either<BetError, BetDTO> updatedResult = betFacade.updateBetToMatch(betDTO.getUuid(), betDTO.getBetType(), auth);
         return ResponseResolver.resolve(updatedResult);
     }
 

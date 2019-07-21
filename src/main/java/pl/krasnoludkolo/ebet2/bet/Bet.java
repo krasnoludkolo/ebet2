@@ -2,7 +2,7 @@ package pl.krasnoludkolo.ebet2.bet;
 
 import lombok.NoArgsConstructor;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,25 +13,25 @@ class Bet {
     private UUID uuid;
     private UUID matchUuid;
     private UUID userUUUID;
-    private BetTyp betTyp;
+    private BetType betType;
 
     static Bet of(NewBet newBet) {
-        return new Bet(UUID.randomUUID(), newBet.getMatchUUID(), newBet.getUserUUID(), newBet.getBetTyp());
+        return new Bet(UUID.randomUUID(), newBet.getMatchUUID(), newBet.getUserUUID(), newBet.getBetType());
     }
 
     static Bet fromEntity(BetEntity e) {
-        return new Bet(e.getUuid(), e.getMatchUuid(), e.getUserUUID(), e.getBetTyp());
+        return new Bet(e.getUuid(), e.getMatchUuid(), e.getUserUUID(), e.getBetType());
     }
 
-    private Bet(UUID uuid, UUID matchUuid, UUID userUUUID, BetTyp betTyp) {
+    private Bet(UUID uuid, UUID matchUuid, UUID userUUUID, BetType betType) {
         this.uuid = uuid;
         this.matchUuid = matchUuid;
         this.userUUUID = userUUUID;
-        this.betTyp = betTyp;
+        this.betType = betType;
     }
 
-    void updateBetType(BetTyp betType) {
-        this.betTyp = betType;
+    void updateBetType(BetType betType) {
+        this.betType = betType;
     }
 
     boolean hasUserUUID(UUID userUUID) {
@@ -60,14 +60,14 @@ class Bet {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, matchUuid, userUUUID, betTyp);
+        return Objects.hash(uuid, matchUuid, userUUUID, betType);
     }
 
     BetDTO toDto() {
-        return new BetDTO(uuid, betTyp, userUUUID, matchUuid);
+        return new BetDTO(uuid, betType, userUUUID, matchUuid);
     }
 
     BetEntity toEntity() {
-        return new BetEntity(uuid, matchUuid, userUUUID, betTyp);
+        return new BetEntity(uuid, matchUuid, userUUUID, betType);
     }
 }

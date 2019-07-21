@@ -4,7 +4,7 @@ import io.vavr.collection.List;
 import org.junit.Before;
 import org.junit.Test;
 import pl.krasnoludkolo.ebet2.bet.BetFacade;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 import pl.krasnoludkolo.ebet2.bet.api.NewBetDTO;
 import pl.krasnoludkolo.ebet2.external.ExternalFacade;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceConfiguration;
@@ -61,8 +61,8 @@ public class AutoImportAndLeagueResultsUpdate {
         MatchDTO matchDTO = leagueDTO.getMatchDTOS().stream().filter(m -> m.getResult() == MatchResult.NOT_SET).findFirst().get();
         UUID matchUUID = matchDTO.getUuid();
 
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.DRAW, matchUUID), auth.getToken());
-        betFacade.addBetToMatch(new NewBetDTO(BetTyp.GUEST_WON, matchUUID), auth2.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetType.DRAW, matchUUID), auth.getToken());
+        betFacade.addBetToMatch(new NewBetDTO(BetType.GUEST_WON, matchUUID), auth2.getToken());
 
         system.setExternalSourceMatchList(withResult());
         resultFacade.manuallyUpdateLeague(leagueUUID);

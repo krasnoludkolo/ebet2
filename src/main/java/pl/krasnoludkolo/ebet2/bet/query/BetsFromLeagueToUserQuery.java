@@ -9,7 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.jooq.RecordValueReader;
 import pl.krasnoludkolo.ebet2.bet.api.BetDTO;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 import pl.krasnoludkolo.ebet2.infrastructure.ListResultJOOQQuery;
 
 import java.util.UUID;
@@ -53,7 +53,7 @@ public class BetsFromLeagueToUserQuery extends ListResultJOOQQuery<BetDTO> {
     private BetDTO mapToBetDTO(Record record) {
         BetDTO betDTO = modelMapper.map(record, BetDTO.class);
         Integer betType = (Integer) record.getValue(1);
-        betDTO.setBetTyp(BetTyp.values()[betType]);
+        betDTO.setBetType(BetType.values()[betType]);
         return betDTO;
     }
 }

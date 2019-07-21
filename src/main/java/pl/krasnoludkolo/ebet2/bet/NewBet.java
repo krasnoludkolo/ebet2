@@ -2,7 +2,7 @@ package pl.krasnoludkolo.ebet2.bet;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pl.krasnoludkolo.ebet2.bet.api.BetTyp;
+import pl.krasnoludkolo.ebet2.bet.api.BetType;
 
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 class NewBet {
 
-    private final BetTyp betTyp;
+    private final BetType betType;
     private final UUID matchUUID;
     private final UUID userUUID;
 
