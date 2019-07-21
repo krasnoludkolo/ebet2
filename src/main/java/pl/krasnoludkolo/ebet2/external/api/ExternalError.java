@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.external.api;
 
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseError;
 
 public enum ExternalError implements ResponseError {
     NO_LEAGUE_DETAILS("No league details", 500),

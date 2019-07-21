@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.user.api;
 
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseError;
 
 public enum UserError implements ResponseError {
     EMPTY_USERNAME_OR_PASSWORD("Empty username or password", 400),

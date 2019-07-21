@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.bet.api;
 
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseError;
 
 public enum BetError implements ResponseError {
     BET_NOT_FOUND("Bet not found", 404),

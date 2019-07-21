@@ -4,7 +4,6 @@ import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
 
 public final class ResponseResolver {
 

@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.points.api;
 
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseError;
 
 public enum PointsError implements ResponseError {
     MATCH_NOT_FOUND("Match not found", 404),

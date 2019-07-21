@@ -1,6 +1,6 @@
 package pl.krasnoludkolo.ebet2.league.api;
 
-import pl.krasnoludkolo.ebet2.infrastructure.ResponseError;
+import pl.krasnoludkolo.ebet2.infrastructure.error.ResponseError;
 
 public enum LeagueError implements ResponseError {
     LEAGUE_NAME_DUPLICATION("League name duplication", 400),
