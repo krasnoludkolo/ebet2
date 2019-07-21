@@ -73,7 +73,7 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
         try (Connection connection = dbConnectionInfo.createConnection()) {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES);
             Result<Record> result = findAllQuery(create);
-            return convertToBetList(result);
+            return convertResultToDomainList(result);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new IllegalStateException(e.getMessage());
@@ -81,7 +81,7 @@ public abstract class JOOQDatabaseConnector<E, D> implements Repository<D> {
     }
 
 
-    private List<D> convertToBetList(Result<Record> result) {
+    private List<D> convertResultToDomainList(Result<Record> result) {
         List<D> resultList = List.empty();
         for (Record record : result) {
             E entity = convertRecordToEntity(record);
