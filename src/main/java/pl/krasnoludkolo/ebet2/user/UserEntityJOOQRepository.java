@@ -15,6 +15,7 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     private static final Field<Object> UUID = field("uuid");
     private static final Field<Object> USERNAME = field("username");
     private static final Field<Object> PASSWORD = field("password");
+    private static final Field<Object> GLOBAL_ROLE = field("global_role");
 
     UserEntityJOOQRepository(Function<UserEntity, UserEntity> domainToEntityMapper, Function<UserEntity, UserEntity> entityToDomainMapper) {
         super(domainToEntityMapper, entityToDomainMapper);
@@ -24,8 +25,8 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     protected void saveQuery(DSLContext create, UserEntity entity) {
         create
                 .insertInto(USER_ENTITY)
-                .columns(UUID, USERNAME, PASSWORD)
-                .values(entity.getUuid(), entity.getUsername(), entity.getPassword())
+                .columns(UUID, USERNAME, PASSWORD, GLOBAL_ROLE)
+                .values(entity.getUuid(), entity.getUsername(), entity.getPassword(), entity.getGlobalRole().ordinal())
                 .execute();
     }
 
@@ -42,7 +43,7 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     @Override
     protected UserEntity convertRecordToEntity(Record record) {
         UserEntity entity = modelMapper.map(record, UserEntity.class);
-        Integer role = (Integer) record.getValue(3);
+        int role = record.get(GLOBAL_ROLE, Integer.class);
         entity.setGlobalRole(GlobalRole.values()[role]);
         return entity;
     }
@@ -67,9 +68,10 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     protected void updateQuery(DSLContext create, UserEntity entity, UUID uuid) {
         create
                 .update(USER_ENTITY)
-                .set(field(USERNAME), entity.getUsername())
-                .set(field(PASSWORD), entity.getPassword())
-                .where(field(UUID).eq(uuid))
+                .set(USERNAME, entity.getUsername())
+                .set(PASSWORD, entity.getPassword())
+                .set(GLOBAL_ROLE, entity.getGlobalRole().ordinal())
+                .where(UUID.eq(uuid))
                 .execute();
     }
 
