@@ -23,8 +23,8 @@ public class LeagueConfiguration {
     }
 
     private LeagueManager createLeagueManager(LeagueRepository leagueRepository, MatchManager matchManager, EntityManagerFactory entityManager) {
-        UnaryOperator<League> d2e = l -> l;
-        UnaryOperator<League> e2d = l -> l;
+        UnaryOperator<League> d2e = UnaryOperator.identity();
+        UnaryOperator<League> e2d = UnaryOperator.identity();
         SpringDataRepositoryAdapter<League, League> adapter = new SpringDataRepositoryAdapter<>(leagueRepository, d2e, e2d, entityManager);
         return new LeagueManager(adapter, matchManager);
     }
