@@ -12,10 +12,10 @@ import static org.jooq.impl.DSL.table;
 final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, UserEntity> {
 
     private static final Table<Record> USER_ENTITY = table("user_entity");
-    private static final Field<Object> UUID = field("uuid");
-    private static final Field<Object> USERNAME = field("username");
-    private static final Field<Object> PASSWORD = field("password");
-    private static final Field<Object> GLOBAL_ROLE = field("global_role");
+    private static final Field<UUID> UUID = field("uuid",UUID.class);
+    private static final Field<String> USERNAME = field("username",String.class);
+    private static final Field<String> PASSWORD = field("password",String.class);
+    private static final Field<Integer> GLOBAL_ROLE = field("global_role",Integer.class);
 
     UserEntityJOOQRepository(Function<UserEntity, UserEntity> domainToEntityMapper, Function<UserEntity, UserEntity> entityToDomainMapper) {
         super(domainToEntityMapper, entityToDomainMapper);
@@ -43,7 +43,7 @@ final class UserEntityJOOQRepository extends JOOQDatabaseConnector<UserEntity, U
     @Override
     protected UserEntity convertRecordToEntity(Record record) {
         UserEntity entity = modelMapper.map(record, UserEntity.class);
-        int role = record.get(GLOBAL_ROLE, Integer.class);
+        int role = record.get(GLOBAL_ROLE);
         entity.setGlobalRole(GlobalRole.values()[role]);
         return entity;
     }
