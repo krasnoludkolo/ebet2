@@ -1,7 +1,6 @@
 package pl.krasnoludkolo.ebet2.external;
 
 import io.vavr.collection.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.krasnoludkolo.ebet2.external.api.ExternalSourceClient;
@@ -18,7 +17,6 @@ public class ExternalConfiguration {
 
 
     @Bean
-    @Autowired
     public ExternalFacade autoImportBean(SpringLeagueDetailsRepository repo, EntityManagerFactory entityManager) {
         Repository<LeagueDetails> leagueDetailsRepository = new SpringDataRepositoryAdapter<>(repo, e -> e, e -> e, entityManager);
         List<ExternalSourceClient> clients = List.of(FootballDataClient.create(), new ElkartoflichoClient());
@@ -30,7 +28,6 @@ public class ExternalConfiguration {
         Repository<LeagueDetails> leagueDetailsRepository = new InMemoryRepository<>();
         return new ExternalFacade(list, leagueDetailsRepository);
     }
-
 
 
 }
