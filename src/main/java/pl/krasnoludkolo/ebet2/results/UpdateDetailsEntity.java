@@ -18,7 +18,7 @@ class UpdateDetailsEntity {
 
     @Id
     private UUID matchUUID;
-    @Column(columnDefinition = "timestamp without time zone")
+    @Column(columnDefinition = "timestamp with time zone")
     private LocalDateTime scheduledTime;
     private int attempt;
 
