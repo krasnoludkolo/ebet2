@@ -29,7 +29,7 @@ public class SpringDataRepositoryAdapter<D, E> implements Repository<D> {
 
     @Override
     public Option<D> findOne(UUID uuid) {
-        Option<E> entity = Option.of(repository.findOne(uuid));
+        Option<E> entity = Option.ofOptional(repository.findById(uuid));
         return entity.map(entityToDomainMapper);
     }
 
@@ -40,7 +40,7 @@ public class SpringDataRepositoryAdapter<D, E> implements Repository<D> {
 
     @Override
     public void delete(UUID uuid) {
-        repository.delete(uuid);
+        repository.deleteById(uuid);
     }
 
     @Override
